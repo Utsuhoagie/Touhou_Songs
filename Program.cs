@@ -2,17 +2,24 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration["ConnectionString:Touhou_Songs_Context"] ?? throw new InvalidOperationException("Connection string 'Touhou_Songs_Context' not found.");
-
-builder.Services.AddDbContext<Touhou_Songs_Context>(options =>
-	options.UseSqlServer(connectionString));
-
 // Add services to the container.
 
+var connectionString = builder.Configuration["ConnectionString:Touhou_Songs"] ?? throw new InvalidOperationException("Connection string 'Touhou_Songs_Context' not found.");
+
+builder.Services.AddDbContext<Touhou_Songs_Context>(options =>
+	options.UseNpgsql(connectionString));
+
+builder.Services.AddMediatR(cfg =>
+{
+	cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+});
+
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services
+	.AddEndpointsApiExplorer()
+	.AddSwaggerGen();
 
 var app = builder.Build();
 

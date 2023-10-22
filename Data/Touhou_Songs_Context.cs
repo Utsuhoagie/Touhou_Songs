@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Touhou_Songs.Features.Songs;
 
 namespace Touhou_Songs.Data
 {
@@ -8,5 +9,7 @@ namespace Touhou_Songs.Data
 			: base(options)
 		{
 		}
+
+		public DbSet<Song> Songs { get; set; } = default!;
 	}
 }
