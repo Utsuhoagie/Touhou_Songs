@@ -3,15 +3,15 @@ using Touhou_Songs.Data;
 
 namespace Touhou_Songs.Features.Songs
 {
-	public record CreateSongRequest(string Title, string Origin) : IRequest;
+	public record CreateSongCommand(string Title, string Origin) : IRequest;
 
-	class CreateSongCommandHandler : IRequestHandler<CreateSongRequest>
+	class CreateSongCommandHandler : IRequestHandler<CreateSongCommand>
 	{
 		private readonly Touhou_Songs_Context _context;
 
 		public CreateSongCommandHandler(Touhou_Songs_Context context) => _context = context;
 
-		public async Task Handle(CreateSongRequest command, CancellationToken cancellationToken)
+		public async Task Handle(CreateSongCommand command, CancellationToken cancellationToken)
 		{
 			var song = new Song
 			{
