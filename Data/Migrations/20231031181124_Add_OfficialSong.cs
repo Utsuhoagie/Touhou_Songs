@@ -3,16 +3,16 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Touhou_Songs.Migrations
+namespace Touhou_Songs.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddTable_Song : Migration
+    public partial class Add_OfficialSong : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Songs",
+                name: "OfficialSongs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -22,7 +22,7 @@ namespace Touhou_Songs.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Songs", x => x.Id);
+                    table.PrimaryKey("PK_OfficialSongs", x => x.Id);
                 });
         }
 
@@ -30,7 +30,7 @@ namespace Touhou_Songs.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Songs");
+                name: "OfficialSongs");
         }
     }
 }

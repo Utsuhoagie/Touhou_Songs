@@ -8,11 +8,11 @@ using Touhou_Songs.Data;
 
 #nullable disable
 
-namespace Touhou_Songs.Migrations
+namespace Touhou_Songs.Data.Migrations
 {
     [DbContext(typeof(Touhou_Songs_Context))]
-    [Migration("20231021185331_AddTable_Song")]
-    partial class AddTable_Song
+    [Migration("20231031181124_Add_OfficialSong")]
+    partial class Add_OfficialSong
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace Touhou_Songs.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Touhou_Songs.Features.Songs.Song", b =>
+            modelBuilder.Entity("Touhou_Songs.Features.OfficialSongs.OfficialSong", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -42,7 +42,7 @@ namespace Touhou_Songs.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Songs");
+                    b.ToTable("OfficialSongs");
                 });
 #pragma warning restore 612, 618
         }

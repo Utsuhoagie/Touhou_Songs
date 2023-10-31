@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Touhou_Songs.Features.Songs;
+using Touhou_Songs.Features.Official.OfficialGames;
+using Touhou_Songs.Features.Official.OfficialSongs;
 
 namespace Touhou_Songs.Data
 {
@@ -10,6 +11,7 @@ namespace Touhou_Songs.Data
 		{
 		}
 
-		public DbSet<Song> Songs { get; set; } = default!;
+		public DbSet<OfficialGame> OfficialGames { get; set; } = default!;
+		public DbSet<OfficialSong> OfficialSongs { get; set; } = default!;
 	}
 }
