@@ -7,13 +7,21 @@ namespace Touhou_Songs.Features.Songs
 	[ApiController]
 	public class SongsController : ControllerBase
 	{
-		private readonly IMediator _mediator;
-		public SongsController(IMediator mediator) => _mediator = mediator;
+		private readonly ISender _sender;
+		public SongsController(ISender sender) => _sender = sender;
+
+		[HttpGet]
+		public async Task<IActionResult> GetSongs()
+		{
+			var songResponses = await _sender.Send(new GetSongsQuery());
+
+			return Ok(songResponses);
+		}
 
 		[HttpPost]
-		public async Task<IActionResult> CreateSong(CreateSongRequest req)
+		public async Task<IActionResult> CreateSong(CreateSongCommand req)
 		{
-			await _mediator.Send(req);
+			await _sender.Send(req);
 
 			return Ok();
 		}
