@@ -6,7 +6,7 @@ namespace Touhou_Songs.Features.Official.OfficialSongs
 {
 	public record GetOfficialSongsQuery() : IRequest<IEnumerable<OfficialSongResponse>>;
 
-	public record OfficialSongResponse(int Id, string Title, string Origin);
+	public record OfficialSongResponse(int Id, string Title, string Context);
 
 	class GetOfficialSongsQueryHandler : IRequestHandler<GetOfficialSongsQuery, IEnumerable<OfficialSongResponse>>
 	{
@@ -17,7 +17,7 @@ namespace Touhou_Songs.Features.Official.OfficialSongs
 		public async Task<IEnumerable<OfficialSongResponse>> Handle(GetOfficialSongsQuery query, CancellationToken cancellationToken)
 		{
 			var officialSongResponses = await _context.OfficialSongs
-				.Select(s => new OfficialSongResponse(s.Id, s.Title, s.Origin))
+				.Select(s => new OfficialSongResponse(s.Id, s.Title, s.Context))
 				.ToListAsync();
 
 			return officialSongResponses;
