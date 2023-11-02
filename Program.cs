@@ -1,39 +1,93 @@
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using Serilog;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using Touhou_Songs.Data;
-var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// NOTE
+var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration["ConnectionString:Touhou_Songs"] ?? throw new InvalidOperationException("Connection string 'Touhou_Songs_Context' not found.");
 
-builder.Services.AddDbContext<Touhou_Songs_Context>(options =>
-	options.UseNpgsql(connectionString));
-
-builder.Services.AddMediatR(cfg =>
+try
 {
-	cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
-});
+	// Add services to the container.
+	builder.Host.UseSerilog(
+	(context, services, configuration) =>
+		configuration
+			.ReadFrom.Configuration(context.Configuration)
+			.ReadFrom.Services(services)
+			.Enrich.FromLogContext()
+			.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}")
+	);
 
-builder.Services.AddControllers();
+	builder.Services.AddDbContext<Touhou_Songs_Context>(options => options.UseNpgsql(connectionString));
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services
-	.AddEndpointsApiExplorer()
-	.AddSwaggerGen();
+	builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
-var app = builder.Build();
+	builder.Services.AddControllers();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+	// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+	builder.Services
+		.AddEndpointsApiExplorer()
+		.AddSwaggerGen(o => o.DocumentFilter<ImportableDocumentFilter>());
+
+	var app = builder.Build();
+
+	// Configure the HTTP request pipeline.
+	if (app.Environment.IsDevelopment())
+	{
+		app.UseSwagger();
+		app.UseSwaggerUI();
+	}
+
+	app.UseHttpsRedirection();
+
+	app.UseAuthorization();
+
+	app.MapControllers();
+
+	app.Run();
+}
+catch (Exception ex)
 {
-	app.UseSwagger();
-	app.UseSwaggerUI();
+	if (ex is HostAbortedException)
+	{
+		return;
+	}
+	Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+	Log.CloseAndFlush();
 }
 
-app.UseHttpsRedirection();
 
-app.UseAuthorization();
+public class ImportableDocumentFilter : IDocumentFilter
+{
+	public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+	{
+		var controllers = Assembly
+			.GetExecutingAssembly()
+			.GetTypes()
+			.Where(x => x.GetCustomAttribute<ApiControllerAttribute>() is not null);
 
-app.MapControllers();
+		swaggerDoc.Tags = controllers
+			.Select(controller => new OpenApiTag
+			{
+				Name = controller.Name.Replace("Controller", string.Empty)
+			})
+			.OrderBy(t => t.Name)
+			.ToList();
 
-app.Run();
+		swaggerDoc.Servers = new List<OpenApiServer>
+		{
+			new OpenApiServer
+			{
+				Url = "https://localhost:5000",
+			}
+		};
+	}
+}
