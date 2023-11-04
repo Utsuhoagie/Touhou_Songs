@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 // NOTE
 var builder = WebApplication.CreateBuilder(args);
@@ -27,7 +28,7 @@ try
 
 	builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
-	builder.Services.AddControllers();
+	builder.Services.AddControllers(o => o.Filters.Add<AppExceptionFilter>());
 
 	// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 	builder.Services
