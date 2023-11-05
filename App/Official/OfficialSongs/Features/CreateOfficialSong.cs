@@ -1,5 +1,6 @@
 using System.Net;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
@@ -10,10 +11,10 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features
 		public string Title { get; set; }
 		public string Context { get; set; }
 
-		public int GameId { get; set; }
+		public string GameCode { get; set; }
 
-		public CreateOfficialSongCommand(string title, string context, int gameId)
-			=> (Title, Context, GameId) = (title, context, gameId);
+		public CreateOfficialSongCommand(string title, string context, string gameCode)
+			=> (Title, Context, GameCode) = (title, context, gameCode);
 	}
 
 	class CreateOfficialSongCommandHandler : IRequestHandler<CreateOfficialSongCommand>
@@ -24,14 +25,15 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features
 
 		public async Task Handle(CreateOfficialSongCommand command, CancellationToken cancellationToken)
 		{
-			var officialGame = await _context.OfficialGames.FindAsync(command.GameId);
+			var officialGame = await _context.OfficialGames
+				.SingleOrDefaultAsync(og => EF.Functions.ILike(og.GameCode, $"{command.GameCode}"));
 
 			if (officialGame is null)
 			{
-				throw new AppException(HttpStatusCode.NotFound, $"Official Game {command.GameId} not found");
+				throw new AppException(HttpStatusCode.NotFound, $"Official Game {command.GameCode} not found");
 			}
 
-			var officialSong = new OfficialSong(command.Title, command.Context, command.GameId)
+			var officialSong = new OfficialSong(command.Title, command.Context, officialGame.Id)
 			{
 				Game = officialGame,
 			};

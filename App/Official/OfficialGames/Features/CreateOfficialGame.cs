@@ -5,12 +5,13 @@ namespace Touhou_Songs.App.Official.OfficialGames.Features
 {
 	public record CreateOfficialGameCommand : IRequest
 	{
-		public string Title { get; set; } = string.Empty;
+		public string Title { get; set; }
+		public string GameCode { get; set; }
 		public DateTime ReleaseDate { get; set; }
-		public string ImageUrl { get; set; } = string.Empty;
+		public string ImageUrl { get; set; }
 
-		public CreateOfficialGameCommand(string title, DateTime releaseDate, string imageUrl)
-			=> (Title, ReleaseDate, ImageUrl) = (title, releaseDate, imageUrl);
+		public CreateOfficialGameCommand(string title, string gameCode, DateTime releaseDate, string imageUrl)
+			=> (Title, GameCode, ReleaseDate, ImageUrl) = (title, gameCode, releaseDate, imageUrl);
 	}
 
 	class CreateOfficialGameCommandHandler : IRequestHandler<CreateOfficialGameCommand>
@@ -21,7 +22,7 @@ namespace Touhou_Songs.App.Official.OfficialGames.Features
 
 		public async Task Handle(CreateOfficialGameCommand command, CancellationToken cancellationToken)
 		{
-			var officialGame = new OfficialGame(command.Title, command.ReleaseDate, command.ImageUrl);
+			var officialGame = new OfficialGame(command.Title, command.GameCode, command.ReleaseDate, command.ImageUrl);
 
 			_context.OfficialGames.Add(officialGame);
 			await _context.SaveChangesAsync();

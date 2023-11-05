@@ -12,7 +12,7 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features
 		public string Title { get; set; }
 		public string Context { get; set; }
 
-		public required string GameTitle { get; set; }
+		public required string GameCode { get; set; }
 
 		public OfficialSongResponse(int id, string title, string context)
 			=> (Id, Title, Context) = (id, title, context);
@@ -28,10 +28,10 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features
 		{
 			var officialSongResponses = await _context.OfficialSongs
 				.Include(os => os.Game)
-				.Where(os => query.searchTitle == null || EF.Functions.Like(os.Title, $"%{query.searchTitle}%"))
+				.Where(os => query.searchTitle == null || EF.Functions.ILike(os.Title, $"%{query.searchTitle}%"))
 				.Select(os => new OfficialSongResponse(os.Id, os.Title, os.Context)
 				{
-					GameTitle = os.Game.Title,
+					GameCode = os.Game.GameCode,
 				})
 				.ToListAsync();
 
