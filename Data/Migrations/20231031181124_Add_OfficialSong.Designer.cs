@@ -24,7 +24,7 @@ namespace Touhou_Songs.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Touhou_Songs.Features.OfficialSongs.OfficialSong", b =>
+            modelBuilder.Entity("Touhou_Songs.App.OfficialSongs.OfficialSong", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

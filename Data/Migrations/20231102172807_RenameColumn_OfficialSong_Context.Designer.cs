@@ -25,7 +25,7 @@ namespace Touhou_Songs.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Touhou_Songs.Features.Official.OfficialGames.OfficialGame", b =>
+            modelBuilder.Entity("Touhou_Songs.App.Official.OfficialGames.OfficialGame", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -49,7 +49,7 @@ namespace Touhou_Songs.Data.Migrations
                     b.ToTable("OfficialGames");
                 });
 
-            modelBuilder.Entity("Touhou_Songs.Features.Official.OfficialSongs.OfficialSong", b =>
+            modelBuilder.Entity("Touhou_Songs.App.Official.OfficialSongs.OfficialSong", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -75,9 +75,9 @@ namespace Touhou_Songs.Data.Migrations
                     b.ToTable("OfficialSongs");
                 });
 
-            modelBuilder.Entity("Touhou_Songs.Features.Official.OfficialSongs.OfficialSong", b =>
+            modelBuilder.Entity("Touhou_Songs.App.Official.OfficialSongs.OfficialSong", b =>
                 {
-                    b.HasOne("Touhou_Songs.Features.Official.OfficialGames.OfficialGame", "Game")
+                    b.HasOne("Touhou_Songs.App.Official.OfficialGames.OfficialGame", "Game")
                         .WithMany("Songs")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -86,7 +86,7 @@ namespace Touhou_Songs.Data.Migrations
                     b.Navigation("Game");
                 });
 
-            modelBuilder.Entity("Touhou_Songs.Features.Official.OfficialGames.OfficialGame", b =>
+            modelBuilder.Entity("Touhou_Songs.App.Official.OfficialGames.OfficialGame", b =>
                 {
                     b.Navigation("Songs");
                 });

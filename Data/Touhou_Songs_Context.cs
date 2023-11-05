@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Touhou_Songs.Features.Official.OfficialGames;
-using Touhou_Songs.Features.Official.OfficialSongs;
+using Touhou_Songs.App.Official.OfficialGames;
+using Touhou_Songs.App.Official.OfficialSongs;
 
 namespace Touhou_Songs.Data
 {

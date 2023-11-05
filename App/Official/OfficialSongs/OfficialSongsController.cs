@@ -1,7 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Touhou_Songs.App.Official.OfficialSongs.Features;
 
-namespace Touhou_Songs.Features.Official.OfficialSongs
+namespace Touhou_Songs.App.Official.OfficialSongs
 {
 	[Route("api/[controller]")]
 	[ApiController]
@@ -11,15 +12,15 @@ namespace Touhou_Songs.Features.Official.OfficialSongs
 		public OfficialSongsController(ISender sender) => _sender = sender;
 
 		[HttpGet]
-		public async Task<IActionResult> GetOfficialSongs()
+		public async Task<IActionResult> GetOfficialSongs([FromQuery] GetOfficialSongsQuery query)
 		{
-			var officialSongResponses = await _sender.Send(new GetOfficialSongsQuery());
+			var officialSongResponses = await _sender.Send(query);
 
 			return Ok(officialSongResponses);
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> CreateOfficialSong(CreateOfficialSongCommand req)
+		public async Task<IActionResult> CreateOfficialSong([FromBody] CreateOfficialSongCommand req)
 		{
 			await _sender.Send(req);
 
