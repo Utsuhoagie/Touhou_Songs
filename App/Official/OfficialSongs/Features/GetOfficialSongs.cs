@@ -12,10 +12,10 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features
 		public string Title { get; set; }
 		public string Context { get; set; }
 
-		public required string GameCode { get; set; }
+		public string GameCode { get; set; }
 
-		public OfficialSongResponse(int id, string title, string context)
-			=> (Id, Title, Context) = (id, title, context);
+		public OfficialSongResponse(int id, string title, string context, string gameCode)
+			=> (Id, Title, Context, GameCode) = (id, title, context, gameCode);
 	}
 
 	class GetOfficialSongsQueryHandler : IRequestHandler<GetOfficialSongsQuery, IEnumerable<OfficialSongResponse>>
@@ -29,10 +29,7 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features
 			var officialSongResponses = await _context.OfficialSongs
 				.Include(os => os.Game)
 				.Where(os => query.searchTitle == null || EF.Functions.ILike(os.Title, $"%{query.searchTitle}%"))
-				.Select(os => new OfficialSongResponse(os.Id, os.Title, os.Context)
-				{
-					GameCode = os.Game.GameCode,
-				})
+				.Select(os => new OfficialSongResponse(os.Id, os.Title, os.Context, os.Game.GameCode))
 				.ToListAsync();
 
 			return officialSongResponses;
