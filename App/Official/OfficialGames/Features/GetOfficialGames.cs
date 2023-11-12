@@ -16,7 +16,7 @@ namespace Touhou_Songs.App.Official.OfficialGames.Features
 
 		public required IEnumerable<string> SongTitles { get; set; }
 
-		public OfficialGameResponse(int id, string gameCode, string title, DateTime releaseDate, string imageUrl)
+		public OfficialGameResponse(int id, string title, string gameCode, DateTime releaseDate, string imageUrl)
 			=> (Id, Title, GameCode, ReleaseDate, ImageUrl) = (id, title, gameCode, releaseDate, imageUrl);
 	}
 
@@ -33,7 +33,9 @@ namespace Touhou_Songs.App.Official.OfficialGames.Features
 				.Where(og => query.searchTitle == null || EF.Functions.ILike(og.Title, $"%{query.searchTitle}%"))
 				.Select(og => new OfficialGameResponse(og.Id, og.Title, og.GameCode, og.ReleaseDate, og.ImageUrl)
 				{
-					SongTitles = og.Songs.Select(os => os.Title),
+					SongTitles = og.Songs
+						.OrderBy(os => os.Id)
+						.Select(os => os.Title),
 				})
 				.ToListAsync();
 

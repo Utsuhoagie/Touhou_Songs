@@ -19,6 +19,14 @@ namespace Touhou_Songs.App.Official.OfficialGames
 			return Ok(officialGameResponses);
 		}
 
+		[HttpGet("{GameCode}")]
+		public async Task<IActionResult> GetOfficialGameDetail([FromRoute] GetOfficialGameDetailQuery query)
+		{
+			var officialGameDetailResponse = await _sender.Send(query);
+
+			return Ok(officialGameDetailResponse);
+		}
+
 		[HttpPost]
 		public async Task<IActionResult> CreateOfficialGame([FromBody] CreateOfficialGameCommand command)
 		{

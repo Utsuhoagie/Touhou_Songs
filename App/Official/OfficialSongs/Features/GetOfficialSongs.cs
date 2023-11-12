@@ -29,6 +29,7 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features
 			var officialSongResponses = await _context.OfficialSongs
 				.Include(os => os.Game)
 				.Where(os => query.searchTitle == null || EF.Functions.ILike(os.Title, $"%{query.searchTitle}%"))
+				.OrderBy(os => os.GameId).ThenBy(os => os.Id)
 				.Select(os => new OfficialSongResponse(os.Id, os.Title, os.Context, os.Game.GameCode))
 				.ToListAsync();
 

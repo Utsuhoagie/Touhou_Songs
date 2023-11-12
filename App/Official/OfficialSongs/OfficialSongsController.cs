@@ -19,6 +19,14 @@ namespace Touhou_Songs.App.Official.OfficialSongs
 			return Ok(officialSongResponses);
 		}
 
+		[HttpGet("{Id}")]
+		public async Task<IActionResult> GetOfficialSongDetail([FromRoute] GetOfficialSongDetailQuery query)
+		{
+			var officialSongResponse = await _sender.Send(query);
+
+			return Ok(officialSongResponse);
+		}
+
 		[HttpPost]
 		public async Task<IActionResult> CreateOfficialSong([FromBody] CreateOfficialSongCommand req)
 		{
