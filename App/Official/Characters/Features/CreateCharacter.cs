@@ -14,8 +14,8 @@ namespace Touhou_Songs.App.Official.Characters.Features
 		public string OriginGameCode { get; set; }
 		public required List<string> SongTitles { get; set; }
 
-		public CreateCharacterCommand(string title, string imageUrl, string originGameCode)
-			=> (Name, ImageUrl, OriginGameCode) = (title, imageUrl, originGameCode);
+		public CreateCharacterCommand(string name, string imageUrl, string originGameCode)
+			=> (Name, ImageUrl, OriginGameCode) = (name, imageUrl, originGameCode);
 	}
 
 	class CreateCharacterCommandHandler : IRequestHandler<CreateCharacterCommand>

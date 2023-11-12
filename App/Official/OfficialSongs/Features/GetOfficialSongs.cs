@@ -4,7 +4,7 @@ using Touhou_Songs.Data;
 
 namespace Touhou_Songs.App.Official.OfficialSongs.Features
 {
-	public record GetOfficialSongsQuery(string? searchTitle) : IRequest<IEnumerable<OfficialSongResponse>>;
+	public record GetOfficialSongsQuery(string? SearchTitle, string? GameCode) : IRequest<IEnumerable<OfficialSongResponse>>;
 
 	public record OfficialSongResponse
 	{
@@ -28,7 +28,8 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features
 		{
 			var officialSongResponses = await _context.OfficialSongs
 				.Include(os => os.Game)
-				.Where(os => query.searchTitle == null || EF.Functions.ILike(os.Title, $"%{query.searchTitle}%"))
+				.Where(os => query.SearchTitle == null || EF.Functions.ILike(os.Title, $"%{query.SearchTitle}%"))
+				.Where(os => query.GameCode == null || os.Game.GameCode == query.GameCode)
 				.OrderBy(os => os.GameId).ThenBy(os => os.Id)
 				.Select(os => new OfficialSongResponse(os.Id, os.Title, os.Context, os.Game.GameCode))
 				.ToListAsync();
