@@ -5,8 +5,8 @@ namespace Touhou_Songs.App.Official.OfficialGames
 	public class OfficialGame
 	{
 		public int Id { get; set; }
-		public string GameCode { get; set; }
 		public string Title { get; set; }
+		public string GameCode { get; set; }
 		public DateTime ReleaseDate { get; set; }
 		public string ImageUrl { get; set; }
 

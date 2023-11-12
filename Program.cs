@@ -24,11 +24,16 @@ try
 			.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}")
 	);
 
+	builder.Services.AddCors(o => o.AddPolicy("My_CORS_Policy", p =>
+		p.WithOrigins("http://localhost:3000")));
+
 	builder.Services.AddDbContext<Touhou_Songs_Context>(options => options.UseNpgsql(connectionString));
 
 	builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
-	builder.Services.AddControllers(o => o.Filters.Add<AppExceptionFilter>());
+	builder.Services
+		.AddControllers(o => o.Filters.Add<AppExceptionFilter>())
+		.AddJsonOptions(o => o.JsonSerializerOptions.PropertyNamingPolicy = null);
 
 	// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 	builder.Services
@@ -45,6 +50,8 @@ try
 	}
 
 	app.UseHttpsRedirection();
+
+	app.UseCors("My_CORS_Policy");
 
 	app.UseAuthorization();
 
