@@ -153,5 +153,35 @@ namespace Touhou_Songs.App
 
 			return Ok();
 		}
+
+
+
+		public class UpdateCharacterImageUrl
+		{
+			public string Name { get; set; }
+			public string ImageUrl { get; set; }
+			public string GameCode { get; set; }
+			public List<string> Songs { get; set; }
+		}
+
+		[HttpPut("CharactersImageUrl")]
+		public async Task<IActionResult> UpdateCharactersImageUrl([FromBody] List<UpdateCharacterImageUrl> updateCharacters)
+		{
+			var characterNames = updateCharacters.Select(u => u.Name);
+			var charactersToUpdate = await _context.Characters
+				.Include(c => c.Songs)
+				.Where(c => characterNames.Contains(c.Name))
+				.ToListAsync();
+
+			foreach (var character in charactersToUpdate)
+			{
+				var updatedCharacter = updateCharacters.SingleOrDefault(u => u.Name == character.Name);
+
+				character.ImageUrl = updatedCharacter!.ImageUrl;
+			}
+
+			await _context.SaveChangesAsync();
+			return Ok();
+		}
 	}
 }
