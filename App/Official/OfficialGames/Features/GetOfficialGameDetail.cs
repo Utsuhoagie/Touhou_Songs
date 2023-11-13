@@ -22,13 +22,14 @@ namespace Touhou_Songs.App.Official.OfficialGames.Features
 		public int Id { get; set; }
 		public string Title { get; set; }
 		public string GameCode { get; set; }
+		public string NumberCode { get; set; }
 		public DateTime ReleaseDate { get; set; }
 		public string ImageUrl { get; set; }
 
 		public required IEnumerable<OfficialSongSimple> Songs { get; set; }
 
-		public OfficialGameDetailResponse(int id, string title, string gameCode, DateTime releaseDate, string imageUrl)
-			=> (Id, Title, GameCode, ReleaseDate, ImageUrl) = (id, title, gameCode, releaseDate, imageUrl);
+		public OfficialGameDetailResponse(int id, string title, string gameCode, string numberCode, DateTime releaseDate, string imageUrl)
+			=> (Id, Title, GameCode, NumberCode, ReleaseDate, ImageUrl) = (id, title, gameCode, numberCode, releaseDate, imageUrl);
 	}
 
 	class GetOfficialGameDetailQueryHandler : IRequestHandler<GetOfficialGameDetailQuery, OfficialGameDetailResponse>
@@ -42,7 +43,7 @@ namespace Touhou_Songs.App.Official.OfficialGames.Features
 			var officialGameDetailResponse = await _context.OfficialGames
 				.Include(og => og.Songs)
 				.Where(og => og.GameCode == query.GameCode)
-				.Select(og => new OfficialGameDetailResponse(og.Id, og.Title, og.GameCode, og.ReleaseDate, og.ImageUrl)
+				.Select(og => new OfficialGameDetailResponse(og.Id, og.Title, og.GameCode, og.NumberCode, og.ReleaseDate, og.ImageUrl)
 				{
 					Songs = og.Songs
 						.OrderBy(os => os.Id)
