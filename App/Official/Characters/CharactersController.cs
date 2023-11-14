@@ -19,6 +19,14 @@ namespace Touhou_Songs.App.Official.Characters
 			return Ok(characterResponses);
 		}
 
+		[HttpGet("{Name}")]
+		public async Task<IActionResult> GetCharacterDetail([FromRoute] GetCharacterDetailQuery query)
+		{
+			var characterResponse = await _sender.Send(query);
+
+			return Ok(characterResponse);
+		}
+
 		[HttpPost]
 		public async Task<IActionResult> CreateCharacter([FromBody] CreateCharacterCommand command)
 		{
