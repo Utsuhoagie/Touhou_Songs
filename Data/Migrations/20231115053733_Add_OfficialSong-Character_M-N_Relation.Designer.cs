@@ -12,8 +12,8 @@ using Touhou_Songs.Data;
 namespace Touhou_Songs.Data.Migrations
 {
     [DbContext(typeof(Touhou_Songs_Context))]
-    [Migration("20231113052404_Add_OfficialGame_NumberCode")]
-    partial class Add_OfficialGame_NumberCode
+    [Migration("20231115053733_Add_OfficialSong-Character_M-N_Relation")]
+    partial class Add_OfficialSongCharacter_MN_Relation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -91,9 +91,6 @@ namespace Touhou_Songs.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CharacterId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Context")
                         .IsRequired()
                         .HasColumnType("text");
@@ -107,11 +104,32 @@ namespace Touhou_Songs.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CharacterId");
-
                     b.HasIndex("GameId");
 
                     b.ToTable("OfficialSongs");
+                });
+
+            modelBuilder.Entity("Touhou_Songs.App.Official._JoinEntities.CharacterOfficialSong", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CharacterId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OfficialSongId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
+
+                    b.HasIndex("OfficialSongId");
+
+                    b.ToTable("CharacterOfficialSongs");
                 });
 
             modelBuilder.Entity("Touhou_Songs.App.Official.Characters.Character", b =>
@@ -127,12 +145,8 @@ namespace Touhou_Songs.Data.Migrations
 
             modelBuilder.Entity("Touhou_Songs.App.Official.OfficialSongs.OfficialSong", b =>
                 {
-                    b.HasOne("Touhou_Songs.App.Official.Characters.Character", null)
-                        .WithMany("OfficialSongs")
-                        .HasForeignKey("CharacterId");
-
                     b.HasOne("Touhou_Songs.App.Official.OfficialGames.OfficialGame", "Game")
-                        .WithMany("OfficialSongs")
+                        .WithMany("Songs")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -140,14 +154,28 @@ namespace Touhou_Songs.Data.Migrations
                     b.Navigation("Game");
                 });
 
-            modelBuilder.Entity("Touhou_Songs.App.Official.Characters.Character", b =>
+            modelBuilder.Entity("Touhou_Songs.App.Official._JoinEntities.CharacterOfficialSong", b =>
                 {
-                    b.Navigation("OfficialSongs");
+                    b.HasOne("Touhou_Songs.App.Official.Characters.Character", "Character")
+                        .WithMany()
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Touhou_Songs.App.Official.OfficialSongs.OfficialSong", "OfficialSong")
+                        .WithMany()
+                        .HasForeignKey("OfficialSongId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Character");
+
+                    b.Navigation("OfficialSong");
                 });
 
             modelBuilder.Entity("Touhou_Songs.App.Official.OfficialGames.OfficialGame", b =>
                 {
-                    b.Navigation("OfficialSongs");
+                    b.Navigation("Songs");
                 });
 #pragma warning restore 612, 618
         }

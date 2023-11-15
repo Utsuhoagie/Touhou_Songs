@@ -11,7 +11,7 @@ namespace Touhou_Songs.App.Official.Characters
 
 		public int OriginGameId { get; set; }
 		public required OfficialGame OriginGame { get; set; }
-		public required List<OfficialSong> Songs { get; set; }
+		public required List<OfficialSong> OfficialSongs { get; set; }
 
 		public Character(string name, string imageUrl, int originGameId)
 			=> (Name, ImageUrl, OriginGameId) = (name, imageUrl, originGameId);

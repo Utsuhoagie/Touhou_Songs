@@ -12,6 +12,7 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features
 		public string Context { get; set; }
 
 		public string GameCode { get; set; }
+		public required List<string> CharacterNames { get; set; }
 
 		public CreateOfficialSongCommand(string title, string context, string gameCode)
 			=> (Title, Context, GameCode) = (title, context, gameCode);
@@ -33,9 +34,14 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features
 				throw new AppException(HttpStatusCode.NotFound, $"Official Game {command.GameCode} not found");
 			}
 
+			var charactersWithSong = await _context.Characters
+				.Where(c => command.CharacterNames.Contains(c.Name))
+				.ToListAsync();
+
 			var officialSong = new OfficialSong(command.Title, command.Context, officialGame.Id)
 			{
 				Game = officialGame,
+				Characters = charactersWithSong,
 			};
 
 			_context.OfficialSongs.Add(officialSong);

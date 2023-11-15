@@ -20,7 +20,7 @@ namespace Touhou_Songs.App
 			public List<string> Songs { get; set; }
 		}
 
-		[HttpPost("Songs")]
+		[HttpPost("OfficialSongs")]
 		public async Task<IActionResult> ImportSongs([FromBody] List<ImportSongsOfGameCommand> allSongs)
 		{
 			var allGames = await _context.OfficialGames.ToListAsync();
@@ -40,6 +40,7 @@ namespace Touhou_Songs.App
 					var newSong = new OfficialSong(song, "??", game.Id)
 					{
 						Game = game,
+						Characters = new(), // PLACEHOLDER!!!!!!!!
 					};
 
 					newSongs.Add(newSong);
@@ -107,7 +108,7 @@ namespace Touhou_Songs.App
 				var character = new Character(importCharacter.Name, importCharacter.ImageUrl, originGame.Id)
 				{
 					OriginGame = originGame,
-					Songs = characterSongs,
+					OfficialSongs = characterSongs,
 				};
 
 				newCharacters.Add(character);
@@ -169,7 +170,7 @@ namespace Touhou_Songs.App
 		{
 			var characterNames = updateCharacters.Select(u => u.Name);
 			var charactersToUpdate = await _context.Characters
-				.Include(c => c.Songs)
+				.Include(c => c.OfficialSongs)
 				.Where(c => characterNames.Contains(c.Name))
 				.ToListAsync();
 

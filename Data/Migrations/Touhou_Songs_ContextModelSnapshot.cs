@@ -45,7 +45,7 @@ namespace Touhou_Songs.Data.Migrations
 
                     b.HasIndex("OriginGameId");
 
-                    b.ToTable("Characters");
+                    b.ToTable("Characters", (string)null);
                 });
 
             modelBuilder.Entity("Touhou_Songs.App.Official.OfficialGames.OfficialGame", b =>
@@ -77,7 +77,7 @@ namespace Touhou_Songs.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OfficialGames");
+                    b.ToTable("OfficialGames", (string)null);
                 });
 
             modelBuilder.Entity("Touhou_Songs.App.Official.OfficialSongs.OfficialSong", b =>
@@ -87,9 +87,6 @@ namespace Touhou_Songs.Data.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CharacterId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Context")
                         .IsRequired()
@@ -104,11 +101,32 @@ namespace Touhou_Songs.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CharacterId");
-
                     b.HasIndex("GameId");
 
-                    b.ToTable("OfficialSongs");
+                    b.ToTable("OfficialSongs", (string)null);
+                });
+
+            modelBuilder.Entity("Touhou_Songs.App.Official._JoinEntities.CharacterOfficialSong", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CharacterId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OfficialSongId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
+
+                    b.HasIndex("OfficialSongId");
+
+                    b.ToTable("CharacterOfficialSongs", (string)null);
                 });
 
             modelBuilder.Entity("Touhou_Songs.App.Official.Characters.Character", b =>
@@ -124,10 +142,6 @@ namespace Touhou_Songs.Data.Migrations
 
             modelBuilder.Entity("Touhou_Songs.App.Official.OfficialSongs.OfficialSong", b =>
                 {
-                    b.HasOne("Touhou_Songs.App.Official.Characters.Character", null)
-                        .WithMany("Songs")
-                        .HasForeignKey("CharacterId");
-
                     b.HasOne("Touhou_Songs.App.Official.OfficialGames.OfficialGame", "Game")
                         .WithMany("Songs")
                         .HasForeignKey("GameId")
@@ -137,9 +151,23 @@ namespace Touhou_Songs.Data.Migrations
                     b.Navigation("Game");
                 });
 
-            modelBuilder.Entity("Touhou_Songs.App.Official.Characters.Character", b =>
+            modelBuilder.Entity("Touhou_Songs.App.Official._JoinEntities.CharacterOfficialSong", b =>
                 {
-                    b.Navigation("Songs");
+                    b.HasOne("Touhou_Songs.App.Official.Characters.Character", "Character")
+                        .WithMany()
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Touhou_Songs.App.Official.OfficialSongs.OfficialSong", "OfficialSong")
+                        .WithMany()
+                        .HasForeignKey("OfficialSongId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Character");
+
+                    b.Navigation("OfficialSong");
                 });
 
             modelBuilder.Entity("Touhou_Songs.App.Official.OfficialGames.OfficialGame", b =>

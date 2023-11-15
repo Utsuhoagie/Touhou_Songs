@@ -34,7 +34,7 @@ namespace Touhou_Songs.App.Official.Characters.Features
 		public string Name { get; set; }
 		public string ImageUrl { get; set; }
 		public required OfficialGameSimple OriginGame { get; set; }
-		public required IEnumerable<OfficialSongSimple> Songs { get; set; }
+		public required IEnumerable<OfficialSongSimple> OfficialSongs { get; set; }
 
 		public CharacterDetailResponse(int id, string name, string imageUrl)
 			=> (Id, Name, ImageUrl) = (id, name, imageUrl);
@@ -50,12 +50,12 @@ namespace Touhou_Songs.App.Official.Characters.Features
 		{
 			var character = await _context.Characters
 				.Include(c => c.OriginGame)
-				.Include(c => c.Songs)
+				.Include(c => c.OfficialSongs)
 				.Where(c => c.Name == request.Name)
 				.Select(c => new CharacterDetailResponse(c.Id, c.Name, c.ImageUrl)
 				{
 					OriginGame = new OfficialGameSimple(c.OriginGame.Title, c.OriginGame.GameCode, c.OriginGame.NumberCode, c.OriginGame.ImageUrl),
-					Songs = c.Songs.Select(os => new OfficialSongSimple(os.Id, os.Title, os.Context)).ToList(),
+					OfficialSongs = c.OfficialSongs.Select(os => new OfficialSongSimple(os.Id, os.Title, os.Context)).ToList(),
 				})
 				.SingleOrDefaultAsync();
 

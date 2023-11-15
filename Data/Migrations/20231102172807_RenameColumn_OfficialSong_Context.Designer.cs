@@ -78,7 +78,7 @@ namespace Touhou_Songs.Data.Migrations
             modelBuilder.Entity("Touhou_Songs.App.Official.OfficialSongs.OfficialSong", b =>
                 {
                     b.HasOne("Touhou_Songs.App.Official.OfficialGames.OfficialGame", "Game")
-                        .WithMany("Songs")
+                        .WithMany("OfficialSongs")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -88,7 +88,7 @@ namespace Touhou_Songs.Data.Migrations
 
             modelBuilder.Entity("Touhou_Songs.App.Official.OfficialGames.OfficialGame", b =>
                 {
-                    b.Navigation("Songs");
+                    b.Navigation("OfficialSongs");
                 });
 #pragma warning restore 612, 618
         }

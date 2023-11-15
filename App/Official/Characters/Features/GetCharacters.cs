@@ -29,11 +29,11 @@ namespace Touhou_Songs.App.Official.Characters.Features
 		{
 			var characterResponses = await _context.Characters
 				.Include(c => c.OriginGame)
-				.Include(c => c.Songs)
+				.Include(c => c.OfficialSongs)
 				.Where(c => query.searchName == null || EF.Functions.ILike(c.Name, $"%{query.searchName}%"))
 				.Select(c => new CharacterResponse(c.Id, c.Name, c.ImageUrl, c.OriginGame.GameCode)
 				{
-					SongTitles = c.Songs.Select(os => os.Title),
+					SongTitles = c.OfficialSongs.Select(os => os.Title),
 				})
 				.ToListAsync();
 

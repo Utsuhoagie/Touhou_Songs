@@ -41,7 +41,7 @@ namespace Touhou_Songs.App.Official.Characters.Features
 			var character = new Character(command.Name, command.ImageUrl, originGame.Id)
 			{
 				OriginGame = originGame,
-				Songs = officialSongs,
+				OfficialSongs = officialSongs,
 			};
 
 			_context.Characters.Add(character);
