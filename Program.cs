@@ -1,10 +1,15 @@
 using System.Reflection;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 // NOTE
@@ -29,6 +34,42 @@ try
 
 	builder.Services.AddDbContext<Touhou_Songs_Context>(options => options.UseNpgsql(connectionString));
 
+	builder.Services
+		.AddIdentity<AppUser, IdentityRole>()
+		.AddEntityFrameworkStores<Touhou_Songs_Context>();
+
+	builder.Services
+		.Configure<IdentityOptions>(options =>
+		{
+			options.Password.RequireLowercase = false;
+			options.Password.RequireUppercase = false;
+			options.Password.RequireNonAlphanumeric = false;
+			options.Password.RequireDigit = false;
+		});
+
+	builder.Services
+		.AddAuthentication(options =>
+		{
+			options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+			options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+			options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+		})
+
+		// Adding Jwt Bearer
+		.AddJwtBearer(options =>
+		{
+			options.SaveToken = true;
+			options.RequireHttpsMetadata = false;
+			options.TokenValidationParameters = new TokenValidationParameters()
+			{
+				ValidateIssuer = true,
+				ValidateAudience = true,
+				ValidAudience = builder.Configuration["JWT:ValidAudience"],
+				ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+			};
+		});
+
 	builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 	builder.Services
@@ -50,6 +91,9 @@ try
 	}
 
 	app.UseHttpsRedirection();
+
+	app.UseAuthentication();
+	app.UseAuthorization();
 
 	app.UseCors("My_CORS_Policy");
 
