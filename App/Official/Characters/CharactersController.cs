@@ -1,11 +1,14 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Touhou_Songs.App.Official.Characters.Features;
+using Touhou_Songs.Infrastructure.Auth;
 
 namespace Touhou_Songs.App.Official.Characters
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize]
 	public class CharactersController : ControllerBase
 	{
 		private readonly ISender _sender;
@@ -28,6 +31,7 @@ namespace Touhou_Songs.App.Official.Characters
 		}
 
 		[HttpPost]
+		[Authorize(Roles = AuthRoles.Admin)]
 		public async Task<IActionResult> CreateCharacter([FromBody] CreateCharacterCommand command)
 		{
 			await _sender.Send(command);

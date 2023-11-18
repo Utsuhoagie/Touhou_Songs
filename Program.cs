@@ -29,8 +29,10 @@ try
 			.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}")
 	);
 
-	builder.Services.AddCors(o => o.AddPolicy("My_CORS_Policy", p =>
-		p.WithOrigins("http://localhost:3000")));
+	builder.Services.AddCors(o => o.AddPolicy("My_CORS_Policy", p => p
+		.WithOrigins("http://localhost:3000")
+		.AllowAnyHeader()
+		.AllowAnyMethod()));
 
 	builder.Services.AddDbContext<Touhou_Songs_Context>(options => options.UseNpgsql(connectionString));
 
