@@ -9,12 +9,12 @@ namespace Touhou_Songs.App.Official.OfficialSongs
 		public string Title { get; set; }
 		public string Context { get; set; }
 
-		public int GameId { get; set; }
+		public required int GameId { get; set; }
 		public required OfficialGame Game { get; set; }
 		public required List<Character> Characters { get; set; }
 
-		public OfficialSong(string title, string context, int gameId)
-			=> (Title, Context, GameId) = (title, context, gameId);
+		public OfficialSong(string title, string context)
+			=> (Title, Context) = (title, context);
 
 	}
 }

@@ -11,7 +11,7 @@ namespace Touhou_Songs.App.Official.OfficialGames
 		public DateTime ReleaseDate { get; set; }
 		public string ImageUrl { get; set; }
 
-		public List<OfficialSong> Songs { get; set; } = new();
+		public required List<OfficialSong> Songs { get; set; }
 
 		public OfficialGame(string title, string gameCode, string numberCode, DateTime releaseDate, string imageUrl)
 			=> (Title, GameCode, NumberCode, ReleaseDate, ImageUrl) = (title, gameCode, numberCode, releaseDate, imageUrl);

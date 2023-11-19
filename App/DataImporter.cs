@@ -41,8 +41,9 @@ namespace Touhou_Songs.App
 
 				foreach (var song in gameSongs.Songs)
 				{
-					var newSong = new OfficialSong(song, "??", game.Id)
+					var newSong = new OfficialSong(song, "??")
 					{
+						GameId = game.Id,
 						Game = game,
 						Characters = new(), // PLACEHOLDER!!!!!!!!
 					};
@@ -117,8 +118,9 @@ namespace Touhou_Songs.App
 					.Where(os => characterSongTitles.Contains(os.Title))
 					.ToList();
 
-				var character = new Character(importCharacter.Name, importCharacter.ImageUrl, originGame.Id)
+				var character = new Character(importCharacter.Name, importCharacter.ImageUrl)
 				{
+					OriginGameId = originGame.Id,
 					OriginGame = originGame,
 					OfficialSongs = characterSongs,
 				};

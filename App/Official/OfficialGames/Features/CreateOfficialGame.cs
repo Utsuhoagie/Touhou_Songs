@@ -23,7 +23,10 @@ namespace Touhou_Songs.App.Official.OfficialGames.Features
 
 		public async Task Handle(CreateOfficialGameCommand command, CancellationToken cancellationToken)
 		{
-			var officialGame = new OfficialGame(command.Title, command.GameCode, command.NumberCode, command.ReleaseDate, command.ImageUrl);
+			var officialGame = new OfficialGame(command.Title, command.GameCode, command.NumberCode, command.ReleaseDate, command.ImageUrl)
+			{
+				Songs = new(),
+			};
 
 			_context.OfficialGames.Add(officialGame);
 			await _context.SaveChangesAsync();

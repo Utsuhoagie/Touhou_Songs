@@ -38,8 +38,9 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features
 				.Where(c => command.CharacterNames.Contains(c.Name))
 				.ToListAsync();
 
-			var officialSong = new OfficialSong(command.Title, command.Context, officialGame.Id)
+			var officialSong = new OfficialSong(command.Title, command.Context)
 			{
+				GameId = officialGame.Id,
 				Game = officialGame,
 				Characters = charactersWithSong,
 			};
