@@ -30,13 +30,17 @@ namespace Touhou_Songs.Data
 				.HasData(
 					new IdentityRole
 					{
+						Id = "8c49af1b-5822-4cbd-bd7c-967dc49a54d4",
 						Name = "Admin",
 						NormalizedName = "ADMIN",
+						ConcurrencyStamp = null,
 					},
 					new IdentityRole
 					{
+						Id = "48807e45-822f-4da9-bbf3-5e71beff314a",
 						Name = "User",
 						NormalizedName = "USER",
+						ConcurrencyStamp = null,
 					}
 				);
 

@@ -31,6 +31,7 @@ namespace Touhou_Songs.App.Official.Characters.Features
 				.Include(c => c.OriginGame)
 				.Include(c => c.OfficialSongs)
 				.Where(c => query.searchName == null || EF.Functions.ILike(c.Name, $"%{query.searchName}%"))
+				.OrderBy(c => c.OriginGame.ReleaseDate)
 				.Select(c => new CharacterResponse(c.Id, c.Name, c.ImageUrl, c.OriginGame.GameCode)
 				{
 					SongTitles = c.OfficialSongs.Select(os => os.Title),

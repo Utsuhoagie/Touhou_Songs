@@ -32,6 +32,7 @@ namespace Touhou_Songs.App.Official.OfficialGames.Features
 			var officialGamesResponse = await _context.OfficialGames
 				.Include(og => og.Songs)
 				.Where(og => query.searchTitle == null || EF.Functions.ILike(og.Title, $"%{query.searchTitle}%"))
+				.OrderBy(og => og.ReleaseDate)
 				.Select(og => new OfficialGameResponse(og.Id, og.Title, og.GameCode, og.NumberCode, og.ReleaseDate, og.ImageUrl)
 				{
 					SongTitles = og.Songs
