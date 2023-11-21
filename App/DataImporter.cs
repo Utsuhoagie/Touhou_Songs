@@ -46,6 +46,8 @@ namespace Touhou_Songs.App
 						GameId = game.Id,
 						Game = game,
 						Characters = new(), // PLACEHOLDER!!!!!!!!
+						ArrangementSongs = new(), // PLACEHOLDER!!!!!
+						OfficialSongArrangementSongs = new(),
 					};
 
 					newSongs.Add(newSong);

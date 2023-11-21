@@ -12,6 +12,14 @@ namespace Touhou_Songs.Infrastructure.Auth
 
 		public AuthController(ISender sender) => _sender = sender;
 
+		[HttpPost("Register")]
+		public async Task<IActionResult> Register([FromBody] RegisterCommand command)
+		{
+			var res = await _sender.Send(command);
+
+			return Ok(res);
+		}
+
 		[HttpPost("RegisterAdmin")]
 		public async Task<IActionResult> RegisterAdmin([FromBody] RegisterAdminCommand command)
 		{
