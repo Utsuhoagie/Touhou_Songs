@@ -1,5 +1,7 @@
-﻿using Touhou_Songs.App.Official.Characters;
+﻿using Touhou_Songs.App.Official._JoinEntities;
+using Touhou_Songs.App.Official.Characters;
 using Touhou_Songs.App.Official.OfficialGames;
+using Touhou_Songs.App.Unofficial.Songs;
 
 namespace Touhou_Songs.App.Official.OfficialSongs
 {
@@ -13,8 +15,10 @@ namespace Touhou_Songs.App.Official.OfficialSongs
 		public required OfficialGame Game { get; set; }
 		public required List<Character> Characters { get; set; }
 
+		public required List<ArrangementSong> ArrangementSongs { get; set; }
+		public required List<OfficialSongArrangementSong> OfficialSongArrangementSongs { get; set; }
+
 		public OfficialSong(string title, string context)
 			=> (Title, Context) = (title, context);
-
 	}
 }

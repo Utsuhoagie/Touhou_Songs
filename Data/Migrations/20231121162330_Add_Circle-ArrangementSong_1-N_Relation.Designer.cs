@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Touhou_Songs.Data;
@@ -11,9 +12,11 @@ using Touhou_Songs.Data;
 namespace Touhou_Songs.Data.Migrations
 {
     [DbContext(typeof(Touhou_Songs_Context))]
-    partial class Touhou_Songs_ContextModelSnapshot : ModelSnapshot
+    [Migration("20231121162330_Add_Circle-ArrangementSong_1-N_Relation")]
+    partial class Add_CircleArrangementSong_1N_Relation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -333,10 +336,6 @@ namespace Touhou_Songs.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("text");
 

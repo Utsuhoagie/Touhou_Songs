@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Touhou_Songs.App.Unofficial.Circles.Features;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
@@ -77,6 +79,9 @@ try
 	builder.Services
 		.AddControllers(o => o.Filters.Add<AppExceptionFilter>())
 		.AddJsonOptions(o => o.JsonSerializerOptions.PropertyNamingPolicy = null);
+
+	builder.Services
+		.AddValidatorsFromAssemblyContaining<CreateCircleValidator>();
 
 	// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 	builder.Services

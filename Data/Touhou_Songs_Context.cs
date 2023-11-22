@@ -5,6 +5,8 @@ using Touhou_Songs.App.Official._JoinEntities;
 using Touhou_Songs.App.Official.Characters;
 using Touhou_Songs.App.Official.OfficialGames;
 using Touhou_Songs.App.Official.OfficialSongs;
+using Touhou_Songs.App.Unofficial.Circles;
+using Touhou_Songs.App.Unofficial.Songs;
 using Touhou_Songs.Infrastructure.Auth;
 
 namespace Touhou_Songs.Data
@@ -20,6 +22,9 @@ namespace Touhou_Songs.Data
 		public DbSet<OfficialSong> OfficialSongs { get; set; } = default!;
 		public DbSet<Character> Characters { get; set; } = default!;
 		public DbSet<CharacterOfficialSong> CharacterOfficialSongs { get; set; } = default!;
+
+		public DbSet<Circle> Circles { get; set; } = default!;
+		public DbSet<ArrangementSong> ArrangementSongs { get; set; } = default!;
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -55,6 +60,16 @@ namespace Touhou_Songs.Data
 				.HasMany(os => os.Characters)
 				.WithMany(c => c.OfficialSongs)
 				.UsingEntity<CharacterOfficialSong>();
+
+			modelBuilder.Entity<Circle>()
+				.HasMany(c => c.ArrangementSongs)
+				.WithOne(a => a.Circle)
+				.IsRequired();
+
+			modelBuilder.Entity<ArrangementSong>()
+				.HasMany(a => a.OfficialSongs)
+				.WithMany(os => os.ArrangementSongs)
+				.UsingEntity<OfficialSongArrangementSong>();
 		}
 	}
 }
