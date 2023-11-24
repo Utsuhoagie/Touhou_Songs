@@ -20,6 +20,14 @@ namespace Touhou_Songs.App.Unofficial.ArrangementSongs
 			return Ok(res);
 		}
 
+		[HttpGet("{Id}")]
+		public async Task<IActionResult> GetArrangementSongDetail([FromRoute] GetArrangementSongDetailQuery query)
+		{
+			var res = await _sender.Send(query);
+
+			return Ok(res);
+		}
+
 		[HttpPost]
 		public async Task<IActionResult> CreateArrangementSong([FromBody] CreateArrangementSongCommand command)
 		{

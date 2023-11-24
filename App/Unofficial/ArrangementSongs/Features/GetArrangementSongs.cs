@@ -21,11 +21,11 @@ namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features
 			=> (Id, Title, Url, Status) = (id, title, url, status);
 	}
 
-	public class GetArrangementSongsQueryHandler : BaseHandler, IRequestHandler<GetArrangementSongsQuery, IEnumerable<ArrangementSongResponse>>
+	class GetArrangementSongsQueryHandler : BaseHandler<GetArrangementSongsQuery, IEnumerable<ArrangementSongResponse>>
 	{
 		public GetArrangementSongsQueryHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
-		public async Task<IEnumerable<ArrangementSongResponse>> Handle(GetArrangementSongsQuery request, CancellationToken cancellationToken)
+		public override async Task<IEnumerable<ArrangementSongResponse>> Handle(GetArrangementSongsQuery request, CancellationToken cancellationToken)
 		{
 			var arrangementSongsResponse = await _context.ArrangementSongs
 				.Include(a => a.Circle)
