@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Official.OfficialSongs.Features
@@ -29,13 +30,11 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features
 			=> (Id, Title, Context) = (id, title, context);
 	}
 
-	class GetOfficialSongDetailQueryHandler : IRequestHandler<GetOfficialSongDetailQuery, OfficialSongDetailResponse>
+	class GetOfficialSongDetailQueryHandler : BaseHandler<GetOfficialSongDetailQuery, OfficialSongDetailResponse>
 	{
-		private readonly Touhou_Songs_Context _context;
+		public GetOfficialSongDetailQueryHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
-		public GetOfficialSongDetailQueryHandler(Touhou_Songs_Context context) => _context = context;
-
-		public async Task<OfficialSongDetailResponse> Handle(GetOfficialSongDetailQuery query, CancellationToken cancellationToken)
+		public override async Task<OfficialSongDetailResponse> Handle(GetOfficialSongDetailQuery query, CancellationToken cancellationToken)
 		{
 			var officialSongDetailResponse = await _context.OfficialSongs
 				.Include(os => os.Game)

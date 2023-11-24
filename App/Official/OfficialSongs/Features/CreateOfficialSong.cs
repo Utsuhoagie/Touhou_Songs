@@ -2,11 +2,12 @@ using System.Net;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Official.OfficialSongs.Features
 {
-	public record CreateOfficialSongCommand : IRequest
+	public record CreateOfficialSongCommand : IRequest<string>
 	{
 		public string Title { get; set; }
 		public string Context { get; set; }
@@ -18,13 +19,11 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features
 			=> (Title, Context, GameCode) = (title, context, gameCode);
 	}
 
-	class CreateOfficialSongCommandHandler : IRequestHandler<CreateOfficialSongCommand>
+	class CreateOfficialSongCommandHandler : BaseHandler<CreateOfficialSongCommand, string>
 	{
-		private readonly Touhou_Songs_Context _context;
+		public CreateOfficialSongCommandHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
-		public CreateOfficialSongCommandHandler(Touhou_Songs_Context context) => _context = context;
-
-		public async Task Handle(CreateOfficialSongCommand command, CancellationToken cancellationToken)
+		public override async Task<string> Handle(CreateOfficialSongCommand command, CancellationToken cancellationToken)
 		{
 			var officialGame = await _context.OfficialGames
 				.SingleOrDefaultAsync(og => EF.Functions.ILike(og.GameCode, $"{command.GameCode}"));
@@ -49,6 +48,8 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features
 
 			_context.OfficialSongs.Add(officialSong);
 			await _context.SaveChangesAsync();
+
+			return officialSong.Title;
 		}
 	}
 }

@@ -1,9 +1,10 @@
 ﻿using MediatR;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.BaseHandler;
 
 namespace Touhou_Songs.App.Official.OfficialGames.Features
 {
-	public record CreateOfficialGameCommand : IRequest
+	public record CreateOfficialGameCommand : IRequest<string>
 	{
 		public string Title { get; set; }
 		public string GameCode { get; set; }
@@ -15,13 +16,11 @@ namespace Touhou_Songs.App.Official.OfficialGames.Features
 			=> (Title, GameCode, NumberCode, ReleaseDate, ImageUrl) = (title, gameCode, numberCode, releaseDate, imageUrl);
 	}
 
-	class CreateOfficialGameCommandHandler : IRequestHandler<CreateOfficialGameCommand>
+	class CreateOfficialGameCommandHandler : BaseHandler<CreateOfficialGameCommand, string>
 	{
-		private readonly Touhou_Songs_Context _context;
+		public CreateOfficialGameCommandHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
-		public CreateOfficialGameCommandHandler(Touhou_Songs_Context context) => _context = context;
-
-		public async Task Handle(CreateOfficialGameCommand command, CancellationToken cancellationToken)
+		public override async Task<string> Handle(CreateOfficialGameCommand command, CancellationToken cancellationToken)
 		{
 			var officialGame = new OfficialGame(command.Title, command.GameCode, command.NumberCode, command.ReleaseDate, command.ImageUrl)
 			{
@@ -30,6 +29,8 @@ namespace Touhou_Songs.App.Official.OfficialGames.Features
 
 			_context.OfficialGames.Add(officialGame);
 			await _context.SaveChangesAsync();
+
+			return officialGame.Title;
 		}
 	}
 }

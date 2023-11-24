@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.Infrastructure.Auth.Features
@@ -25,15 +26,14 @@ namespace Touhou_Songs.Infrastructure.Auth.Features
 			(UserName, Email) = (userName, email);
 	}
 
-	public class RegisterAdminCommandHandler : IRequestHandler<RegisterAdminCommand, RegisterAdminResponse>
+	class RegisterAdminCommandHandler : BaseHandler<RegisterAdminCommand, RegisterAdminResponse>
 	{
-		private readonly Touhou_Songs_Context _context;
 		private readonly UserManager<AppUser> _userManager;
 
-		public RegisterAdminCommandHandler(Touhou_Songs_Context context, UserManager<AppUser> userManager) =>
-			(_context, _userManager) = (context, userManager);
+		public RegisterAdminCommandHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context, UserManager<AppUser> userManager) : base(httpContextAccessor, context)
+		=> _userManager = userManager;
 
-		public async Task<RegisterAdminResponse> Handle(RegisterAdminCommand command, CancellationToken cancellationToken)
+		public override async Task<RegisterAdminResponse> Handle(RegisterAdminCommand command, CancellationToken cancellationToken)
 		{
 			var existingUser = await _userManager.FindByEmailAsync(command.Email);
 

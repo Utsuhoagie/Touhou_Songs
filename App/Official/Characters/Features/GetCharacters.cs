@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.BaseHandler;
 
 namespace Touhou_Songs.App.Official.Characters.Features
 {
@@ -19,13 +20,11 @@ namespace Touhou_Songs.App.Official.Characters.Features
 			=> (Id, Name, ImageUrl, OriginGameCode) = (id, name, imageUrl, originGameCode);
 	}
 
-	class GetCharactersQueryHandler : IRequestHandler<GetCharactersQuery, IEnumerable<CharacterResponse>>
+	class GetCharactersQueryHandler : BaseHandler<GetCharactersQuery, IEnumerable<CharacterResponse>>
 	{
-		private readonly Touhou_Songs_Context _context;
+		public GetCharactersQueryHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
-		public GetCharactersQueryHandler(Touhou_Songs_Context context) => _context = context;
-
-		public async Task<IEnumerable<CharacterResponse>> Handle(GetCharactersQuery query, CancellationToken cancellationToken)
+		public override async Task<IEnumerable<CharacterResponse>> Handle(GetCharactersQuery query, CancellationToken cancellationToken)
 		{
 			var characterResponses = await _context.Characters
 				.Include(c => c.OriginGame)

@@ -5,6 +5,8 @@ using System.Text;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.Infrastructure.Auth.Features
@@ -25,15 +27,15 @@ namespace Touhou_Songs.Infrastructure.Auth.Features
 		public LoginResponse(string token, DateTime expireAt) => (Token, ExpireAt) = (token, expireAt);
 	}
 
-	public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponse>
+	class LoginCommandHandler : BaseHandler<LoginCommand, LoginResponse>
 	{
 		private readonly UserManager<AppUser> _userManager;
 		private readonly IConfiguration _configuration;
 
-		public LoginCommandHandler(UserManager<AppUser> userManager, IConfiguration configuration)
+		public LoginCommandHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context, UserManager<AppUser> userManager, IConfiguration configuration) : base(httpContextAccessor, context)
 			=> (_userManager, _configuration) = (userManager, configuration);
 
-		public async Task<LoginResponse> Handle(LoginCommand command, CancellationToken cancellationToken)
+		public override async Task<LoginResponse> Handle(LoginCommand command, CancellationToken cancellationToken)
 		{
 			var user = await _userManager.FindByEmailAsync(command.Email);
 
@@ -62,7 +64,9 @@ namespace Touhou_Songs.Infrastructure.Auth.Features
 				claims.Add(new Claim(ClaimTypes.Role, role));
 			}
 
-			var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+			var jwtSecret = _configuration["JWT:Secret"] ?? throw new AppException(HttpStatusCode.InternalServerError, "JWT Secret not found");
+
+			var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
 
 			var token = new JwtSecurityToken(
 				issuer: _configuration["JWT:ValidIssuer"],

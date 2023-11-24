@@ -36,11 +36,11 @@ namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features
 			=> (Title, Url, Status) = (title, url, status);
 	}
 
-	public class CreateArrangementSongCommandHandler : BaseHandler, IRequestHandler<CreateArrangementSongCommand, CreateArrangementSongResponse>
+	class CreateArrangementSongCommandHandler : BaseHandler<CreateArrangementSongCommand, CreateArrangementSongResponse>
 	{
 		public CreateArrangementSongCommandHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
-		public async Task<CreateArrangementSongResponse> Handle(CreateArrangementSongCommand command, CancellationToken cancellationToken)
+		public override async Task<CreateArrangementSongResponse> Handle(CreateArrangementSongCommand command, CancellationToken cancellationToken)
 		{
 			var userRole = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Role)?.Value;
 

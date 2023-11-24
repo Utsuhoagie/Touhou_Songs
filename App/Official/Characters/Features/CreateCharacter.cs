@@ -2,11 +2,12 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Official.Characters.Features
 {
-	public record CreateCharacterCommand : IRequest
+	public record CreateCharacterCommand : IRequest<string>
 	{
 		public string Name { get; set; }
 		public string ImageUrl { get; set; }
@@ -18,13 +19,11 @@ namespace Touhou_Songs.App.Official.Characters.Features
 			=> (Name, ImageUrl, OriginGameCode) = (name, imageUrl, originGameCode);
 	}
 
-	class CreateCharacterCommandHandler : IRequestHandler<CreateCharacterCommand>
+	class CreateCharacterCommandHandler : BaseHandler<CreateCharacterCommand, string>
 	{
-		private readonly Touhou_Songs_Context _context;
+		public CreateCharacterCommandHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
-		public CreateCharacterCommandHandler(Touhou_Songs_Context context) => _context = context;
-
-		public async Task Handle(CreateCharacterCommand command, CancellationToken cancellationToken)
+		public override async Task<string> Handle(CreateCharacterCommand command, CancellationToken cancellationToken)
 		{
 			var originGame = await _context.OfficialGames
 				.SingleOrDefaultAsync(og => EF.Functions.ILike(og.GameCode, $"{command.OriginGameCode}"));
@@ -47,6 +46,8 @@ namespace Touhou_Songs.App.Official.Characters.Features
 
 			_context.Characters.Add(character);
 			await _context.SaveChangesAsync();
+
+			return character.Name;
 		}
 	}
 }

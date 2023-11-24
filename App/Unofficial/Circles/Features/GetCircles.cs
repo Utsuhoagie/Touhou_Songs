@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.BaseHandler;
 
 namespace Touhou_Songs.App.Unofficial.Circles.Features
 {
@@ -12,26 +13,24 @@ namespace Touhou_Songs.App.Unofficial.Circles.Features
 		public string Name { get; set; }
 		public string Status { get; set; }
 
-		public required List<string> ArrangementSongs { get; set; }
+		public required IEnumerable<string> ArrangementSongTitles { get; set; }
 
 		public CircleResponse(int id, string name, string status)
 			=> (Id, Name, Status) = (id, name, status);
 	}
 
-	public class GetCirclesQueryHandler : IRequestHandler<GetCirclesQuery, IEnumerable<CircleResponse>>
+	class GetCirclesQueryHandler : BaseHandler<GetCirclesQuery, IEnumerable<CircleResponse>>
 	{
-		private readonly Touhou_Songs_Context _context;
+		public GetCirclesQueryHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
-		public GetCirclesQueryHandler(Touhou_Songs_Context context) => _context = context;
-
-		public async Task<IEnumerable<CircleResponse>> Handle(GetCirclesQuery query, CancellationToken cancellationToken)
+		public override async Task<IEnumerable<CircleResponse>> Handle(GetCirclesQuery query, CancellationToken cancellationToken)
 		{
 			var circles = await _context.Circles
 				.Include(c => c.ArrangementSongs)
 				.Where(c => query.searchName == null || EF.Functions.ILike(c.Name, $"%{query.searchName}%"))
 				.Select(c => new CircleResponse(c.Id, c.Name, c.Status.ToString())
 				{
-					ArrangementSongs = c.ArrangementSongs.Select(a => a.Title).ToList(),
+					ArrangementSongTitles = c.ArrangementSongs.Select(a => a.Title),
 				})
 				.ToListAsync();
 

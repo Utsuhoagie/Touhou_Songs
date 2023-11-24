@@ -35,14 +35,14 @@ namespace Touhou_Songs.App.Unofficial.Circles.Features
 		}
 	}
 
-	public class CreateCircleCommandHandler : BaseHandler, IRequestHandler<CreateCircleCommand, CreateCircleCommandResponse>
+	class CreateCircleCommandHandler : BaseHandler<CreateCircleCommand, CreateCircleCommandResponse>
 	{
 		private readonly IValidator<CreateCircleCommand> _validator;
 
 		public CreateCircleCommandHandler(IHttpContextAccessor httpContextAccessor, IValidator<CreateCircleCommand> validator, Touhou_Songs_Context context) : base(httpContextAccessor, context)
 			=> _validator = validator;
 
-		public async Task<CreateCircleCommandResponse> Handle(CreateCircleCommand command, CancellationToken cancellationToken)
+		public override async Task<CreateCircleCommandResponse> Handle(CreateCircleCommand command, CancellationToken cancellationToken)
 		{
 			var userRole = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Role)?.Value;
 

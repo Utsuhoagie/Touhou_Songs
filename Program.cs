@@ -1,3 +1,4 @@
+using System.Net;
 using System.Reflection;
 using System.Text;
 using FluentValidation;
@@ -70,7 +71,9 @@ try
 				ValidateAudience = true,
 				ValidAudience = builder.Configuration["JWT:ValidAudience"],
 				ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+					builder.Configuration["JWT:Secret"]
+					?? throw new AppException(HttpStatusCode.InternalServerError, "JWT Secret not found."))),
 			};
 		});
 
