@@ -35,5 +35,18 @@ namespace Touhou_Songs.App.Unofficial.ArrangementSongs
 
 			return Ok(res);
 		}
+
+		public class ValidateArrangementSongStatusBody
+		{
+			public string Status { get; set; } = default!;
+		}
+		[HttpPut("{Id}")]
+		public async Task<IActionResult> ValidateArrangementSongStatus([FromRoute] int Id, [FromBody] ValidateArrangementSongStatusBody body)
+		{
+			var command = new ValidateArrangementSongStatusCommand(Id, body.Status);
+			var res = await _sender.Send(command);
+
+			return Ok(res);
+		}
 	}
 }

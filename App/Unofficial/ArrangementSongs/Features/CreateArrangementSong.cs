@@ -15,7 +15,7 @@ namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features
 		public string Title { get; set; }
 		public string Url { get; set; }
 
-		public required int CircleId { get; set; }
+		public required string CircleName { get; set; }
 
 		public required List<int> OfficialSongIds { get; set; }
 
@@ -49,11 +49,11 @@ namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features
 				throw new AppException(HttpStatusCode.Unauthorized);
 			}
 
-			var circle = await _context.Circles.SingleOrDefaultAsync(c => c.Id == command.CircleId);
+			var circle = await _context.Circles.SingleOrDefaultAsync(c => c.Name == command.CircleName);
 
 			if (circle is null)
 			{
-				throw new AppException(HttpStatusCode.NotFound, $"Circle with id = {command.CircleId} not found");
+				throw new AppException(HttpStatusCode.NotFound, $"Circle with name = {command.CircleName} not found");
 			}
 
 			var officialSongs = await _context.OfficialSongs
