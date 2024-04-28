@@ -13,6 +13,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using Touhou_Songs.App.Unofficial.Circles.Features;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
+using Touhou_Songs.Infrastructure.Configuration;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 // NOTE
@@ -76,6 +77,8 @@ try
 					?? throw new AppException(HttpStatusCode.InternalServerError, "JWT Secret not found."))),
 			};
 		});
+
+	builder.Services.Configure<ConfigurationOptions>(builder.Configuration);
 
 	builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 

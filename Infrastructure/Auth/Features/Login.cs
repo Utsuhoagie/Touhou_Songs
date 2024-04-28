@@ -4,9 +4,11 @@ using System.Security.Claims;
 using System.Text;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Configuration;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.Infrastructure.Auth.Features;
@@ -30,10 +32,10 @@ public record LoginResponse
 class LoginCommandHandler : BaseHandler<LoginCommand, LoginResponse>
 {
 	private readonly UserManager<AppUser> _userManager;
-	private readonly IConfiguration _configuration;
+	private readonly ConfigurationOptions _config;
 
-	public LoginCommandHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context, UserManager<AppUser> userManager, IConfiguration configuration) : base(httpContextAccessor, context)
-		=> (_userManager, _configuration) = (userManager, configuration);
+	public LoginCommandHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context, UserManager<AppUser> userManager, IOptions<ConfigurationOptions> options) : base(httpContextAccessor, context)
+		=> (_userManager, _config) = (userManager, options.Value);
 
 	public override async Task<LoginResponse> Handle(LoginCommand command, CancellationToken cancellationToken)
 	{
@@ -57,21 +59,16 @@ class LoginCommandHandler : BaseHandler<LoginCommand, LoginResponse>
 			new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
 		};
 
-		var userRoles = await _userManager.GetRolesAsync(user);
+		var userRoles = (await _userManager.GetRolesAsync(user)).ToList();
 
-		foreach (var role in userRoles)
-		{
-			claims.Add(new Claim(ClaimTypes.Role, role));
-		}
+		userRoles.ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role)));
 
-		var jwtSecret = _configuration["JWT:Secret"] ?? throw new AppException(HttpStatusCode.InternalServerError, "JWT Secret not found");
-
-		var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
+		var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.JWT.Secret));
 
 		var token = new JwtSecurityToken(
-			issuer: _configuration["JWT:ValidIssuer"],
-			audience: _configuration["JWT:ValidAudience"],
-			expires: DateTime.Now.AddHours(double.Parse(_configuration["JWT:ValidHours"] ?? throw new AppException(HttpStatusCode.InternalServerError, "JWT Valid Hours not found"))),
+			issuer: _config.JWT.ValidIssuer,
+			audience: _config.JWT.ValidAudience,
+			expires: DateTime.Now.AddHours(_config.JWT.ValidHours),
 			claims: claims,
 			signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256));
 
