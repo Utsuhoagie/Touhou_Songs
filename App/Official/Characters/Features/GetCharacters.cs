@@ -20,9 +20,9 @@ public record CharacterResponse
 		=> (Id, Name, ImageUrl, OriginGameCode) = (id, name, imageUrl, originGameCode);
 }
 
-class GetCharactersQueryHandler : BaseHandler<GetCharactersQuery, IEnumerable<CharacterResponse>>
+class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<CharacterResponse>>
 {
-	public GetCharactersQueryHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public GetCharactersHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
 	public override async Task<IEnumerable<CharacterResponse>> Handle(GetCharactersQuery query, CancellationToken cancellationToken)
 	{

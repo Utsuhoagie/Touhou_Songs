@@ -19,9 +19,9 @@ public record CircleResponse
 		=> (Id, Name, Status) = (id, name, status);
 }
 
-class GetCirclesQueryHandler : BaseHandler<GetCirclesQuery, IEnumerable<CircleResponse>>
+class GetCirclesHandler : BaseHandler<GetCirclesQuery, IEnumerable<CircleResponse>>
 {
-	public GetCirclesQueryHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public GetCirclesHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
 	public override async Task<IEnumerable<CircleResponse>> Handle(GetCirclesQuery query, CancellationToken cancellationToken)
 	{

@@ -33,9 +33,9 @@ namespace Touhou_Songs.App.Official.OfficialGames.Features
 			=> (Id, Title, GameCode, NumberCode, ReleaseDate, ImageUrl) = (id, title, gameCode, numberCode, releaseDate, imageUrl);
 	}
 
-	class GetOfficialGameDetailQueryHandler : BaseHandler<GetOfficialGameDetailQuery, OfficialGameDetailResponse>
+	class GetOfficialGameDetailHandler : BaseHandler<GetOfficialGameDetailQuery, OfficialGameDetailResponse>
 	{
-		public GetOfficialGameDetailQueryHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+		public GetOfficialGameDetailHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
 		public override async Task<OfficialGameDetailResponse> Handle(GetOfficialGameDetailQuery query, CancellationToken cancellationToken)
 		{

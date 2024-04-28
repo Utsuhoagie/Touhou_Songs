@@ -21,9 +21,9 @@ public record ArrangementSongResponse
 		=> (Id, Title, Url, Status) = (id, title, url, status);
 }
 
-class GetArrangementSongsQueryHandler : BaseHandler<GetArrangementSongsQuery, IEnumerable<ArrangementSongResponse>>
+class GetArrangementSongsHandler : BaseHandler<GetArrangementSongsQuery, IEnumerable<ArrangementSongResponse>>
 {
-	public GetArrangementSongsQueryHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public GetArrangementSongsHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
 	public override async Task<IEnumerable<ArrangementSongResponse>> Handle(GetArrangementSongsQuery request, CancellationToken cancellationToken)
 	{

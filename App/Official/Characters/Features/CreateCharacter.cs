@@ -19,9 +19,9 @@ public record CreateCharacterCommand : IRequest<string>
 		=> (Name, ImageUrl, OriginGameCode) = (name, imageUrl, originGameCode);
 }
 
-class CreateCharacterCommandHandler : BaseHandler<CreateCharacterCommand, string>
+class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, string>
 {
-	public CreateCharacterCommandHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public CreateCharacterHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
 	public override async Task<string> Handle(CreateCharacterCommand command, CancellationToken cancellationToken)
 	{

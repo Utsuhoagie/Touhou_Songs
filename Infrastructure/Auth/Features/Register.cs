@@ -26,11 +26,11 @@ public record RegisterResponse
 		(UserName, Email) = (userName, email);
 }
 
-class RegisterCommandHandler : BaseHandler<RegisterCommand, RegisterResponse>
+class RegisterHandler : BaseHandler<RegisterCommand, RegisterResponse>
 {
 	private readonly UserManager<AppUser> _userManager;
 
-	public RegisterCommandHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context, UserManager<AppUser> userManager) : base(httpContextAccessor, context)
+	public RegisterHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context, UserManager<AppUser> userManager) : base(httpContextAccessor, context)
 		=> _userManager = userManager;
 
 	public override async Task<RegisterResponse> Handle(RegisterCommand command, CancellationToken cancellationToken)

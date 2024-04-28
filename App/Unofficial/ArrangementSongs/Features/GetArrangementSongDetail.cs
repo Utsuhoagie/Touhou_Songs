@@ -31,9 +31,9 @@ public record OfficialSongSimpleResponse
 	public OfficialSongSimpleResponse(int id, string title) => (Id, Title) = (id, title);
 }
 
-class GetArrangementSongDetailQueryHandler : BaseHandler<GetArrangementSongDetailQuery, ArrangementSongDetailResponse>
+class GetArrangementSongDetailHandler : BaseHandler<GetArrangementSongDetailQuery, ArrangementSongDetailResponse>
 {
-	public GetArrangementSongDetailQueryHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public GetArrangementSongDetailHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
 	public override async Task<ArrangementSongDetailResponse> Handle(GetArrangementSongDetailQuery query, CancellationToken cancellationToken)
 	{

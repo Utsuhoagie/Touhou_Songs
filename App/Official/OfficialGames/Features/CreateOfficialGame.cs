@@ -16,9 +16,9 @@ namespace Touhou_Songs.App.Official.OfficialGames.Features
 			=> (Title, GameCode, NumberCode, ReleaseDate, ImageUrl) = (title, gameCode, numberCode, releaseDate, imageUrl);
 	}
 
-	class CreateOfficialGameCommandHandler : BaseHandler<CreateOfficialGameCommand, string>
+	class CreateOfficialGameHandler : BaseHandler<CreateOfficialGameCommand, string>
 	{
-		public CreateOfficialGameCommandHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+		public CreateOfficialGameHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
 		public override async Task<string> Handle(CreateOfficialGameCommand command, CancellationToken cancellationToken)
 		{

@@ -9,9 +9,9 @@ namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
 
 public record ValidateArrangementSongStatusCommand(int Id, string Status) : IRequest<string>;
 
-class ValidateArrangementSongStatusCommandHandler : BaseHandler<ValidateArrangementSongStatusCommand, string>
+class ValidateArrangementSongStatusHandler : BaseHandler<ValidateArrangementSongStatusCommand, string>
 {
-	public ValidateArrangementSongStatusCommandHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public ValidateArrangementSongStatusHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
 	public override async Task<string> Handle(ValidateArrangementSongStatusCommand command, CancellationToken cancellationToken)
 	{

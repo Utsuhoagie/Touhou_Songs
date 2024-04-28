@@ -35,11 +35,11 @@ public class CreateCircleValidator : AbstractValidator<CreateCircleCommand>
 	}
 }
 
-class CreateCircleCommandHandler : BaseHandler<CreateCircleCommand, CreateCircleCommandResponse>
+class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommandResponse>
 {
 	private readonly IValidator<CreateCircleCommand> _validator;
 
-	public CreateCircleCommandHandler(IHttpContextAccessor httpContextAccessor, IValidator<CreateCircleCommand> validator, Touhou_Songs_Context context) : base(httpContextAccessor, context)
+	public CreateCircleHandler(IHttpContextAccessor httpContextAccessor, IValidator<CreateCircleCommand> validator, Touhou_Songs_Context context) : base(httpContextAccessor, context)
 		=> _validator = validator;
 
 	public override async Task<CreateCircleCommandResponse> Handle(CreateCircleCommand command, CancellationToken cancellationToken)

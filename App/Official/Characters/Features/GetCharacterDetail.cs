@@ -41,9 +41,9 @@ public record CharacterDetailResponse
 		=> (Id, Name, ImageUrl) = (id, name, imageUrl);
 }
 
-class GetCharacterDetailQueryHandler : BaseHandler<GetCharacterDetailQuery, CharacterDetailResponse>
+class GetCharacterDetailHandler : BaseHandler<GetCharacterDetailQuery, CharacterDetailResponse>
 {
-	public GetCharacterDetailQueryHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public GetCharacterDetailHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
 	public override async Task<CharacterDetailResponse> Handle(GetCharacterDetailQuery request, CancellationToken cancellationToken)
 	{

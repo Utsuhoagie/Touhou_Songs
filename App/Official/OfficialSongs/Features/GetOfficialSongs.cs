@@ -19,9 +19,9 @@ public record OfficialSongResponse
 		=> (Id, Title, Context, GameCode) = (id, title, context, gameCode);
 }
 
-class GetOfficialSongsQueryHandler : BaseHandler<GetOfficialSongsQuery, IEnumerable<OfficialSongResponse>>
+class GetOfficialSongsHandler : BaseHandler<GetOfficialSongsQuery, IEnumerable<OfficialSongResponse>>
 {
-	public GetOfficialSongsQueryHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public GetOfficialSongsHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
 	public override async Task<IEnumerable<OfficialSongResponse>> Handle(GetOfficialSongsQuery query, CancellationToken cancellationToken)
 	{

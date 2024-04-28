@@ -36,9 +36,9 @@ public record CreateArrangementSongResponse
 		=> (Title, Url, Status) = (title, url, status);
 }
 
-class CreateArrangementSongCommandHandler : BaseHandler<CreateArrangementSongCommand, CreateArrangementSongResponse>
+class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, CreateArrangementSongResponse>
 {
-	public CreateArrangementSongCommandHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public CreateArrangementSongHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
 	public override async Task<CreateArrangementSongResponse> Handle(CreateArrangementSongCommand command, CancellationToken cancellationToken)
 	{

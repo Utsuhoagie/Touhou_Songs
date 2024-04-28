@@ -19,9 +19,9 @@ public record CreateOfficialSongCommand : IRequest<string>
 		=> (Title, Context, GameCode) = (title, context, gameCode);
 }
 
-class CreateOfficialSongCommandHandler : BaseHandler<CreateOfficialSongCommand, string>
+class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string>
 {
-	public CreateOfficialSongCommandHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public CreateOfficialSongHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
 
 	public override async Task<string> Handle(CreateOfficialSongCommand command, CancellationToken cancellationToken)
 	{
