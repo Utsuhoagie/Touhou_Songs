@@ -1,30 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Touhou_Songs.Infrastructure.ExceptionHandling
+namespace Touhou_Songs.Infrastructure.ExceptionHandling;
+
+public class AppExceptionFilter : IActionFilter, IOrderedFilter
 {
-	public class AppExceptionFilter : IActionFilter, IOrderedFilter
+	public int Order => int.MaxValue - 10;
+
+	public void OnActionExecuting(ActionExecutingContext context) { }
+
+	public void OnActionExecuted(ActionExecutedContext context)
 	{
-		public int Order => int.MaxValue - 10;
-
-		public void OnActionExecuting(ActionExecutingContext context) { }
-
-		public void OnActionExecuted(ActionExecutedContext context)
+		if (context.Exception is AppException exception)
 		{
-			if (context.Exception is AppException exception)
+			var valueWithMessage = new
 			{
-				var valueWithMessage = new
-				{
-					Message = exception.Value,
-				};
+				Message = exception.Value,
+			};
 
-				context.Result = new ObjectResult(valueWithMessage)
-				{
-					StatusCode = (int)exception.StatusCode,
-				};
+			context.Result = new ObjectResult(valueWithMessage)
+			{
+				StatusCode = (int)exception.StatusCode,
+			};
 
-				context.ExceptionHandled = true;
-			}
+			context.ExceptionHandled = true;
 		}
 	}
 }

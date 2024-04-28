@@ -5,52 +5,51 @@ using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
-namespace Touhou_Songs.App.Official.OfficialSongs.Features
+namespace Touhou_Songs.App.Official.OfficialSongs.Features;
+
+public record GetOfficialSongDetailQuery(int Id) : IRequest<OfficialSongDetailResponse>;
+
+public record OfficialGameSimple
 {
-	public record GetOfficialSongDetailQuery(int Id) : IRequest<OfficialSongDetailResponse>;
+	public string Title { get; set; }
+	public string GameCode { get; set; }
+	public string ImageUrl { get; set; }
 
-	public record OfficialGameSimple
+	public OfficialGameSimple(string title, string gameCode, string imageUrl)
+		=> (Title, GameCode, ImageUrl) = (title, gameCode, imageUrl);
+}
+public record OfficialSongDetailResponse
+{
+	public int Id { get; set; }
+	public string Title { get; set; }
+	public string Context { get; set; }
+
+	public required OfficialGameSimple Game { get; set; }
+
+	public OfficialSongDetailResponse(int id, string title, string context)
+		=> (Id, Title, Context) = (id, title, context);
+}
+
+class GetOfficialSongDetailQueryHandler : BaseHandler<GetOfficialSongDetailQuery, OfficialSongDetailResponse>
+{
+	public GetOfficialSongDetailQueryHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+
+	public override async Task<OfficialSongDetailResponse> Handle(GetOfficialSongDetailQuery query, CancellationToken cancellationToken)
 	{
-		public string Title { get; set; }
-		public string GameCode { get; set; }
-		public string ImageUrl { get; set; }
-
-		public OfficialGameSimple(string title, string gameCode, string imageUrl)
-			=> (Title, GameCode, ImageUrl) = (title, gameCode, imageUrl);
-	}
-	public record OfficialSongDetailResponse
-	{
-		public int Id { get; set; }
-		public string Title { get; set; }
-		public string Context { get; set; }
-
-		public required OfficialGameSimple Game { get; set; }
-
-		public OfficialSongDetailResponse(int id, string title, string context)
-			=> (Id, Title, Context) = (id, title, context);
-	}
-
-	class GetOfficialSongDetailQueryHandler : BaseHandler<GetOfficialSongDetailQuery, OfficialSongDetailResponse>
-	{
-		public GetOfficialSongDetailQueryHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
-
-		public override async Task<OfficialSongDetailResponse> Handle(GetOfficialSongDetailQuery query, CancellationToken cancellationToken)
-		{
-			var officialSongDetailResponse = await _context.OfficialSongs
-				.Include(os => os.Game)
-				.Where(os => os.Id == query.Id)
-				.Select(os => new OfficialSongDetailResponse(os.Id, os.Title, os.Context)
-				{
-					Game = new OfficialGameSimple(os.Game.Title, os.Game.GameCode, os.Game.ImageUrl),
-				})
-				.SingleOrDefaultAsync();
-
-			if (officialSongDetailResponse is null)
+		var officialSongDetailResponse = await _context.OfficialSongs
+			.Include(os => os.Game)
+			.Where(os => os.Id == query.Id)
+			.Select(os => new OfficialSongDetailResponse(os.Id, os.Title, os.Context)
 			{
-				throw new AppException(HttpStatusCode.NotFound, $"OfficialSong {query.Id} not found.");
-			}
+				Game = new OfficialGameSimple(os.Game.Title, os.Game.GameCode, os.Game.ImageUrl),
+			})
+			.SingleOrDefaultAsync();
 
-			return officialSongDetailResponse;
+		if (officialSongDetailResponse is null)
+		{
+			throw new AppException(HttpStatusCode.NotFound, $"OfficialSong {query.Id} not found.");
 		}
+
+		return officialSongDetailResponse;
 	}
 }

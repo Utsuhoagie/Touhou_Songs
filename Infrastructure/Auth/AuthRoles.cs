@@ -1,9 +1,8 @@
-﻿namespace Touhou_Songs.Infrastructure.Auth
-{
-	public static class AuthRoles
-	{
-		public const string Admin = "Admin";
+﻿namespace Touhou_Songs.Infrastructure.Auth;
 
-		public const string User = "User";
-	}
+public static class AuthRoles
+{
+	public const string Admin = "Admin";
+
+	public const string User = "User";
 }

@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Touhou_Songs.Infrastructure.Auth
+namespace Touhou_Songs.Infrastructure.Auth;
+
+public class AppUser : IdentityUser
 {
-	public class AppUser : IdentityUser
-	{
-		public AppUser(string userName, string email) => (UserName, Email) = (userName, email);
-	}
+	public AppUser(string userName, string email) => (UserName, Email) = (userName, email);
 }

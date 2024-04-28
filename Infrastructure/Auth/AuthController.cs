@@ -2,38 +2,37 @@
 using Microsoft.AspNetCore.Mvc;
 using Touhou_Songs.Infrastructure.Auth.Features;
 
-namespace Touhou_Songs.Infrastructure.Auth
+namespace Touhou_Songs.Infrastructure.Auth;
+
+[Route("api/[controller]")]
+[ApiController]
+public class AuthController : ControllerBase
 {
-	[Route("api/[controller]")]
-	[ApiController]
-	public class AuthController : ControllerBase
+	private readonly ISender _sender;
+
+	public AuthController(ISender sender) => _sender = sender;
+
+	[HttpPost("Register")]
+	public async Task<IActionResult> Register([FromBody] RegisterCommand command)
 	{
-		private readonly ISender _sender;
+		var res = await _sender.Send(command);
 
-		public AuthController(ISender sender) => _sender = sender;
+		return Ok(res);
+	}
 
-		[HttpPost("Register")]
-		public async Task<IActionResult> Register([FromBody] RegisterCommand command)
-		{
-			var res = await _sender.Send(command);
+	[HttpPost("RegisterAdmin")]
+	public async Task<IActionResult> RegisterAdmin([FromBody] RegisterAdminCommand command)
+	{
+		var res = await _sender.Send(command);
 
-			return Ok(res);
-		}
+		return Ok(res);
+	}
 
-		[HttpPost("RegisterAdmin")]
-		public async Task<IActionResult> RegisterAdmin([FromBody] RegisterAdminCommand command)
-		{
-			var res = await _sender.Send(command);
+	[HttpPost("Login")]
+	public async Task<IActionResult> Login([FromBody] LoginCommand command)
+	{
+		var res = await _sender.Send(command);
 
-			return Ok(res);
-		}
-
-		[HttpPost("Login")]
-		public async Task<IActionResult> Login([FromBody] LoginCommand command)
-		{
-			var res = await _sender.Send(command);
-
-			return Ok(res);
-		}
+		return Ok(res);
 	}
 }

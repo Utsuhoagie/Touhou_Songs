@@ -3,41 +3,40 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.BaseHandler;
 
-namespace Touhou_Songs.App.Official.Characters.Features
+namespace Touhou_Songs.App.Official.Characters.Features;
+
+public record GetCharactersQuery(string? searchName) : IRequest<IEnumerable<CharacterResponse>>;
+
+public record CharacterResponse
 {
-	public record GetCharactersQuery(string? searchName) : IRequest<IEnumerable<CharacterResponse>>;
+	public int Id { get; set; }
+	public string Name { get; set; }
+	public string ImageUrl { get; set; }
 
-	public record CharacterResponse
+	public string OriginGameCode { get; set; }
+	public required IEnumerable<string> SongTitles { get; set; }
+
+	public CharacterResponse(int id, string name, string imageUrl, string originGameCode)
+		=> (Id, Name, ImageUrl, OriginGameCode) = (id, name, imageUrl, originGameCode);
+}
+
+class GetCharactersQueryHandler : BaseHandler<GetCharactersQuery, IEnumerable<CharacterResponse>>
+{
+	public GetCharactersQueryHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+
+	public override async Task<IEnumerable<CharacterResponse>> Handle(GetCharactersQuery query, CancellationToken cancellationToken)
 	{
-		public int Id { get; set; }
-		public string Name { get; set; }
-		public string ImageUrl { get; set; }
+		var characterResponses = await _context.Characters
+			.Include(c => c.OriginGame)
+			.Include(c => c.OfficialSongs)
+			.Where(c => query.searchName == null || EF.Functions.ILike(c.Name, $"%{query.searchName}%"))
+			.OrderBy(c => c.OriginGame.ReleaseDate)
+			.Select(c => new CharacterResponse(c.Id, c.Name, c.ImageUrl, c.OriginGame.GameCode)
+			{
+				SongTitles = c.OfficialSongs.Select(os => os.Title),
+			})
+			.ToListAsync();
 
-		public string OriginGameCode { get; set; }
-		public required IEnumerable<string> SongTitles { get; set; }
-
-		public CharacterResponse(int id, string name, string imageUrl, string originGameCode)
-			=> (Id, Name, ImageUrl, OriginGameCode) = (id, name, imageUrl, originGameCode);
-	}
-
-	class GetCharactersQueryHandler : BaseHandler<GetCharactersQuery, IEnumerable<CharacterResponse>>
-	{
-		public GetCharactersQueryHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
-
-		public override async Task<IEnumerable<CharacterResponse>> Handle(GetCharactersQuery query, CancellationToken cancellationToken)
-		{
-			var characterResponses = await _context.Characters
-				.Include(c => c.OriginGame)
-				.Include(c => c.OfficialSongs)
-				.Where(c => query.searchName == null || EF.Functions.ILike(c.Name, $"%{query.searchName}%"))
-				.OrderBy(c => c.OriginGame.ReleaseDate)
-				.Select(c => new CharacterResponse(c.Id, c.Name, c.ImageUrl, c.OriginGame.GameCode)
-				{
-					SongTitles = c.OfficialSongs.Select(os => os.Title),
-				})
-				.ToListAsync();
-
-			return characterResponses;
-		}
+		return characterResponses;
 	}
 }

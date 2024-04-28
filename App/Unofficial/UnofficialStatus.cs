@@ -1,9 +1,8 @@
-﻿namespace Touhou_Songs.App.Unofficial
+﻿namespace Touhou_Songs.App.Unofficial;
+
+public enum UnofficialStatus
 {
-	public enum UnofficialStatus
-	{
-		Pending = 0,
-		Confirmed = 1,
-		Rejected = -1,
-	}
+	Pending = 0,
+	Confirmed = 1,
+	Rejected = -1,
 }
