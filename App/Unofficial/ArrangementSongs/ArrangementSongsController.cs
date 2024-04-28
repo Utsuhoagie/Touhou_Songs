@@ -40,7 +40,7 @@ public class ArrangementSongsController : ControllerBase
 	{
 		public string Status { get; set; } = default!;
 	}
-	[HttpPut("{Id}")]
+	[HttpPut("{Id}/ValidateStatus")]
 	public async Task<IActionResult> ValidateArrangementSongStatus([FromRoute] int Id, [FromBody] ValidateArrangementSongStatusBody body)
 	{
 		var command = new ValidateArrangementSongStatusCommand(Id, body.Status);
