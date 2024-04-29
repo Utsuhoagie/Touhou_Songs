@@ -7,7 +7,10 @@ namespace Touhou_Songs.App.Unofficial.Songs;
 public class ArrangementSong
 {
 	public int Id { get; set; }
+
 	public string Title { get; set; }
+	public string? TitleRomaji { get; set; }
+	public string? TitleJapanese { get; set; }
 	public string Url { get; set; }
 
 	public UnofficialStatus Status { get; set; }

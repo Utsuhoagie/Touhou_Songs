@@ -23,11 +23,8 @@ public class Touhou_Songs_Context : IdentityDbContext<AppUser>
 	public DbSet<Circle> Circles { get; set; } = default!;
 	public DbSet<ArrangementSong> ArrangementSongs { get; set; } = default!;
 
-	protected override void OnModelCreating(ModelBuilder modelBuilder)
+	void OnModelCreating_Auth(ModelBuilder modelBuilder)
 	{
-		base.OnModelCreating(modelBuilder);
-
-		// Auth
 		modelBuilder.Entity<IdentityRole>()
 			.HasData(
 				new IdentityRole
@@ -45,27 +42,49 @@ public class Touhou_Songs_Context : IdentityDbContext<AppUser>
 					ConcurrencyStamp = null,
 				}
 			);
+	}
 
-		// App
+	void OnModelCreating_App(ModelBuilder modelBuilder)
+	{
 		modelBuilder.Entity<Character>()
 			.HasOne(c => c.OriginGame)
 			.WithMany()
 			.HasForeignKey(c => c.OriginGameId)
 			.IsRequired();
 
+
 		modelBuilder.Entity<OfficialSong>()
 			.HasMany(os => os.Characters)
 			.WithMany(c => c.OfficialSongs)
 			.UsingEntity<CharacterOfficialSong>();
+
 
 		modelBuilder.Entity<Circle>()
 			.HasMany(c => c.ArrangementSongs)
 			.WithOne(a => a.Circle)
 			.IsRequired();
 
+		modelBuilder.Entity<Circle>()
+			.Property(c => c.Status)
+			.HasConversion<string>();
+
+
 		modelBuilder.Entity<ArrangementSong>()
 			.HasMany(a => a.OfficialSongs)
 			.WithMany(os => os.ArrangementSongs)
 			.UsingEntity<OfficialSongArrangementSong>();
+
+		modelBuilder.Entity<ArrangementSong>()
+			.Property(a => a.Status)
+			.HasConversion<string>();
+	}
+
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
+	{
+		base.OnModelCreating(modelBuilder);
+
+		OnModelCreating_Auth(modelBuilder);
+
+		OnModelCreating_App(modelBuilder);
 	}
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Touhou_Songs.Data;
@@ -11,9 +12,11 @@ using Touhou_Songs.Data;
 namespace Touhou_Songs.Data.Migrations
 {
     [DbContext(typeof(Touhou_Songs_Context))]
-    partial class Touhou_Songs_ContextModelSnapshot : ModelSnapshot
+    [Migration("20240428164242_Update_Enum_Conversion_2")]
+    partial class Update_Enum_Conversion_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -191,7 +194,7 @@ namespace Touhou_Songs.Data.Migrations
 
                     b.HasIndex("OriginGameId");
 
-                    b.ToTable("Characters", (string)null);
+                    b.ToTable("Characters");
                 });
 
             modelBuilder.Entity("Touhou_Songs.App.Official.OfficialGames.OfficialGame", b =>
@@ -223,7 +226,7 @@ namespace Touhou_Songs.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OfficialGames", (string)null);
+                    b.ToTable("OfficialGames");
                 });
 
             modelBuilder.Entity("Touhou_Songs.App.Official.OfficialSongs.OfficialSong", b =>
@@ -249,7 +252,7 @@ namespace Touhou_Songs.Data.Migrations
 
                     b.HasIndex("GameId");
 
-                    b.ToTable("OfficialSongs", (string)null);
+                    b.ToTable("OfficialSongs");
                 });
 
             modelBuilder.Entity("Touhou_Songs.App.Official._JoinEntities.CharacterOfficialSong", b =>
@@ -272,7 +275,7 @@ namespace Touhou_Songs.Data.Migrations
 
                     b.HasIndex("OfficialSongId");
 
-                    b.ToTable("CharacterOfficialSongs", (string)null);
+                    b.ToTable("CharacterOfficialSongs");
                 });
 
             modelBuilder.Entity("Touhou_Songs.App.Official._JoinEntities.OfficialSongArrangementSong", b =>
@@ -295,7 +298,7 @@ namespace Touhou_Songs.Data.Migrations
 
                     b.HasIndex("OfficialSongId");
 
-                    b.ToTable("OfficialSongArrangementSong", (string)null);
+                    b.ToTable("OfficialSongArrangementSong");
                 });
 
             modelBuilder.Entity("Touhou_Songs.App.Unofficial.Circles.Circle", b =>
@@ -316,7 +319,7 @@ namespace Touhou_Songs.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Circles", (string)null);
+                    b.ToTable("Circles");
                 });
 
             modelBuilder.Entity("Touhou_Songs.App.Unofficial.Songs.ArrangementSong", b =>
@@ -352,7 +355,7 @@ namespace Touhou_Songs.Data.Migrations
 
                     b.HasIndex("CircleId");
 
-                    b.ToTable("ArrangementSongs", (string)null);
+                    b.ToTable("ArrangementSongs");
                 });
 
             modelBuilder.Entity("Touhou_Songs.Infrastructure.Auth.AppUser", b =>
