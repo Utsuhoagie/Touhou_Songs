@@ -46,6 +46,6 @@ class RegisterAdminHandler : BaseHandler<RegisterAdminCommand, RegisterAdminResp
 		await _userManager.CreateAsync(newUser, command.Password);
 		await _userManager.AddToRoleAsync(newUser, AuthRoles.Admin);
 
-		return new RegisterAdminResponse(command.UserName, command.Email);
+		return new RegisterAdminResponse(newUser.UserName!, newUser.Email!);
 	}
 }

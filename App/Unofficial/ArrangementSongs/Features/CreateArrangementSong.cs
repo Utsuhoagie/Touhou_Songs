@@ -16,7 +16,6 @@ public record CreateArrangementSongCommand : IRequest<CreateArrangementSongRespo
 	public string? TitleRomaji { get; set; }
 	public string? TitleJapanese { get; set; }
 
-
 	public string Url { get; set; }
 
 	public required string CircleName { get; set; }
