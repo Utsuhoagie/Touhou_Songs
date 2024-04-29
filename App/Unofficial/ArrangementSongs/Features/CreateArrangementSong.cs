@@ -13,18 +13,26 @@ namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
 public record CreateArrangementSongCommand : IRequest<CreateArrangementSongResponse>
 {
 	public string Title { get; set; }
+	public string? TitleRomaji { get; set; }
+	public string? TitleJapanese { get; set; }
+
+
 	public string Url { get; set; }
 
 	public required string CircleName { get; set; }
 
 	public required List<int> OfficialSongIds { get; set; }
 
-	public CreateArrangementSongCommand(string title, string url) => (Title, Url) = (title, url);
+	public CreateArrangementSongCommand(string title, string? titleRomaji, string? titleJapanese, string url)
+		=> (Title, TitleRomaji, TitleJapanese, Url) = (title, titleRomaji, titleJapanese, url);
 }
 
 public record CreateArrangementSongResponse
 {
 	public string Title { get; set; }
+	public string? TitleRomaji { get; set; }
+	public string? TitleJapanese { get; set; }
+
 	public string Url { get; set; }
 	public string Status { get; set; }
 
@@ -32,8 +40,8 @@ public record CreateArrangementSongResponse
 
 	public required List<string> OfficialSongTitles { get; set; }
 
-	public CreateArrangementSongResponse(string title, string url, string status)
-		=> (Title, Url, Status) = (title, url, status);
+	public CreateArrangementSongResponse(string title, string? titleRomaji, string? titleJapanese, string url, string status)
+		=> (Title, TitleRomaji, TitleJapanese, Url, Status) = (title, titleRomaji, titleJapanese, url, status);
 }
 
 class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, CreateArrangementSongResponse>
@@ -74,7 +82,8 @@ class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, C
 		_context.ArrangementSongs.Add(arrangementSong);
 		await _context.SaveChangesAsync();
 
-		return new CreateArrangementSongResponse(arrangementSong.Title, arrangementSong.Url, arrangementSong.Status.ToString())
+		return new CreateArrangementSongResponse(
+			arrangementSong.Title, arrangementSong.TitleRomaji, arrangementSong.TitleJapanese, arrangementSong.Url, arrangementSong.Status.ToString())
 		{
 			CircleName = arrangementSong.Circle.Name,
 			OfficialSongTitles = arrangementSong.OfficialSongs.Select(os => os.Title).ToList(),

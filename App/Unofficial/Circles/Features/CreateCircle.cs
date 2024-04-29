@@ -19,6 +19,7 @@ public record CreateCircleCommand : IRequest<CreateCircleCommandResponse>
 public record CreateCircleCommandResponse
 {
 	public string Name { get; set; }
+
 	// "Pending", "Confirmed", "Rejected"
 	public string Status { get; set; }
 

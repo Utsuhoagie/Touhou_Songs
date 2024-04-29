@@ -9,18 +9,6 @@ namespace Touhou_Songs.App.Unofficial.Circles.Features;
 
 public record GetCircleDetailQuery(string Name) : IRequest<CircleResponse>;
 
-//public record CircleResponse
-//{
-//	public int Id { get; set; }
-//	public string Name { get; set; }
-//	public string Status { get; set; }
-
-//	public required IEnumerable<string> ArrangementSongTitles { get; set; }
-
-//	public CircleResponse(int id, string name, string status)
-//		=> (Id, Name, Status) = (id, name, status);
-//}
-
 class GetCircleDetailHandler : BaseHandler<GetCircleDetailQuery, CircleResponse>
 {
 	public GetCircleDetailHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }

@@ -13,10 +13,10 @@ public record OfficialSongResponse
 	public string Title { get; set; }
 	public string Context { get; set; }
 
-	public string GameCode { get; set; }
+	public required string GameCode { get; set; }
 
-	public OfficialSongResponse(int id, string title, string context, string gameCode)
-		=> (Id, Title, Context, GameCode) = (id, title, context, gameCode);
+	public OfficialSongResponse(int id, string title, string context)
+		=> (Id, Title, Context) = (id, title, context);
 }
 
 class GetOfficialSongsHandler : BaseHandler<GetOfficialSongsQuery, IEnumerable<OfficialSongResponse>>
@@ -30,7 +30,10 @@ class GetOfficialSongsHandler : BaseHandler<GetOfficialSongsQuery, IEnumerable<O
 			.Where(os => query.SearchTitle == null || EF.Functions.ILike(os.Title, $"%{query.SearchTitle}%"))
 			.Where(os => query.GameCode == null || os.Game.GameCode == query.GameCode)
 			.OrderBy(os => os.GameId).ThenBy(os => os.Id)
-			.Select(os => new OfficialSongResponse(os.Id, os.Title, os.Context, os.Game.GameCode))
+			.Select(os => new OfficialSongResponse(os.Id, os.Title, os.Context)
+			{
+				GameCode = os.Game.GameCode
+			})
 			.ToListAsync();
 
 		return officialSongResponses;

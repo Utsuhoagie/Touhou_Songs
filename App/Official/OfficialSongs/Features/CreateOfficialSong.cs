@@ -12,11 +12,11 @@ public record CreateOfficialSongCommand : IRequest<string>
 	public string Title { get; set; }
 	public string Context { get; set; }
 
-	public string GameCode { get; set; }
+	public required string GameCode { get; set; }
 	public required List<string> CharacterNames { get; set; }
 
-	public CreateOfficialSongCommand(string title, string context, string gameCode)
-		=> (Title, Context, GameCode) = (title, context, gameCode);
+	public CreateOfficialSongCommand(string title, string context)
+		=> (Title, Context) = (title, context);
 }
 
 class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string>

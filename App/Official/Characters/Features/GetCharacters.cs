@@ -13,11 +13,11 @@ public record CharacterResponse
 	public string Name { get; set; }
 	public string ImageUrl { get; set; }
 
-	public string OriginGameCode { get; set; }
-	public required IEnumerable<string> SongTitles { get; set; }
+	public required string OriginGameCode { get; set; }
+	public required IEnumerable<string> OfficialSongTitles { get; set; }
 
-	public CharacterResponse(int id, string name, string imageUrl, string originGameCode)
-		=> (Id, Name, ImageUrl, OriginGameCode) = (id, name, imageUrl, originGameCode);
+	public CharacterResponse(int id, string name, string imageUrl)
+		=> (Id, Name, ImageUrl) = (id, name, imageUrl);
 }
 
 class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<CharacterResponse>>
@@ -31,9 +31,10 @@ class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<Charact
 			.Include(c => c.OfficialSongs)
 			.Where(c => query.searchName == null || EF.Functions.ILike(c.Name, $"%{query.searchName}%"))
 			.OrderBy(c => c.OriginGame.ReleaseDate)
-			.Select(c => new CharacterResponse(c.Id, c.Name, c.ImageUrl, c.OriginGame.GameCode)
+			.Select(c => new CharacterResponse(c.Id, c.Name, c.ImageUrl)
 			{
-				SongTitles = c.OfficialSongs.Select(os => os.Title),
+				OriginGameCode = c.OriginGame.GameCode,
+				OfficialSongTitles = c.OfficialSongs.Select(os => os.Title),
 			})
 			.ToListAsync();
 

@@ -9,15 +9,6 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features;
 
 public record GetOfficialSongDetailQuery(int Id) : IRequest<OfficialSongDetailResponse>;
 
-public record OfficialGameSimple
-{
-	public string Title { get; set; }
-	public string GameCode { get; set; }
-	public string ImageUrl { get; set; }
-
-	public OfficialGameSimple(string title, string gameCode, string imageUrl)
-		=> (Title, GameCode, ImageUrl) = (title, gameCode, imageUrl);
-}
 public record OfficialSongDetailResponse
 {
 	public int Id { get; set; }
@@ -25,6 +16,15 @@ public record OfficialSongDetailResponse
 	public string Context { get; set; }
 
 	public required OfficialGameSimple Game { get; set; }
+	public record OfficialGameSimple
+	{
+		public string Title { get; set; }
+		public string GameCode { get; set; }
+		public string ImageUrl { get; set; }
+
+		public OfficialGameSimple(string title, string gameCode, string imageUrl)
+			=> (Title, GameCode, ImageUrl) = (title, gameCode, imageUrl);
+	}
 
 	public OfficialSongDetailResponse(int id, string title, string context)
 		=> (Id, Title, Context) = (id, title, context);
@@ -41,7 +41,7 @@ class GetOfficialSongDetailHandler : BaseHandler<GetOfficialSongDetailQuery, Off
 			.Where(os => os.Id == query.Id)
 			.Select(os => new OfficialSongDetailResponse(os.Id, os.Title, os.Context)
 			{
-				Game = new OfficialGameSimple(os.Game.Title, os.Game.GameCode, os.Game.ImageUrl),
+				Game = new OfficialSongDetailResponse.OfficialGameSimple(os.Game.Title, os.Game.GameCode, os.Game.ImageUrl),
 			})
 			.SingleOrDefaultAsync();
 
