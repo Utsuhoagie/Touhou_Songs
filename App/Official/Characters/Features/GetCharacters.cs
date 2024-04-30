@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
 
 namespace Touhou_Songs.App.Official.Characters.Features;
@@ -22,7 +23,7 @@ public record CharacterResponse
 
 class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<CharacterResponse>>
 {
-	public GetCharactersHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public GetCharactersHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
 	public override async Task<IEnumerable<CharacterResponse>> Handle(GetCharactersQuery query, CancellationToken cancellationToken)
 	{

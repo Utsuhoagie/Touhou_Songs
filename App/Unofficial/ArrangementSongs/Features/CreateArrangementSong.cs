@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Security.Claims;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.App.Unofficial.Songs;
@@ -45,16 +44,11 @@ public record CreateArrangementSongResponse
 
 class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, CreateArrangementSongResponse>
 {
-	public CreateArrangementSongHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public CreateArrangementSongHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
 	public override async Task<CreateArrangementSongResponse> Handle(CreateArrangementSongCommand command, CancellationToken cancellationToken)
 	{
-		var userRole = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Role)?.Value;
-
-		if (userRole is null)
-		{
-			throw new AppException(HttpStatusCode.Unauthorized);
-		}
+		var (user, role) = await _authUtils.GetUserWithRole();
 
 		var circle = await _context.Circles.SingleOrDefaultAsync(c => c.Name == command.CircleName);
 
@@ -68,7 +62,9 @@ class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, C
 			.Where(os => command.OfficialSongIds.Contains(os.Id))
 			.ToListAsync();
 
-		var arrangementSongStatus = userRole == AuthRoles.Admin ? UnofficialStatus.Confirmed : UnofficialStatus.Pending;
+		var arrangementSongStatus = role == AuthRoles.Admin ?
+			UnofficialStatus.Confirmed
+			: UnofficialStatus.Pending;
 
 		var arrangementSong = new ArrangementSong(command.Title, command.Url, arrangementSongStatus)
 		{

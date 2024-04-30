@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
@@ -11,7 +12,7 @@ public record ValidateCircleStatusCommand(string Name, string Status) : IRequest
 
 class ValidateCircleStatusHandler : BaseHandler<ValidateCircleStatusCommand, string>
 {
-	public ValidateCircleStatusHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public ValidateCircleStatusHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
 	public override async Task<string> Handle(ValidateCircleStatusCommand command, CancellationToken cancellationToken)
 	{
@@ -24,7 +25,7 @@ class ValidateCircleStatusHandler : BaseHandler<ValidateCircleStatusCommand, str
 
 		if (circle.Status != UnofficialStatus.Pending)
 		{
-			throw new AppException(HttpStatusCode.Conflict, $"Circle {command.Name} is already approved. Status = {circle.Status.ToString()}.");
+			throw new AppException(HttpStatusCode.Conflict, $"Circle {command.Name} is already approved. Status = {circle.Status}.");
 		}
 
 		circle.Status = Enum.Parse<UnofficialStatus>(command.Status);

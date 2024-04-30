@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
@@ -33,7 +34,7 @@ public record OfficialSongSimpleResponse
 
 class GetArrangementSongDetailHandler : BaseHandler<GetArrangementSongDetailQuery, ArrangementSongDetailResponse>
 {
-	public GetArrangementSongDetailHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public GetArrangementSongDetailHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
 	public override async Task<ArrangementSongDetailResponse> Handle(GetArrangementSongDetailQuery query, CancellationToken cancellationToken)
 	{

@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Security.Claims;
 using FluentValidation;
 using MediatR;
 using Touhou_Songs.Data;
@@ -40,17 +39,12 @@ class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommand
 {
 	private readonly IValidator<CreateCircleCommand> _validator;
 
-	public CreateCircleHandler(IHttpContextAccessor httpContextAccessor, IValidator<CreateCircleCommand> validator, Touhou_Songs_Context context) : base(httpContextAccessor, context)
+	public CreateCircleHandler(AuthUtils authUtils, IValidator<CreateCircleCommand> validator, Touhou_Songs_Context context) : base(authUtils, context)
 		=> _validator = validator;
 
 	public override async Task<CreateCircleCommandResponse> Handle(CreateCircleCommand command, CancellationToken cancellationToken)
 	{
-		var userRole = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Role)?.Value;
-
-		if (userRole is null)
-		{
-			throw new AppException(HttpStatusCode.Unauthorized);
-		}
+		var (user, role) = await _authUtils.GetUserWithRole();
 
 		var validationResult = await _validator.ValidateAsync(command);
 
@@ -60,11 +54,13 @@ class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommand
 			throw new AppException(HttpStatusCode.BadRequest, errorMessages);
 		}
 
-		var circleStatus = userRole == AuthRoles.Admin ? UnofficialStatus.Confirmed : UnofficialStatus.Pending;
+		var circleStatus = role == AuthRoles.Admin ?
+			UnofficialStatus.Confirmed
+			: UnofficialStatus.Pending;
 
 		var circle = new Circle(command.Name, circleStatus)
 		{
-			ArrangementSongs = new()
+			ArrangementSongs = new(),
 		};
 
 		_context.Circles.Add(circle);

@@ -30,7 +30,7 @@ class RegisterHandler : BaseHandler<RegisterCommand, RegisterResponse>
 {
 	private readonly UserManager<AppUser> _userManager;
 
-	public RegisterHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context, UserManager<AppUser> userManager) : base(httpContextAccessor, context)
+	public RegisterHandler(AuthUtils authUtils, Touhou_Songs_Context context, UserManager<AppUser> userManager) : base(authUtils, context)
 		=> _userManager = userManager;
 
 	public override async Task<RegisterResponse> Handle(RegisterCommand command, CancellationToken cancellationToken)

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
 
 namespace Touhou_Songs.App.Official.OfficialGames.Features;
@@ -24,7 +25,7 @@ public record OfficialGameResponse
 
 class GetOfficialGamesHandler : BaseHandler<GetOfficialGamesQuery, IEnumerable<OfficialGameResponse>>
 {
-	public GetOfficialGamesHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public GetOfficialGamesHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
 	public override async Task<IEnumerable<OfficialGameResponse>> Handle(GetOfficialGamesQuery query, CancellationToken cancellationToken)
 	{

@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
@@ -11,7 +12,7 @@ public record GetCircleDetailQuery(string Name) : IRequest<CircleResponse>;
 
 class GetCircleDetailHandler : BaseHandler<GetCircleDetailQuery, CircleResponse>
 {
-	public GetCircleDetailHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public GetCircleDetailHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
 	public override async Task<CircleResponse> Handle(GetCircleDetailQuery query, CancellationToken cancellationToken)
 	{

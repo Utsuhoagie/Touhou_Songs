@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
 
 namespace Touhou_Songs.App.Official.OfficialGames.Features;
@@ -18,7 +19,7 @@ public record CreateOfficialGameCommand : IRequest<string>
 
 class CreateOfficialGameHandler : BaseHandler<CreateOfficialGameCommand, string>
 {
-	public CreateOfficialGameHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public CreateOfficialGameHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
 	public override async Task<string> Handle(CreateOfficialGameCommand command, CancellationToken cancellationToken)
 	{

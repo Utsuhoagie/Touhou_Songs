@@ -2,6 +2,7 @@ using System.Net;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
@@ -21,7 +22,7 @@ public record CreateOfficialSongCommand : IRequest<string>
 
 class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string>
 {
-	public CreateOfficialSongHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public CreateOfficialSongHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
 	public override async Task<string> Handle(CreateOfficialSongCommand command, CancellationToken cancellationToken)
 	{

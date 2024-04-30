@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
@@ -11,7 +12,7 @@ public record ValidateArrangementSongStatusCommand(int Id, string Status) : IReq
 
 class ValidateArrangementSongStatusHandler : BaseHandler<ValidateArrangementSongStatusCommand, string>
 {
-	public ValidateArrangementSongStatusHandler(IHttpContextAccessor httpContextAccessor, Touhou_Songs_Context context) : base(httpContextAccessor, context) { }
+	public ValidateArrangementSongStatusHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
 	public override async Task<string> Handle(ValidateArrangementSongStatusCommand command, CancellationToken cancellationToken)
 	{

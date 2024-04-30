@@ -78,6 +78,8 @@ try
 			};
 		});
 
+	builder.Services.AddScoped<AuthUtils>();
+
 	builder.Services.Configure<ConfigurationOptions>(builder.Configuration);
 
 	builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));

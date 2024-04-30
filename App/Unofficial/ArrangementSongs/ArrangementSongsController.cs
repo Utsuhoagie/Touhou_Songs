@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
 
@@ -6,6 +7,7 @@ namespace Touhou_Songs.App.Unofficial.ArrangementSongs;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ArrangementSongsController : ControllerBase
 {
 	private readonly ISender _sender;
