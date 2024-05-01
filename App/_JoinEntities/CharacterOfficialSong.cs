@@ -1,7 +1,7 @@
 ﻿using Touhou_Songs.App.Official.Characters;
 using Touhou_Songs.App.Official.OfficialSongs;
 
-namespace Touhou_Songs.App.Official._JoinEntities;
+namespace Touhou_Songs.App._JoinEntities;
 
 public class CharacterOfficialSong
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Touhou_Songs.App.Official._JoinEntities;
+using Touhou_Songs.App._JoinEntities;
 using Touhou_Songs.App.Official.Characters;
 using Touhou_Songs.App.Official.OfficialGames;
 using Touhou_Songs.App.Official.OfficialSongs;

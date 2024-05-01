@@ -1,4 +1,4 @@
-﻿using Touhou_Songs.App.Official._JoinEntities;
+﻿using Touhou_Songs.App._JoinEntities;
 using Touhou_Songs.App.Official.OfficialSongs;
 using Touhou_Songs.App.Unofficial.Circles;
 
