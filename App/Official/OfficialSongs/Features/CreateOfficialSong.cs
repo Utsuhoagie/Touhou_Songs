@@ -1,14 +1,12 @@
-using System.Net;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
-using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Official.OfficialSongs.Features;
 
-public record CreateOfficialSongCommand : IRequest<string>
+public record CreateOfficialSongCommand : IRequest<Result<string>>
 {
 	public string Title { get; set; }
 	public string Context { get; set; }
@@ -20,18 +18,18 @@ public record CreateOfficialSongCommand : IRequest<string>
 		=> (Title, Context) = (title, context);
 }
 
-class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string>
+class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string, Result<string>>
 {
 	public CreateOfficialSongHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
-	public override async Task<string> Handle(CreateOfficialSongCommand command, CancellationToken cancellationToken)
+	public override async Task<Result<string>> Handle(CreateOfficialSongCommand command, CancellationToken cancellationToken)
 	{
 		var officialGame = await _context.OfficialGames
 			.SingleOrDefaultAsync(og => EF.Functions.ILike(og.GameCode, $"{command.GameCode}"));
 
 		if (officialGame is null)
 		{
-			throw new AppException(HttpStatusCode.NotFound, $"Official Game {command.GameCode} not found");
+			return NotFound($"Official Game {command.GameCode} not found");
 		}
 
 		var charactersWithSong = await _context.Characters
@@ -50,6 +48,6 @@ class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string>
 		_context.OfficialSongs.Add(officialSong);
 		await _context.SaveChangesAsync();
 
-		return officialSong.Title;
+		return Ok(officialSong.Title);
 	}
 }

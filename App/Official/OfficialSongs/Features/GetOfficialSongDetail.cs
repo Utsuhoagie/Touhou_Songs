@@ -1,14 +1,12 @@
-﻿using System.Net;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
-using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Official.OfficialSongs.Features;
 
-public record GetOfficialSongDetailQuery(int Id) : IRequest<OfficialSongDetailResponse>;
+public record GetOfficialSongDetailQuery(int Id) : IRequest<Result<OfficialSongDetailResponse>>;
 
 public record OfficialSongDetailResponse
 {
@@ -31,13 +29,13 @@ public record OfficialSongDetailResponse
 		=> (Id, Title, Context) = (id, title, context);
 }
 
-class GetOfficialSongDetailHandler : BaseHandler<GetOfficialSongDetailQuery, OfficialSongDetailResponse>
+class GetOfficialSongDetailHandler : BaseHandler<GetOfficialSongDetailQuery, OfficialSongDetailResponse, Result<OfficialSongDetailResponse>>
 {
 	public GetOfficialSongDetailHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
-	public override async Task<OfficialSongDetailResponse> Handle(GetOfficialSongDetailQuery query, CancellationToken cancellationToken)
+	public override async Task<Result<OfficialSongDetailResponse>> Handle(GetOfficialSongDetailQuery query, CancellationToken cancellationToken)
 	{
-		var officialSongDetailResponse = await _context.OfficialSongs
+		var officialSongDetail_Res = await _context.OfficialSongs
 			.Include(os => os.Game)
 			.Where(os => os.Id == query.Id)
 			.Select(os => new OfficialSongDetailResponse(os.Id, os.Title, os.Context)
@@ -46,11 +44,11 @@ class GetOfficialSongDetailHandler : BaseHandler<GetOfficialSongDetailQuery, Off
 			})
 			.SingleOrDefaultAsync();
 
-		if (officialSongDetailResponse is null)
+		if (officialSongDetail_Res is null)
 		{
-			throw new AppException(HttpStatusCode.NotFound, $"OfficialSong {query.Id} not found.");
+			return NotFound($"OfficialSong {query.Id} not found.");
 		}
 
-		return officialSongDetailResponse;
+		return Ok(officialSongDetail_Res);
 	}
 }

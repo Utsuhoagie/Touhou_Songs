@@ -1,14 +1,12 @@
-﻿using System.Net;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
-using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Official.Characters.Features;
 
-public record GetCharacterDetailQuery(string Name) : IRequest<CharacterDetailResponse>;
+public record GetCharacterDetailQuery(string Name) : IRequest<Result<CharacterDetailResponse>>;
 
 public record CharacterDetailResponse
 {
@@ -42,13 +40,13 @@ public record CharacterDetailResponse
 		=> (Id, Name, ImageUrl) = (id, name, imageUrl);
 }
 
-class GetCharacterDetailHandler : BaseHandler<GetCharacterDetailQuery, CharacterDetailResponse>
+class GetCharacterDetailHandler : BaseHandler<GetCharacterDetailQuery, CharacterDetailResponse, Result<CharacterDetailResponse>>
 {
 	public GetCharacterDetailHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
-	public override async Task<CharacterDetailResponse> Handle(GetCharacterDetailQuery request, CancellationToken cancellationToken)
+	public override async Task<Result<CharacterDetailResponse>> Handle(GetCharacterDetailQuery request, CancellationToken cancellationToken)
 	{
-		var character = await _context.Characters
+		var character_Res = await _context.Characters
 			.Include(c => c.OriginGame)
 			.Include(c => c.OfficialSongs)
 			.Where(c => c.Name == request.Name)
@@ -59,11 +57,11 @@ class GetCharacterDetailHandler : BaseHandler<GetCharacterDetailQuery, Character
 			})
 			.SingleOrDefaultAsync();
 
-		if (character is null)
+		if (character_Res is null)
 		{
-			throw new AppException(HttpStatusCode.NotFound, $"Character {request.Name} not found.");
+			return NotFound($"Character {request.Name} not found.");
 		}
 
-		return character;
+		return Ok(character_Res);
 	}
 }

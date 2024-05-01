@@ -2,14 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Touhou_Songs.App.Official.OfficialGames.Features;
+using Touhou_Songs.Infrastructure.API;
 using Touhou_Songs.Infrastructure.Auth;
 
 namespace Touhou_Songs.App.Official.OfficialGames;
 
-[Route("api/[controller]")]
-[ApiController]
 [Authorize]
-public class OfficialGamesController : ControllerBase
+public class OfficialGamesController : ApiController
 {
 	private readonly ISender _sender;
 	public OfficialGamesController(ISender sender) => _sender = sender;
@@ -17,25 +16,25 @@ public class OfficialGamesController : ControllerBase
 	[HttpGet]
 	public async Task<IActionResult> GetOfficialGames([FromQuery] GetOfficialGamesQuery query)
 	{
-		var officialGameResponses = await _sender.Send(query);
+		var officialGames_Res = await _sender.Send(query);
 
-		return Ok(officialGameResponses);
+		return ToResponse(officialGames_Res);
 	}
 
 	[HttpGet("{GameCode}")]
 	public async Task<IActionResult> GetOfficialGameDetail([FromRoute] GetOfficialGameDetailQuery query)
 	{
-		var officialGameDetailResponse = await _sender.Send(query);
+		var officialGameDetail_Res = await _sender.Send(query);
 
-		return Ok(officialGameDetailResponse);
+		return ToResponse(officialGameDetail_Res);
 	}
 
 	[HttpPost]
 	[Authorize(Roles = AuthRoles.Admin)]
 	public async Task<IActionResult> CreateOfficialGame([FromBody] CreateOfficialGameCommand command)
 	{
-		await _sender.Send(command);
+		var res = await _sender.Send(command);
 
-		return Ok();
+		return ToResponse(res);
 	}
 }

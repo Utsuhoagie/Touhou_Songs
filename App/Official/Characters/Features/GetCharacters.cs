@@ -6,7 +6,7 @@ using Touhou_Songs.Infrastructure.BaseHandler;
 
 namespace Touhou_Songs.App.Official.Characters.Features;
 
-public record GetCharactersQuery(string? searchName) : IRequest<IEnumerable<CharacterResponse>>;
+public record GetCharactersQuery(string? searchName) : IRequest<Result<IEnumerable<CharacterResponse>>>;
 
 public record CharacterResponse
 {
@@ -21,13 +21,13 @@ public record CharacterResponse
 		=> (Id, Name, ImageUrl) = (id, name, imageUrl);
 }
 
-class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<CharacterResponse>>
+class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<CharacterResponse>, Result<IEnumerable<CharacterResponse>>>
 {
 	public GetCharactersHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
-	public override async Task<IEnumerable<CharacterResponse>> Handle(GetCharactersQuery query, CancellationToken cancellationToken)
+	public override async Task<Result<IEnumerable<CharacterResponse>>> Handle(GetCharactersQuery query, CancellationToken cancellationToken)
 	{
-		var characterResponses = await _context.Characters
+		var characters_Res = await _context.Characters
 			.Include(c => c.OriginGame)
 			.Include(c => c.OfficialSongs)
 			.Where(c => query.searchName == null || EF.Functions.ILike(c.Name, $"%{query.searchName}%"))
@@ -39,6 +39,6 @@ class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<Charact
 			})
 			.ToListAsync();
 
-		return characterResponses;
+		return Ok(characters_Res);
 	}
 }

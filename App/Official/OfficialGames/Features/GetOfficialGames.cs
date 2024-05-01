@@ -6,7 +6,7 @@ using Touhou_Songs.Infrastructure.BaseHandler;
 
 namespace Touhou_Songs.App.Official.OfficialGames.Features;
 
-public record GetOfficialGamesQuery(string? searchTitle) : IRequest<IEnumerable<OfficialGameResponse>>;
+public record GetOfficialGamesQuery(string? searchTitle) : IRequest<Result<IEnumerable<OfficialGameResponse>>>;
 
 public record OfficialGameResponse
 {
@@ -23,13 +23,13 @@ public record OfficialGameResponse
 		=> (Id, Title, GameCode, NumberCode, ReleaseDate, ImageUrl) = (id, title, gameCode, numberCode, releaseDate, imageUrl);
 }
 
-class GetOfficialGamesHandler : BaseHandler<GetOfficialGamesQuery, IEnumerable<OfficialGameResponse>>
+class GetOfficialGamesHandler : BaseHandler<GetOfficialGamesQuery, IEnumerable<OfficialGameResponse>, Result<IEnumerable<OfficialGameResponse>>>
 {
 	public GetOfficialGamesHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
-	public override async Task<IEnumerable<OfficialGameResponse>> Handle(GetOfficialGamesQuery query, CancellationToken cancellationToken)
+	public override async Task<Result<IEnumerable<OfficialGameResponse>>> Handle(GetOfficialGamesQuery query, CancellationToken cancellationToken)
 	{
-		var officialGamesResponse = await _context.OfficialGames
+		var officialGames_Res = await _context.OfficialGames
 			.Include(og => og.Songs)
 			.Where(og => query.searchTitle == null || EF.Functions.ILike(og.Title, $"%{query.searchTitle}%"))
 			.OrderBy(og => og.ReleaseDate)
@@ -41,6 +41,6 @@ class GetOfficialGamesHandler : BaseHandler<GetOfficialGamesQuery, IEnumerable<O
 			})
 			.ToListAsync();
 
-		return officialGamesResponse;
+		return Ok(officialGames_Res);
 	}
 }

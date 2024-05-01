@@ -5,7 +5,7 @@ using Touhou_Songs.Infrastructure.BaseHandler;
 
 namespace Touhou_Songs.App.Official.OfficialGames.Features;
 
-public record CreateOfficialGameCommand : IRequest<string>
+public record CreateOfficialGameCommand : IRequest<Result<string>>
 {
 	public string Title { get; set; }
 	public string GameCode { get; set; }
@@ -17,11 +17,11 @@ public record CreateOfficialGameCommand : IRequest<string>
 		=> (Title, GameCode, NumberCode, ReleaseDate, ImageUrl) = (title, gameCode, numberCode, releaseDate, imageUrl);
 }
 
-class CreateOfficialGameHandler : BaseHandler<CreateOfficialGameCommand, string>
+class CreateOfficialGameHandler : BaseHandler<CreateOfficialGameCommand, string, Result<string>>
 {
 	public CreateOfficialGameHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
-	public override async Task<string> Handle(CreateOfficialGameCommand command, CancellationToken cancellationToken)
+	public override async Task<Result<string>> Handle(CreateOfficialGameCommand command, CancellationToken cancellationToken)
 	{
 		var officialGame = new OfficialGame(command.Title, command.GameCode, command.NumberCode, command.ReleaseDate, command.ImageUrl)
 		{
@@ -31,6 +31,6 @@ class CreateOfficialGameHandler : BaseHandler<CreateOfficialGameCommand, string>
 		_context.OfficialGames.Add(officialGame);
 		await _context.SaveChangesAsync();
 
-		return officialGame.Title;
+		return Ok(officialGame.Title);
 	}
 }

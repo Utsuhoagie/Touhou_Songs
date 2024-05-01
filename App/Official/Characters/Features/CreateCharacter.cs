@@ -1,14 +1,12 @@
-﻿using System.Net;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
-using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Official.Characters.Features;
 
-public record CreateCharacterCommand : IRequest<string>
+public record CreateCharacterCommand : IRequest<Result<string>>
 {
 	public string Name { get; set; }
 	public string ImageUrl { get; set; }
@@ -20,18 +18,18 @@ public record CreateCharacterCommand : IRequest<string>
 		=> (Name, ImageUrl, OriginGameCode) = (name, imageUrl, originGameCode);
 }
 
-class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, string>
+class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, string, Result<string>>
 {
 	public CreateCharacterHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
-	public override async Task<string> Handle(CreateCharacterCommand command, CancellationToken cancellationToken)
+	public override async Task<Result<string>> Handle(CreateCharacterCommand command, CancellationToken cancellationToken)
 	{
 		var originGame = await _context.OfficialGames
 			.SingleOrDefaultAsync(og => EF.Functions.ILike(og.GameCode, $"{command.OriginGameCode}"));
 
 		if (originGame is null)
 		{
-			throw new AppException(HttpStatusCode.NotFound, $"Official OriginGame {command.OriginGameCode} not found");
+			return NotFound($"Official OriginGame {command.OriginGameCode} not found");
 		}
 
 		var officialSongs = await _context.OfficialSongs
@@ -48,6 +46,6 @@ class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, string>
 		_context.Characters.Add(character);
 		await _context.SaveChangesAsync();
 
-		return character.Name;
+		return Ok(character.Name);
 	}
 }

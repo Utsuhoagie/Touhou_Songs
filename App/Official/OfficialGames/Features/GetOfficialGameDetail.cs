@@ -1,14 +1,12 @@
-﻿using System.Net;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
-using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Official.OfficialGames.Features;
 
-public record GetOfficialGameDetailQuery(string GameCode) : IRequest<OfficialGameDetailResponse>;
+public record GetOfficialGameDetailQuery(string GameCode) : IRequest<Result<OfficialGameDetailResponse>>;
 
 public record OfficialGameDetailResponse
 {
@@ -33,13 +31,13 @@ public record OfficialGameDetailResponse
 		=> (Id, Title, GameCode, NumberCode, ReleaseDate, ImageUrl) = (id, title, gameCode, numberCode, releaseDate, imageUrl);
 }
 
-class GetOfficialGameDetailHandler : BaseHandler<GetOfficialGameDetailQuery, OfficialGameDetailResponse>
+class GetOfficialGameDetailHandler : BaseHandler<GetOfficialGameDetailQuery, OfficialGameDetailResponse, Result<OfficialGameDetailResponse>>
 {
 	public GetOfficialGameDetailHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
-	public override async Task<OfficialGameDetailResponse> Handle(GetOfficialGameDetailQuery query, CancellationToken cancellationToken)
+	public override async Task<Result<OfficialGameDetailResponse>> Handle(GetOfficialGameDetailQuery query, CancellationToken cancellationToken)
 	{
-		var officialGameDetailResponse = await _context.OfficialGames
+		var officialGameDetail_Res = await _context.OfficialGames
 			.Include(og => og.Songs)
 			.Where(og => og.GameCode == query.GameCode)
 			.Select(og => new OfficialGameDetailResponse(og.Id, og.Title, og.GameCode, og.NumberCode, og.ReleaseDate, og.ImageUrl)
@@ -50,11 +48,11 @@ class GetOfficialGameDetailHandler : BaseHandler<GetOfficialGameDetailQuery, Off
 			})
 			.SingleOrDefaultAsync();
 
-		if (officialGameDetailResponse is null)
+		if (officialGameDetail_Res is null)
 		{
-			throw new AppException(HttpStatusCode.NotFound, $"OfficialGame {query.GameCode} not found.");
+			return NotFound($"OfficialGame {query.GameCode} not found.");
 		}
 
-		return officialGameDetailResponse;
+		return Ok(officialGameDetail_Res);
 	}
 }

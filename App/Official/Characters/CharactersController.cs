@@ -2,14 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Touhou_Songs.App.Official.Characters.Features;
+using Touhou_Songs.Infrastructure.API;
 using Touhou_Songs.Infrastructure.Auth;
 
 namespace Touhou_Songs.App.Official.Characters;
 
-[Route("api/[controller]")]
-[ApiController]
 [Authorize]
-public class CharactersController : ControllerBase
+public class CharactersController : ApiController
 {
 	private readonly ISender _sender;
 	public CharactersController(ISender sender) => _sender = sender;
@@ -17,25 +16,25 @@ public class CharactersController : ControllerBase
 	[HttpGet]
 	public async Task<IActionResult> GetCharacters([FromQuery] GetCharactersQuery query)
 	{
-		var characterResponses = await _sender.Send(query);
+		var characters_Res = await _sender.Send(query);
 
-		return Ok(characterResponses);
+		return ToResponse(characters_Res);
 	}
 
 	[HttpGet("{Name}")]
 	public async Task<IActionResult> GetCharacterDetail([FromRoute] GetCharacterDetailQuery query)
 	{
-		var characterResponse = await _sender.Send(query);
+		var character_Res = await _sender.Send(query);
 
-		return Ok(characterResponse);
+		return ToResponse(character_Res);
 	}
 
 	[HttpPost]
 	[Authorize(Roles = AuthRoles.Admin)]
 	public async Task<IActionResult> CreateCharacter([FromBody] CreateCharacterCommand command)
 	{
-		await _sender.Send(command);
+		var res = await _sender.Send(command);
 
-		return Ok();
+		return ToResponse(res);
 	}
 }
