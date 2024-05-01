@@ -2,13 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Touhou_Songs.App.Unofficial.Circles.Features;
+using Touhou_Songs.Infrastructure.API;
 using Touhou_Songs.Infrastructure.Auth;
 
 namespace Touhou_Songs.App.Unofficial.Circles;
 
-[Route("api/[controller]")]
-[ApiController]
-public class CirclesController : ControllerBase
+public class CirclesController : ApiController
 {
 	private readonly ISender _sender;
 
@@ -20,7 +19,7 @@ public class CirclesController : ControllerBase
 	{
 		var res = await _sender.Send(query);
 
-		return Ok(res);
+		return ToResponse(res);
 	}
 
 	[HttpGet("{Name}")]
@@ -29,7 +28,7 @@ public class CirclesController : ControllerBase
 	{
 		var res = await _sender.Send(query);
 
-		return Ok(res);
+		return ToResponse(res);
 	}
 
 	[HttpPost]
@@ -38,7 +37,7 @@ public class CirclesController : ControllerBase
 	{
 		var res = await _sender.Send(command);
 
-		return Ok(res);
+		return ToResponse(res);
 	}
 
 	public class ValidateCircleStatusBody
@@ -52,6 +51,6 @@ public class CirclesController : ControllerBase
 		var command = new ValidateCircleStatusCommand(Name, body.Status);
 		var res = await _sender.Send(command);
 
-		return Ok(res);
+		return ToResponse(res);
 	}
 }

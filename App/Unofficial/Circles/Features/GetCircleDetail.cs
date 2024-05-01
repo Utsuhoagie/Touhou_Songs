@@ -8,15 +8,15 @@ using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Unofficial.Circles.Features;
 
-public record GetCircleDetailQuery(string Name) : IRequest<CircleResponse>;
+public record GetCircleDetailQuery(string Name) : IRequest<Result<CircleResponse>>;
 
-class GetCircleDetailHandler : BaseHandler<GetCircleDetailQuery, CircleResponse>
+class GetCircleDetailHandler : BaseHandler<GetCircleDetailQuery, CircleResponse, Result<CircleResponse>>
 {
 	public GetCircleDetailHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
-	public override async Task<CircleResponse> Handle(GetCircleDetailQuery query, CancellationToken cancellationToken)
+	public override async Task<Result<CircleResponse>> Handle(GetCircleDetailQuery query, CancellationToken cancellationToken)
 	{
-		var circle = await _context.Circles
+		var circle_Res = await _context.Circles
 			.Include(c => c.ArrangementSongs)
 			.Where(c => c.Name == query.Name)
 			.Select(c => new CircleResponse(c.Id, c.Name, c.Status.ToString())
@@ -25,11 +25,11 @@ class GetCircleDetailHandler : BaseHandler<GetCircleDetailQuery, CircleResponse>
 			})
 			.SingleOrDefaultAsync();
 
-		if (circle is null)
+		if (circle_Res is null)
 		{
 			throw new AppException(HttpStatusCode.NotFound, $"Circle {query.Name} not found.");
 		}
 
-		return circle;
+		return Ok(circle_Res);
 	}
 }

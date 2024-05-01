@@ -8,7 +8,7 @@ using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Unofficial.Circles.Features;
 
-public record CreateCircleCommand : IRequest<CreateCircleCommandResponse>
+public record CreateCircleCommand : IRequest<Result<CreateCircleCommandResponse>>
 {
 	public string Name { get; set; }
 
@@ -35,14 +35,14 @@ public class CreateCircleValidator : AbstractValidator<CreateCircleCommand>
 	}
 }
 
-class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommandResponse>
+class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommandResponse, Result<CreateCircleCommandResponse>>
 {
 	private readonly IValidator<CreateCircleCommand> _validator;
 
 	public CreateCircleHandler(AuthUtils authUtils, IValidator<CreateCircleCommand> validator, Touhou_Songs_Context context) : base(authUtils, context)
 		=> _validator = validator;
 
-	public override async Task<CreateCircleCommandResponse> Handle(CreateCircleCommand command, CancellationToken cancellationToken)
+	public override async Task<Result<CreateCircleCommandResponse>> Handle(CreateCircleCommand command, CancellationToken cancellationToken)
 	{
 		var (user, role) = await _authUtils.GetUserWithRole();
 
@@ -66,6 +66,7 @@ class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommand
 		_context.Circles.Add(circle);
 		await _context.SaveChangesAsync();
 
-		return new CreateCircleCommandResponse(circle.Name, circle.Status.ToString());
+		var res = new CreateCircleCommandResponse(circle.Name, Enum.GetName(circle.Status)!);
+		return Ok(res);
 	}
 }

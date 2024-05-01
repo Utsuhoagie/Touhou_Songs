@@ -9,7 +9,7 @@ using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
 
-public record CreateArrangementSongCommand : IRequest<CreateArrangementSongResponse>
+public record CreateArrangementSongCommand : IRequest<Result<CreateArrangementSongResponse>>
 {
 	public string Title { get; set; }
 	public string? TitleRomaji { get; set; }
@@ -42,11 +42,11 @@ public record CreateArrangementSongResponse
 		=> (Title, TitleRomaji, TitleJapanese, Url, Status) = (title, titleRomaji, titleJapanese, url, status);
 }
 
-class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, CreateArrangementSongResponse>
+class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, CreateArrangementSongResponse, Result<CreateArrangementSongResponse>>
 {
 	public CreateArrangementSongHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
-	public override async Task<CreateArrangementSongResponse> Handle(CreateArrangementSongCommand command, CancellationToken cancellationToken)
+	public override async Task<Result<CreateArrangementSongResponse>> Handle(CreateArrangementSongCommand command, CancellationToken cancellationToken)
 	{
 		var (user, role) = await _authUtils.GetUserWithRole();
 
@@ -77,11 +77,14 @@ class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, C
 		_context.ArrangementSongs.Add(arrangementSong);
 		await _context.SaveChangesAsync();
 
-		return new CreateArrangementSongResponse(
-			arrangementSong.Title, arrangementSong.TitleRomaji, arrangementSong.TitleJapanese, arrangementSong.Url, arrangementSong.Status.ToString())
+		var res = new CreateArrangementSongResponse(
+			arrangementSong.Title, arrangementSong.TitleRomaji, arrangementSong.TitleJapanese,
+			arrangementSong.Url, Enum.GetName(arrangementSong.Status)!)
 		{
 			CircleName = arrangementSong.Circle.Name,
 			OfficialSongTitles = arrangementSong.OfficialSongs.Select(os => os.Title).ToList(),
 		};
+
+		return Ok(res);
 	}
 }

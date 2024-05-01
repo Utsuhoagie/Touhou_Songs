@@ -8,13 +8,13 @@ using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
 
-public record ValidateArrangementSongStatusCommand(int Id, string Status) : IRequest<string>;
+public record ValidateArrangementSongStatusCommand(int Id, string Status) : IRequest<Result<string>>;
 
-class ValidateArrangementSongStatusHandler : BaseHandler<ValidateArrangementSongStatusCommand, string>
+class ValidateArrangementSongStatusHandler : BaseHandler<ValidateArrangementSongStatusCommand, string, Result<string>>
 {
 	public ValidateArrangementSongStatusHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
-	public override async Task<string> Handle(ValidateArrangementSongStatusCommand command, CancellationToken cancellationToken)
+	public override async Task<Result<string>> Handle(ValidateArrangementSongStatusCommand command, CancellationToken cancellationToken)
 	{
 		var arrangementSong = await _context.ArrangementSongs.SingleOrDefaultAsync(a => a.Id == command.Id);
 
@@ -31,6 +31,7 @@ class ValidateArrangementSongStatusHandler : BaseHandler<ValidateArrangementSong
 		arrangementSong.Status = Enum.Parse<UnofficialStatus>(command.Status);
 		await _context.SaveChangesAsync();
 
-		return $"ArrangementSong [{command.Id}] was {command.Status} successfully.";
+		var message = $"ArrangementSong [{command.Id}] was {command.Status} successfully.";
+		return Ok(message);
 	}
 }

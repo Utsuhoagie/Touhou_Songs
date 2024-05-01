@@ -8,7 +8,7 @@ using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
 
-public record GetArrangementSongDetailQuery(int Id) : IRequest<ArrangementSongDetailResponse>;
+public record GetArrangementSongDetailQuery(int Id) : IRequest<Result<ArrangementSongDetailResponse>>;
 
 public record ArrangementSongDetailResponse
 {
@@ -32,13 +32,13 @@ public record OfficialSongSimpleResponse
 	public OfficialSongSimpleResponse(int id, string title) => (Id, Title) = (id, title);
 }
 
-class GetArrangementSongDetailHandler : BaseHandler<GetArrangementSongDetailQuery, ArrangementSongDetailResponse>
+class GetArrangementSongDetailHandler : BaseHandler<GetArrangementSongDetailQuery, ArrangementSongDetailResponse, Result<ArrangementSongDetailResponse>>
 {
 	public GetArrangementSongDetailHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
-	public override async Task<ArrangementSongDetailResponse> Handle(GetArrangementSongDetailQuery query, CancellationToken cancellationToken)
+	public override async Task<Result<ArrangementSongDetailResponse>> Handle(GetArrangementSongDetailQuery query, CancellationToken cancellationToken)
 	{
-		var arrangementSongResponse = await _context.ArrangementSongs
+		var arrangementSong_Res = await _context.ArrangementSongs
 			.Include(a => a.Circle)
 			.Include(a => a.OfficialSongs)
 			.Where(a => a.Id == query.Id)
@@ -49,11 +49,12 @@ class GetArrangementSongDetailHandler : BaseHandler<GetArrangementSongDetailQuer
 			})
 			.SingleOrDefaultAsync();
 
-		if (arrangementSongResponse is null)
+		if (arrangementSong_Res is null)
 		{
+			return NotFound($"Arrangement Song with Id = {query.Id} not found.");
 			throw new AppException(HttpStatusCode.NotFound, $"Arrangement Song with Id = {query.Id} not found.");
 		}
 
-		return arrangementSongResponse;
+		return Ok(arrangementSong_Res);
 	}
 }

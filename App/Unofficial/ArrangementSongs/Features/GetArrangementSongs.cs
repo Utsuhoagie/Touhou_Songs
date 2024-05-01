@@ -6,7 +6,7 @@ using Touhou_Songs.Infrastructure.BaseHandler;
 
 namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
 
-public record GetArrangementSongsQuery() : IRequest<IEnumerable<ArrangementSongResponse>>;
+public record GetArrangementSongsQuery() : IRequest<Result<IEnumerable<ArrangementSongResponse>>>;
 
 public record ArrangementSongResponse
 {
@@ -22,13 +22,13 @@ public record ArrangementSongResponse
 		=> (Id, Title, Url, Status) = (id, title, url, status);
 }
 
-class GetArrangementSongsHandler : BaseHandler<GetArrangementSongsQuery, IEnumerable<ArrangementSongResponse>>
+class GetArrangementSongsHandler : BaseHandler<GetArrangementSongsQuery, IEnumerable<ArrangementSongResponse>, Result<IEnumerable<ArrangementSongResponse>>>
 {
 	public GetArrangementSongsHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
-	public override async Task<IEnumerable<ArrangementSongResponse>> Handle(GetArrangementSongsQuery request, CancellationToken cancellationToken)
+	public override async Task<Result<IEnumerable<ArrangementSongResponse>>> Handle(GetArrangementSongsQuery request, CancellationToken cancellationToken)
 	{
-		var arrangementSongsResponse = await _context.ArrangementSongs
+		var arrangementSongs_Res = await _context.ArrangementSongs
 			.Include(a => a.Circle)
 			.Include(a => a.OfficialSongs)
 			.Select(a => new ArrangementSongResponse(a.Id, a.Title, a.Url, a.Status.ToString())
@@ -38,6 +38,6 @@ class GetArrangementSongsHandler : BaseHandler<GetArrangementSongsQuery, IEnumer
 			})
 			.ToListAsync();
 
-		return arrangementSongsResponse;
+		return Ok(arrangementSongs_Res);
 	}
 }

@@ -2,13 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
+using Touhou_Songs.Infrastructure.API;
 
 namespace Touhou_Songs.App.Unofficial.ArrangementSongs;
 
-[Route("api/[controller]")]
-[ApiController]
 [Authorize]
-public class ArrangementSongsController : ControllerBase
+public class ArrangementSongsController : ApiController
 {
 	private readonly ISender _sender;
 
@@ -19,7 +18,7 @@ public class ArrangementSongsController : ControllerBase
 	{
 		var res = await _sender.Send(query);
 
-		return Ok(res);
+		return ToResponse(res);
 	}
 
 	[HttpGet("{Id}")]
@@ -27,7 +26,7 @@ public class ArrangementSongsController : ControllerBase
 	{
 		var res = await _sender.Send(query);
 
-		return Ok(res);
+		return ToResponse(res);
 	}
 
 	[HttpPost]
@@ -35,19 +34,16 @@ public class ArrangementSongsController : ControllerBase
 	{
 		var res = await _sender.Send(command);
 
-		return Ok(res);
+		return ToResponse(res);
 	}
 
-	public class ValidateArrangementSongStatusBody
-	{
-		public string Status { get; set; } = default!;
-	}
+	public record ValidateArrangementSongStatusBody(string Status);
 	[HttpPut("{Id}/ValidateStatus")]
 	public async Task<IActionResult> ValidateArrangementSongStatus([FromRoute] int Id, [FromBody] ValidateArrangementSongStatusBody body)
 	{
 		var command = new ValidateArrangementSongStatusCommand(Id, body.Status);
 		var res = await _sender.Send(command);
 
-		return Ok(res);
+		return ToResponse(res);
 	}
 }

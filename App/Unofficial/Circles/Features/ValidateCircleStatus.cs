@@ -8,13 +8,13 @@ using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Unofficial.Circles.Features;
 
-public record ValidateCircleStatusCommand(string Name, string Status) : IRequest<string>;
+public record ValidateCircleStatusCommand(string Name, string Status) : IRequest<Result<string>>;
 
-class ValidateCircleStatusHandler : BaseHandler<ValidateCircleStatusCommand, string>
+class ValidateCircleStatusHandler : BaseHandler<ValidateCircleStatusCommand, string, Result<string>>
 {
 	public ValidateCircleStatusHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
-	public override async Task<string> Handle(ValidateCircleStatusCommand command, CancellationToken cancellationToken)
+	public override async Task<Result<string>> Handle(ValidateCircleStatusCommand command, CancellationToken cancellationToken)
 	{
 		var circle = await _context.Circles.SingleOrDefaultAsync(c => c.Name == command.Name);
 
@@ -31,6 +31,7 @@ class ValidateCircleStatusHandler : BaseHandler<ValidateCircleStatusCommand, str
 		circle.Status = Enum.Parse<UnofficialStatus>(command.Status);
 		await _context.SaveChangesAsync();
 
-		return $"Circle {command.Name} was {command.Status} successfully.";
+		var message = $"Circle {command.Name} was {command.Status} successfully.";
+		return Ok(message);
 	}
 }
