@@ -1,10 +1,8 @@
-﻿using System.Net;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
-using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Unofficial.Circles.Features;
 
@@ -27,7 +25,7 @@ class GetCircleDetailHandler : BaseHandler<GetCircleDetailQuery, CircleResponse,
 
 		if (circle_Res is null)
 		{
-			throw new AppException(HttpStatusCode.NotFound, $"Circle {query.Name} not found.");
+			return NotFound($"Circle {query.Name} not found.");
 		}
 
 		return Ok(circle_Res);

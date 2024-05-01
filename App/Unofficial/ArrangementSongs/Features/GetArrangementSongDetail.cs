@@ -1,10 +1,8 @@
-﻿using System.Net;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
-using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
 
@@ -52,7 +50,6 @@ class GetArrangementSongDetailHandler : BaseHandler<GetArrangementSongDetailQuer
 		if (arrangementSong_Res is null)
 		{
 			return NotFound($"Arrangement Song with Id = {query.Id} not found.");
-			throw new AppException(HttpStatusCode.NotFound, $"Arrangement Song with Id = {query.Id} not found.");
 		}
 
 		return Ok(arrangementSong_Res);

@@ -1,10 +1,8 @@
-﻿using System.Net;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
-using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
 
@@ -20,12 +18,12 @@ class ValidateArrangementSongStatusHandler : BaseHandler<ValidateArrangementSong
 
 		if (arrangementSong is null)
 		{
-			throw new AppException(HttpStatusCode.NotFound, $"ArrangementSong {command.Id} not found.");
+			return NotFound($"ArrangementSong {command.Id} not found.");
 		}
 
 		if (arrangementSong.Status != UnofficialStatus.Pending)
 		{
-			throw new AppException(HttpStatusCode.Conflict, $"ArrangementSong {command.Id} is already approved. Status = {arrangementSong.Status.ToString()}.");
+			return Conflict($"ArrangementSong {command.Id} is already approved. Status = {arrangementSong.Status}.");
 		}
 
 		arrangementSong.Status = Enum.Parse<UnofficialStatus>(command.Status);

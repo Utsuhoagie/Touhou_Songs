@@ -1,10 +1,8 @@
-﻿using System.Net;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
-using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Unofficial.Circles.Features;
 
@@ -20,12 +18,12 @@ class ValidateCircleStatusHandler : BaseHandler<ValidateCircleStatusCommand, str
 
 		if (circle is null)
 		{
-			throw new AppException(HttpStatusCode.NotFound, $"Circle {command.Name} not found.");
+			return NotFound($"Circle {command.Name} not found.");
 		}
 
 		if (circle.Status != UnofficialStatus.Pending)
 		{
-			throw new AppException(HttpStatusCode.Conflict, $"Circle {command.Name} is already approved. Status = {circle.Status}.");
+			return Conflict($"Circle {command.Name} is already approved. Status = {circle.Status}.");
 		}
 
 		circle.Status = Enum.Parse<UnofficialStatus>(command.Status);

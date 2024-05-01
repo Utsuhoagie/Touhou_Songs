@@ -1,10 +1,8 @@
-﻿using System.Net;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
-using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Unofficial.Circles.Features;
 
@@ -51,7 +49,7 @@ class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommand
 		if (!validationResult.IsValid)
 		{
 			var errorMessages = validationResult.Errors.Select(vf => vf.ErrorMessage);
-			throw new AppException(HttpStatusCode.BadRequest, errorMessages);
+			return BadRequest(null, errorMessages);
 		}
 
 		var circleStatus = role == AuthRoles.Admin ?

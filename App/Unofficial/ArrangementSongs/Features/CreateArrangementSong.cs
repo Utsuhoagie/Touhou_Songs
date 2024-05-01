@@ -1,11 +1,9 @@
-﻿using System.Net;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.App.Unofficial.Songs;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
-using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
 
@@ -54,7 +52,7 @@ class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, C
 
 		if (circle is null)
 		{
-			throw new AppException(HttpStatusCode.NotFound, $"Circle with name = {command.CircleName} not found");
+			return NotFound($"Circle with name = {command.CircleName} not found");
 		}
 
 		var officialSongs = await _context.OfficialSongs
