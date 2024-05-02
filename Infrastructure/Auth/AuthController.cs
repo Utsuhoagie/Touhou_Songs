@@ -1,12 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Touhou_Songs.Infrastructure.API;
 using Touhou_Songs.Infrastructure.Auth.Features;
 
 namespace Touhou_Songs.Infrastructure.Auth;
 
-[Route("api/[controller]")]
-[ApiController]
-public class AuthController : ControllerBase
+public class AuthController : ApiController
 {
 	private readonly ISender _sender;
 
@@ -17,7 +16,7 @@ public class AuthController : ControllerBase
 	{
 		var res = await _sender.Send(command);
 
-		return Ok(res);
+		return ToResponse(res);
 	}
 
 	[HttpPost("RegisterAdmin")]
@@ -25,7 +24,7 @@ public class AuthController : ControllerBase
 	{
 		var res = await _sender.Send(command);
 
-		return Ok(res);
+		return ToResponse(res);
 	}
 
 	[HttpPost("Login")]
@@ -33,6 +32,6 @@ public class AuthController : ControllerBase
 	{
 		var res = await _sender.Send(command);
 
-		return Ok(res);
+		return ToResponse(res);
 	}
 }
