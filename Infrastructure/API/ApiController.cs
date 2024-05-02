@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.Infrastructure.API;
 

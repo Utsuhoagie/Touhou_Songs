@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.Configuration;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.Infrastructure.Auth.Features;
 
@@ -27,7 +28,7 @@ public record LoginResponse
 	public LoginResponse(string token, DateTime expireAt) => (Token, ExpireAt) = (token, expireAt);
 }
 
-class LoginHandler : BaseHandler<LoginCommand, LoginResponse, Result<LoginResponse>>
+class LoginHandler : BaseHandler<LoginCommand, LoginResponse>
 {
 	private readonly UserManager<AppUser> _userManager;
 	private readonly ConfigurationOptions _config;
@@ -41,14 +42,14 @@ class LoginHandler : BaseHandler<LoginCommand, LoginResponse, Result<LoginRespon
 
 		if (user is null)
 		{
-			return NotFound($"User with email {command.Email} not found.");
+			return _resultFactory.NotFound($"User with email {command.Email} not found.");
 		}
 
 		var checkPassword = await _userManager.CheckPasswordAsync(user, command.Password);
 
 		if (!checkPassword)
 		{
-			return Unauthorized();
+			return _resultFactory.Unauthorized();
 		}
 
 		var claims = new List<Claim>
@@ -72,6 +73,6 @@ class LoginHandler : BaseHandler<LoginCommand, LoginResponse, Result<LoginRespon
 
 		var tokenResponse = new JwtSecurityTokenHandler().WriteToken(token);
 
-		return Ok(new LoginResponse(tokenResponse, token.ValidTo));
+		return _resultFactory.Ok(new LoginResponse(tokenResponse, token.ValidTo));
 	}
 }

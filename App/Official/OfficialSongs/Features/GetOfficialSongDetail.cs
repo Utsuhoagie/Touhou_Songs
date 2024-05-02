@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.OfficialSongs.Features;
 
@@ -29,7 +30,7 @@ public record OfficialSongDetailResponse
 		=> (Id, Title, Context) = (id, title, context);
 }
 
-class GetOfficialSongDetailHandler : BaseHandler<GetOfficialSongDetailQuery, OfficialSongDetailResponse, Result<OfficialSongDetailResponse>>
+class GetOfficialSongDetailHandler : BaseHandler<GetOfficialSongDetailQuery, OfficialSongDetailResponse>
 {
 	public GetOfficialSongDetailHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
@@ -46,9 +47,9 @@ class GetOfficialSongDetailHandler : BaseHandler<GetOfficialSongDetailQuery, Off
 
 		if (officialSongDetail_Res is null)
 		{
-			return NotFound($"OfficialSong {query.Id} not found.");
+			return _resultFactory.NotFound($"OfficialSong {query.Id} not found.");
 		}
 
-		return Ok(officialSongDetail_Res);
+		return _resultFactory.Ok(officialSongDetail_Res);
 	}
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
 
@@ -22,7 +23,7 @@ public record ArrangementSongResponse
 		=> (Id, Title, Url, Status) = (id, title, url, status);
 }
 
-class GetArrangementSongsHandler : BaseHandler<GetArrangementSongsQuery, IEnumerable<ArrangementSongResponse>, Result<IEnumerable<ArrangementSongResponse>>>
+class GetArrangementSongsHandler : BaseHandler<GetArrangementSongsQuery, IEnumerable<ArrangementSongResponse>>
 {
 	public GetArrangementSongsHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
@@ -38,6 +39,6 @@ class GetArrangementSongsHandler : BaseHandler<GetArrangementSongsQuery, IEnumer
 			})
 			.ToListAsync();
 
-		return Ok(arrangementSongs_Res);
+		return _resultFactory.Ok(arrangementSongs_Res);
 	}
 }

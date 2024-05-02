@@ -1,7 +1,6 @@
-﻿using System.Net;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using Touhou_Songs.Infrastructure.ExceptionHandling;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.Infrastructure.Auth;
 
@@ -13,13 +12,15 @@ public class AuthUtils
 	public AuthUtils(IHttpContextAccessor httpContextAccessor, UserManager<AppUser> userManager)
 		=> (_httpContextAccessor, _userManager) = (httpContextAccessor, userManager);
 
-	public async Task<(AppUser? user, string role)> GetUserWithRole()
+	public async Task<Result<(AppUser user, string role)>> GetUserWithRole()
 	{
+		var resultFactory = new ResultFactory<(AppUser user, string role)>();
+
 		var userFromClaims = _httpContextAccessor.HttpContext?.User;
 
 		if (userFromClaims is null)
 		{
-			throw new AppException(HttpStatusCode.Unauthorized);
+			return resultFactory.Unauthorized();
 		}
 
 		var userEmail = userFromClaims.FindFirstValue(ClaimTypes.Email);
@@ -27,16 +28,16 @@ public class AuthUtils
 
 		if (userEmail is null || userRole is null)
 		{
-			throw new AppException(HttpStatusCode.Unauthorized);
+			return resultFactory.Unauthorized();
 		}
 
 		var user = await _userManager.FindByEmailAsync(userEmail);
 
 		if (user is null)
 		{
-			throw new AppException(HttpStatusCode.Unauthorized);
+			return resultFactory.Unauthorized();
 		}
 
-		return (user, userRole);
+		return resultFactory.Ok((user, userRole));
 	}
 }

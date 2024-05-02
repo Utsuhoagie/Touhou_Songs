@@ -4,6 +4,7 @@ using Touhou_Songs.App.Unofficial.Songs;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
 
@@ -40,19 +41,26 @@ public record CreateArrangementSongResponse
 		=> (Title, TitleRomaji, TitleJapanese, Url, Status) = (title, titleRomaji, titleJapanese, url, status);
 }
 
-class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, CreateArrangementSongResponse, Result<CreateArrangementSongResponse>>
+class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, CreateArrangementSongResponse>
 {
 	public CreateArrangementSongHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
 	public override async Task<Result<CreateArrangementSongResponse>> Handle(CreateArrangementSongCommand command, CancellationToken cancellationToken)
 	{
-		var (user, role) = await _authUtils.GetUserWithRole();
+		var userWithRole_Result = await _authUtils.GetUserWithRole();
+
+		if (!userWithRole_Result.Success)
+		{
+			return _resultFactory.FromResult(userWithRole_Result);
+		}
+
+		var (user, role) = userWithRole_Result.Value;
 
 		var circle = await _context.Circles.SingleOrDefaultAsync(c => c.Name == command.CircleName);
 
 		if (circle is null)
 		{
-			return NotFound($"Circle with name = {command.CircleName} not found");
+			return _resultFactory.NotFound($"Circle with name = {command.CircleName} not found");
 		}
 
 		var officialSongs = await _context.OfficialSongs
@@ -83,6 +91,6 @@ class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, C
 			OfficialSongTitles = arrangementSong.OfficialSongs.Select(os => os.Title).ToList(),
 		};
 
-		return Ok(res);
+		return _resultFactory.Ok(res);
 	}
 }

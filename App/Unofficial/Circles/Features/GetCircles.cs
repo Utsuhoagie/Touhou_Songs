@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Unofficial.Circles.Features;
 
@@ -20,7 +21,7 @@ public record CircleResponse
 		=> (Id, Name, Status) = (id, name, status);
 }
 
-class GetCirclesHandler : BaseHandler<GetCirclesQuery, IEnumerable<CircleResponse>, Result<IEnumerable<CircleResponse>>>
+class GetCirclesHandler : BaseHandler<GetCirclesQuery, IEnumerable<CircleResponse>>
 {
 	public GetCirclesHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
@@ -35,6 +36,6 @@ class GetCirclesHandler : BaseHandler<GetCirclesQuery, IEnumerable<CircleRespons
 			})
 			.ToListAsync();
 
-		return Ok(circles_Res);
+		return _resultFactory.Ok(circles_Res);
 	}
 }

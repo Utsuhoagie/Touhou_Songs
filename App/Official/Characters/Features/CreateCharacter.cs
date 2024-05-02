@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.Characters.Features;
 
@@ -18,7 +19,7 @@ public record CreateCharacterCommand : IRequest<Result<string>>
 		=> (Name, ImageUrl, OriginGameCode) = (name, imageUrl, originGameCode);
 }
 
-class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, string, Result<string>>
+class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, string>
 {
 	public CreateCharacterHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
@@ -29,7 +30,7 @@ class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, string, Resul
 
 		if (originGame is null)
 		{
-			return NotFound($"Official OriginGame {command.OriginGameCode} not found");
+			return _resultFactory.NotFound($"Official OriginGame {command.OriginGameCode} not found");
 		}
 
 		var officialSongs = await _context.OfficialSongs
@@ -46,6 +47,6 @@ class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, string, Resul
 		_context.Characters.Add(character);
 		await _context.SaveChangesAsync();
 
-		return Ok(character.Name);
+		return _resultFactory.Ok(character.Name);
 	}
 }

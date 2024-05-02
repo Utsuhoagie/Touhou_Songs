@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.Infrastructure.Auth.Features;
 
@@ -24,7 +25,7 @@ public record RegisterAdminResponse
 		(UserName, Email) = (userName, email);
 }
 
-class RegisterAdminHandler : BaseHandler<RegisterAdminCommand, RegisterAdminResponse, Result<RegisterAdminResponse>>
+class RegisterAdminHandler : BaseHandler<RegisterAdminCommand, RegisterAdminResponse>
 {
 	private readonly UserManager<AppUser> _userManager;
 
@@ -37,13 +38,13 @@ class RegisterAdminHandler : BaseHandler<RegisterAdminCommand, RegisterAdminResp
 
 		if (existingUser is not null)
 		{
-			return Conflict($"User with email {command.Email} already exists.");
+			return _resultFactory.Conflict($"User with email {command.Email} already exists.");
 		}
 
 		var newUser = new AppUser(command.UserName, command.Email);
 		await _userManager.CreateAsync(newUser, command.Password);
 		await _userManager.AddToRoleAsync(newUser, AuthRoles.Admin);
 
-		return Ok(new RegisterAdminResponse(newUser.UserName!, newUser.Email!));
+		return _resultFactory.Ok(new RegisterAdminResponse(newUser.UserName!, newUser.Email!));
 	}
 }

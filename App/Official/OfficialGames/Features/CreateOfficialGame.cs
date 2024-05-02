@@ -2,6 +2,7 @@
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.OfficialGames.Features;
 
@@ -17,7 +18,7 @@ public record CreateOfficialGameCommand : IRequest<Result<string>>
 		=> (Title, GameCode, NumberCode, ReleaseDate, ImageUrl) = (title, gameCode, numberCode, releaseDate, imageUrl);
 }
 
-class CreateOfficialGameHandler : BaseHandler<CreateOfficialGameCommand, string, Result<string>>
+class CreateOfficialGameHandler : BaseHandler<CreateOfficialGameCommand, string>
 {
 	public CreateOfficialGameHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
@@ -31,6 +32,6 @@ class CreateOfficialGameHandler : BaseHandler<CreateOfficialGameCommand, string,
 		_context.OfficialGames.Add(officialGame);
 		await _context.SaveChangesAsync();
 
-		return Ok(officialGame.Title);
+		return _resultFactory.Ok(officialGame.Title);
 	}
 }

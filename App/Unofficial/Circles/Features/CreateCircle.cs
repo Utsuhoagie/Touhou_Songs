@@ -3,6 +3,7 @@ using MediatR;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Unofficial.Circles.Features;
 
@@ -33,7 +34,7 @@ public class CreateCircleValidator : AbstractValidator<CreateCircleCommand>
 	}
 }
 
-class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommandResponse, Result<CreateCircleCommandResponse>>
+class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommandResponse>
 {
 	private readonly IValidator<CreateCircleCommand> _validator;
 
@@ -42,14 +43,21 @@ class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommand
 
 	public override async Task<Result<CreateCircleCommandResponse>> Handle(CreateCircleCommand command, CancellationToken cancellationToken)
 	{
-		var (user, role) = await _authUtils.GetUserWithRole();
+		var userWithRole_Result = await _authUtils.GetUserWithRole();
+
+		if (!userWithRole_Result.Success)
+		{
+			return _resultFactory.FromResult(userWithRole_Result);
+		}
+
+		var (user, role) = userWithRole_Result.Value;
 
 		var validationResult = await _validator.ValidateAsync(command);
 
 		if (!validationResult.IsValid)
 		{
 			var errorMessages = validationResult.Errors.Select(vf => vf.ErrorMessage);
-			return BadRequest(null, errorMessages);
+			return _resultFactory.BadRequest(null, errorMessages);
 		}
 
 		var circleStatus = role == AuthRoles.Admin ?
@@ -65,6 +73,6 @@ class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommand
 		await _context.SaveChangesAsync();
 
 		var res = new CreateCircleCommandResponse(circle.Name, Enum.GetName(circle.Status)!);
-		return Ok(res);
+		return _resultFactory.Ok(res);
 	}
 }

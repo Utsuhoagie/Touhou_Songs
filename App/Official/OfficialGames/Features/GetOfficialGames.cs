@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.OfficialGames.Features;
 
@@ -23,7 +24,7 @@ public record OfficialGameResponse
 		=> (Id, Title, GameCode, NumberCode, ReleaseDate, ImageUrl) = (id, title, gameCode, numberCode, releaseDate, imageUrl);
 }
 
-class GetOfficialGamesHandler : BaseHandler<GetOfficialGamesQuery, IEnumerable<OfficialGameResponse>, Result<IEnumerable<OfficialGameResponse>>>
+class GetOfficialGamesHandler : BaseHandler<GetOfficialGamesQuery, IEnumerable<OfficialGameResponse>>
 {
 	public GetOfficialGamesHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
@@ -41,6 +42,6 @@ class GetOfficialGamesHandler : BaseHandler<GetOfficialGamesQuery, IEnumerable<O
 			})
 			.ToListAsync();
 
-		return Ok(officialGames_Res);
+		return _resultFactory.Ok(officialGames_Res);
 	}
 }

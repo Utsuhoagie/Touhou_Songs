@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.OfficialSongs.Features;
 
@@ -18,7 +19,7 @@ public record CreateOfficialSongCommand : IRequest<Result<string>>
 		=> (Title, Context) = (title, context);
 }
 
-class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string, Result<string>>
+class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string>
 {
 	public CreateOfficialSongHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
@@ -29,7 +30,7 @@ class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string,
 
 		if (officialGame is null)
 		{
-			return NotFound($"Official Game {command.GameCode} not found");
+			return _resultFactory.NotFound($"Official Game {command.GameCode} not found");
 		}
 
 		var charactersWithSong = await _context.Characters
@@ -48,6 +49,6 @@ class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string,
 		_context.OfficialSongs.Add(officialSong);
 		await _context.SaveChangesAsync();
 
-		return Ok(officialSong.Title);
+		return _resultFactory.Ok(officialSong.Title);
 	}
 }

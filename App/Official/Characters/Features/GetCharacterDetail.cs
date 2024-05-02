@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.Characters.Features;
 
@@ -40,7 +41,7 @@ public record CharacterDetailResponse
 		=> (Id, Name, ImageUrl) = (id, name, imageUrl);
 }
 
-class GetCharacterDetailHandler : BaseHandler<GetCharacterDetailQuery, CharacterDetailResponse, Result<CharacterDetailResponse>>
+class GetCharacterDetailHandler : BaseHandler<GetCharacterDetailQuery, CharacterDetailResponse>
 {
 	public GetCharacterDetailHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
@@ -59,9 +60,9 @@ class GetCharacterDetailHandler : BaseHandler<GetCharacterDetailQuery, Character
 
 		if (character_Res is null)
 		{
-			return NotFound($"Character {request.Name} not found.");
+			return _resultFactory.NotFound($"Character {request.Name} not found.");
 		}
 
-		return Ok(character_Res);
+		return _resultFactory.Ok(character_Res);
 	}
 }

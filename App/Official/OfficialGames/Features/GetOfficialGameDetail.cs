@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.OfficialGames.Features;
 
@@ -31,7 +32,7 @@ public record OfficialGameDetailResponse
 		=> (Id, Title, GameCode, NumberCode, ReleaseDate, ImageUrl) = (id, title, gameCode, numberCode, releaseDate, imageUrl);
 }
 
-class GetOfficialGameDetailHandler : BaseHandler<GetOfficialGameDetailQuery, OfficialGameDetailResponse, Result<OfficialGameDetailResponse>>
+class GetOfficialGameDetailHandler : BaseHandler<GetOfficialGameDetailQuery, OfficialGameDetailResponse>
 {
 	public GetOfficialGameDetailHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
@@ -50,9 +51,9 @@ class GetOfficialGameDetailHandler : BaseHandler<GetOfficialGameDetailQuery, Off
 
 		if (officialGameDetail_Res is null)
 		{
-			return NotFound($"OfficialGame {query.GameCode} not found.");
+			return _resultFactory.NotFound($"OfficialGame {query.GameCode} not found.");
 		}
 
-		return Ok(officialGameDetail_Res);
+		return _resultFactory.Ok(officialGameDetail_Res);
 	}
 }

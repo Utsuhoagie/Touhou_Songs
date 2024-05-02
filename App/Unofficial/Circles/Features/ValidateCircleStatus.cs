@@ -3,12 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Unofficial.Circles.Features;
 
 public record ValidateCircleStatusCommand(string Name, string Status) : IRequest<Result<string>>;
 
-class ValidateCircleStatusHandler : BaseHandler<ValidateCircleStatusCommand, string, Result<string>>
+class ValidateCircleStatusHandler : BaseHandler<ValidateCircleStatusCommand, string>
 {
 	public ValidateCircleStatusHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
@@ -18,18 +19,18 @@ class ValidateCircleStatusHandler : BaseHandler<ValidateCircleStatusCommand, str
 
 		if (circle is null)
 		{
-			return NotFound($"Circle {command.Name} not found.");
+			return _resultFactory.NotFound($"Circle {command.Name} not found.");
 		}
 
 		if (circle.Status != UnofficialStatus.Pending)
 		{
-			return Conflict($"Circle {command.Name} is already approved. Status = {circle.Status}.");
+			return _resultFactory.Conflict($"Circle {command.Name} is already approved. Status = {circle.Status}.");
 		}
 
 		circle.Status = Enum.Parse<UnofficialStatus>(command.Status);
 		await _context.SaveChangesAsync();
 
 		var message = $"Circle {command.Name} was {command.Status} successfully.";
-		return Ok(message);
+		return _resultFactory.Ok(message);
 	}
 }

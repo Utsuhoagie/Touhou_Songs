@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.Characters.Features;
 
@@ -21,7 +22,7 @@ public record CharacterResponse
 		=> (Id, Name, ImageUrl) = (id, name, imageUrl);
 }
 
-class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<CharacterResponse>, Result<IEnumerable<CharacterResponse>>>
+class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<CharacterResponse>>
 {
 	public GetCharactersHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
@@ -39,6 +40,6 @@ class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<Charact
 			})
 			.ToListAsync();
 
-		return Ok(characters_Res);
+		return _resultFactory.Ok(characters_Res);
 	}
 }
