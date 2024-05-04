@@ -1,17 +1,14 @@
 using System.Net;
-using System.Reflection;
 using System.Text;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Serilog;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Touhou_Songs.App.Unofficial.Circles.Features;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.API;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.Configuration;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
@@ -129,32 +126,4 @@ catch (Exception ex)
 finally
 {
 	Log.CloseAndFlush();
-}
-
-
-public class ImportableDocumentFilter : IDocumentFilter
-{
-	public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
-	{
-		var controllers = Assembly
-			.GetExecutingAssembly()
-			.GetTypes()
-			.Where(x => x.GetCustomAttribute<ApiControllerAttribute>() is not null);
-
-		swaggerDoc.Tags = controllers
-			.Select(controller => new OpenApiTag
-			{
-				Name = controller.Name.Replace("Controller", string.Empty)
-			})
-			.OrderBy(t => t.Name)
-			.ToList();
-
-		swaggerDoc.Servers = new List<OpenApiServer>
-		{
-			new OpenApiServer
-			{
-				Url = "https://localhost:5000",
-			}
-		};
-	}
 }

@@ -1,5 +1,7 @@
-﻿using System.Security.Claims;
+﻿using System.Net;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Touhou_Songs.Infrastructure.ExceptionHandling;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.Infrastructure.Auth;
@@ -28,14 +30,16 @@ public class AuthUtils
 
 		if (userEmail is null || userRole is null)
 		{
-			return resultFactory.Unauthorized();
+			throw new AppException(HttpStatusCode.Unauthorized);
+			//return resultFactory.Unauthorized();
 		}
 
 		var user = await _userManager.FindByEmailAsync(userEmail);
 
 		if (user is null)
 		{
-			return resultFactory.Unauthorized();
+			throw new AppException(HttpStatusCode.Unauthorized);
+			//return resultFactory.Unauthorized();
 		}
 
 		return resultFactory.Ok((user, userRole));
