@@ -10,9 +10,9 @@ public class AppUser : IdentityUser
 
 	public AppUser(string userName, string email) => (UserName, Email) = (userName, email);
 
-	public void AddProfile(string displayName)
+	public void AddProfile()
 	{
-		var profile = new UserProfile(displayName)
+		var profile = new UserProfile()
 		{
 			UserId = Id,
 			User = this,
