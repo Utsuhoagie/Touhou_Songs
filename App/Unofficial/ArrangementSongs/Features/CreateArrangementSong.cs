@@ -49,6 +49,7 @@ class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, C
 	{
 		var userWithRole_Result = await _authUtils.GetUserWithRole();
 
+		// NOT REQUIRED, SINCE IT THROWS ALREADY
 		if (!userWithRole_Result.Success)
 		{
 			return _resultFactory.FromResult(userWithRole_Result);
