@@ -35,7 +35,9 @@ try
 		.AllowAnyHeader()
 		.AllowAnyMethod()));
 
-	builder.Services.AddDbContext<Touhou_Songs_Context>(options => options.UseNpgsql(connectionString));
+	builder.Services.AddDbContext<Touhou_Songs_Context>(options => options
+		.UseNpgsql(connectionString)
+		.UseSnakeCaseNamingConvention());
 
 	builder.Services
 		.AddIdentity<AppUser, IdentityRole>()
