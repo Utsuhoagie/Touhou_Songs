@@ -69,7 +69,7 @@ class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, C
 			.Where(os => command.OfficialSongIds.Contains(os.Id))
 			.ToListAsync();
 
-		var arrangementSongStatus = role == AuthRoles.Admin ?
+		var arrangementSongStatus = role == AuthRole.Admin ?
 			UnofficialStatus.Confirmed
 			: UnofficialStatus.Pending;
 

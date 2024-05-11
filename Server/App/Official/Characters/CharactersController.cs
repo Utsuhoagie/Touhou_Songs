@@ -30,7 +30,7 @@ public class CharactersController : ApiController
 	}
 
 	[HttpPost]
-	[Authorize(Roles = AuthRoles.Admin)]
+	[AuthorizeRoles(AuthRole.Admin)]
 	public async Task<IActionResult> CreateCharacter([FromBody] CreateCharacterCommand command)
 	{
 		var res = await _sender.Send(command);

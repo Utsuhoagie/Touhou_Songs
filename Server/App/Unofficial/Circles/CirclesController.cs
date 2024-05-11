@@ -45,7 +45,7 @@ public class CirclesController : ApiController
 		public string Status { get; set; } = default!;
 	}
 	[HttpPut("{Name}/ValidateStatus")]
-	[Authorize(Roles = AuthRoles.Admin)]
+	[AuthorizeRoles(AuthRole.Admin)]
 	public async Task<IActionResult> ValidateCircleStatus([FromRoute] string Name, [FromBody] ValidateCircleStatusBody body)
 	{
 		var command = new ValidateCircleStatusCommand(Name, body.Status);

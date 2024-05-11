@@ -43,7 +43,7 @@ class RegisterHandler : BaseHandler<RegisterCommand, RegisterResponse>
 
 		var newUser = new AppUser(command.UserName, command.Email);
 		await _userManager.CreateAsync(newUser, command.Password);
-		await _userManager.AddToRoleAsync(newUser, AuthRoles.User);
+		await _userManager.AddToRoleAsync(newUser, Enum.GetName(AuthRole.User)!);
 
 		newUser.AddProfile();
 

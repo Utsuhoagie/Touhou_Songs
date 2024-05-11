@@ -14,9 +14,9 @@ public class AuthUtils
 	public AuthUtils(IHttpContextAccessor httpContextAccessor, UserManager<AppUser> userManager)
 		=> (_httpContextAccessor, _userManager) = (httpContextAccessor, userManager);
 
-	public async Task<Result<(AppUser user, string role)>> GetUserWithRole()
+	public async Task<Result<(AppUser user, AuthRole role)>> GetUserWithRole()
 	{
-		var resultFactory = new ResultFactory<(AppUser user, string role)>();
+		var resultFactory = new ResultFactory<(AppUser user, AuthRole role)>();
 
 		var userFromClaims = _httpContextAccessor.HttpContext?.User;
 
@@ -26,14 +26,15 @@ public class AuthUtils
 		}
 
 		var userEmail = userFromClaims.FindFirstValue(ClaimTypes.Email);
-		var userRole = userFromClaims.FindFirstValue(ClaimTypes.Role);
+		var userRoleString = userFromClaims.FindFirstValue(ClaimTypes.Role);
 
-		if (userEmail is null || userRole is null)
+		if (userEmail is null || userRoleString is null)
 		{
 			throw new AppException(HttpStatusCode.Unauthorized);
 			//return resultFactory.Unauthorized();
 		}
 
+		var userRole = Enum.Parse<AuthRole>(userRoleString);
 		var user = await _userManager.FindByEmailAsync(userEmail);
 
 		if (user is null)

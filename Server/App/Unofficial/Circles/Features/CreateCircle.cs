@@ -60,7 +60,7 @@ class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommand
 			return _resultFactory.BadRequest(null, errorMessages);
 		}
 
-		var circleStatus = role == AuthRoles.Admin ?
+		var circleStatus = role == AuthRole.Admin ?
 			UnofficialStatus.Confirmed
 			: UnofficialStatus.Pending;
 

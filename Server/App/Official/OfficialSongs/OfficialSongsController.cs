@@ -30,7 +30,7 @@ public class OfficialSongsController : ApiController
 	}
 
 	[HttpPost]
-	[Authorize(Roles = AuthRoles.Admin)]
+	[AuthorizeRoles(AuthRole.Admin)]
 	public async Task<IActionResult> CreateOfficialSong([FromBody] CreateOfficialSongCommand req)
 	{
 		var res = await _sender.Send(req);

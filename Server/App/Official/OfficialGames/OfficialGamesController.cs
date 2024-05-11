@@ -30,7 +30,7 @@ public class OfficialGamesController : ApiController
 	}
 
 	[HttpPost]
-	[Authorize(Roles = AuthRoles.Admin)]
+	[AuthorizeRoles(AuthRole.Admin)]
 	public async Task<IActionResult> CreateOfficialGame([FromBody] CreateOfficialGameCommand command)
 	{
 		var res = await _sender.Send(command);
