@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{4A563E28-37EE-4C88-9D35-192DB66D2A2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Touhou_Songs_Testing", "Testing\Touhou_Songs_Testing.csproj", "{4A563E28-37EE-4C88-9D35-192DB66D2A2C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{97F7403C-BBBA-4380-B45B-24D9AE808329} = {97F7403C-BBBA-4380-B45B-24D9AE808329}
 	EndProjectSection
