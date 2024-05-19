@@ -16,8 +16,6 @@ using Touhou_Songs.Infrastructure.ExceptionHandling;
 // NOTE
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration["ConnectionString:Touhou_Songs"] ?? throw new InvalidOperationException("Connection string 'Touhou_Songs_Context' not found.");
-
 try
 {
 	// Add services to the container.
@@ -30,10 +28,14 @@ try
 			.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}")
 	);
 
+	var connectionString = builder.Configuration["ConnectionString:Touhou_Songs"] ?? throw new InvalidOperationException("Connection string 'Touhou_Songs_Context' not found.");
+
 	builder.Services.AddCors(o => o.AddPolicy("My_CORS_Policy", p => p
 		.WithOrigins("http://localhost:3000")
 		.AllowAnyHeader()
 		.AllowAnyMethod()));
+
+	builder.Services.AddScoped<AuthUtils>();
 
 	builder.Services.AddDbContext<Touhou_Songs_Context>(options => options
 		.UseNpgsql(connectionString)
@@ -77,8 +79,6 @@ try
 			};
 		});
 
-	builder.Services.AddScoped<AuthUtils>();
-
 	builder.Services.Configure<ConfigurationOptions>(builder.Configuration);
 
 	builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
@@ -118,11 +118,8 @@ try
 	app.Run();
 }
 catch (Exception ex)
+	when (ex is not HostAbortedException && ex.Source != "Microsoft.EntityFrameworkCore.Design")
 {
-	if (ex is HostAbortedException)
-	{
-		return;
-	}
 	Log.Fatal(ex, "Application terminated unexpectedly");
 }
 finally

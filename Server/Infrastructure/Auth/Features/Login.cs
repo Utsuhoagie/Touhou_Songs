@@ -54,7 +54,8 @@ class LoginHandler : BaseHandler<LoginCommand, LoginResponse>
 
 		var claims = new List<Claim>
 		{
-			new Claim(ClaimTypes.Email, command.Email),
+			new Claim(ClaimTypes.Name, user.UserName ?? "NONE"),
+			new Claim(ClaimTypes.Email, user.Email ?? "NONE"),
 			new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
 		};
 
