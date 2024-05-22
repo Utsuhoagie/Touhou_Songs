@@ -45,4 +45,53 @@ public class AuthUtils
 
 		return resultFactory.Ok((user, userRole));
 	}
+
+	public Result<string> GetUserName()
+	{
+		var resultFactory = new ResultFactory<string>();
+
+		var userFromClaims = _httpContextAccessor.HttpContext?.User;
+
+		if (userFromClaims is null)
+		{
+			return resultFactory.Unauthorized();
+		}
+
+		var userNameFromClaims = userFromClaims.FindFirstValue(ClaimTypes.Name);
+
+		if (userNameFromClaims is null)
+		{
+			return resultFactory.Unauthorized();
+		}
+
+		return resultFactory.Ok(userNameFromClaims);
+	}
+}
+
+/// <summary>
+/// Should probably only be used for the DbContext
+/// </summary>
+public static class AuthUtilsStatic
+{
+	public static Result<string> GetUserName(IHttpContextAccessor httpContextAccessor)
+	{
+		var resultFactory = new ResultFactory<string>();
+
+		var userFromClaims = httpContextAccessor.HttpContext?.User;
+
+		if (userFromClaims is null)
+		{
+			return resultFactory.Unauthorized();
+		}
+
+		var userNameFromClaims = userFromClaims.FindFirstValue(ClaimTypes.Name);
+
+		if (userNameFromClaims is null)
+		{
+			//throw new AppException(HttpStatusCode.Unauthorized);
+			return resultFactory.Unauthorized();
+		}
+
+		return resultFactory.Ok(userNameFromClaims);
+	}
 }
