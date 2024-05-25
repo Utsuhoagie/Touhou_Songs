@@ -34,4 +34,12 @@ public class AuthController : ApiController
 
 		return ToResponse(res);
 	}
+
+	[HttpPost("ChangePassword")]
+	public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
+	{
+		var res = await _sender.Send(command);
+
+		return ToResponse(res);
+	}
 }
