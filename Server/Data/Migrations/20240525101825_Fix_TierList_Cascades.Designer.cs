@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Touhou_Songs.Data;
@@ -11,18 +12,18 @@ using Touhou_Songs.Data;
 namespace Touhou_Songs.Data.Migrations
 {
     [DbContext(typeof(Touhou_Songs_Context))]
-    partial class Touhou_Songs_ContextModelSnapshot : ModelSnapshot
+    [Migration("20240525101825_Fix_TierList_Cascades")]
+    partial class Fix_TierList_Cascades
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.5")
+                .HasAnnotation("ProductVersion", "7.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.HasSequence("BaseEntitySequence");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -305,6 +306,121 @@ namespace Touhou_Songs.Data.Migrations
                     b.ToTable("official_songs", (string)null);
                 });
 
+            modelBuilder.Entity("Touhou_Songs.App.TierListMaking.TierList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CreatedByUserName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("created_by_user_name");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("ArrangementSongs")
+                        .HasColumnName("type");
+
+                    b.Property<string>("UpdatedByUserName")
+                        .HasColumnType("text")
+                        .HasColumnName("updated_by_user_name");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on");
+
+                    b.HasKey("Id")
+                        .HasName("pk_tier_lists");
+
+                    b.ToTable("tier_lists", (string)null);
+                });
+
+            modelBuilder.Entity("Touhou_Songs.App.TierListMaking.TierListItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("IconUrl")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("icon_url");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("label");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer")
+                        .HasColumnName("order");
+
+                    b.Property<int>("TierListTierId")
+                        .HasColumnType("integer")
+                        .HasColumnName("tier_list_tier_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_tier_list_items");
+
+                    b.HasIndex("TierListTierId")
+                        .HasDatabaseName("ix_tier_list_items_tier_list_tier_id");
+
+                    b.ToTable("tier_list_items", (string)null);
+                });
+
+            modelBuilder.Entity("Touhou_Songs.App.TierListMaking.TierListTier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("label");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer")
+                        .HasColumnName("order");
+
+                    b.Property<int>("TierListId")
+                        .HasColumnType("integer")
+                        .HasColumnName("tier_list_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_tier_list_tiers");
+
+                    b.HasIndex("TierListId")
+                        .HasDatabaseName("ix_tier_list_tiers_tier_list_id");
+
+                    b.ToTable("tier_list_tiers", (string)null);
+                });
+
             modelBuilder.Entity("Touhou_Songs.App.Unofficial.Circles.Circle", b =>
                 {
                     b.Property<int>("Id")
@@ -328,6 +444,51 @@ namespace Touhou_Songs.Data.Migrations
                         .HasName("pk_circles");
 
                     b.ToTable("circles", (string)null);
+                });
+
+            modelBuilder.Entity("Touhou_Songs.App.Unofficial.Songs.ArrangementSong", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CircleId")
+                        .HasColumnType("integer")
+                        .HasColumnName("circle_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.Property<string>("TitleJapanese")
+                        .HasColumnType("text")
+                        .HasColumnName("title_japanese");
+
+                    b.Property<string>("TitleRomaji")
+                        .HasColumnType("text")
+                        .HasColumnName("title_romaji");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("url");
+
+                    b.HasKey("Id")
+                        .HasName("pk_arrangement_songs");
+
+                    b.HasIndex("CircleId")
+                        .HasDatabaseName("ix_arrangement_songs_circle_id");
+
+                    b.ToTable("arrangement_songs", (string)null);
                 });
 
             modelBuilder.Entity("Touhou_Songs.App.UserProfile.UserProfile", b =>
@@ -505,165 +666,6 @@ namespace Touhou_Songs.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Touhou_Songs.Infrastructure.BaseEntity.BaseEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("nextval('\"BaseEntitySequence\"')");
-
-                    NpgsqlPropertyBuilderExtensions.UseSequence(b.Property<int>("Id"));
-
-                    b.HasKey("Id");
-
-                    b.ToTable((string)null);
-
-                    b.UseTpcMappingStrategy();
-                });
-
-            modelBuilder.Entity("Touhou_Songs.App.TierListMaking.TierListItem", b =>
-                {
-                    b.HasBaseType("Touhou_Songs.Infrastructure.BaseEntity.BaseEntity");
-
-                    b.Property<string>("IconUrl")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("icon_url");
-
-                    b.Property<string>("Label")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("label");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer")
-                        .HasColumnName("order");
-
-                    b.Property<int>("SourceId")
-                        .HasColumnType("integer")
-                        .HasColumnName("source_id");
-
-                    b.Property<int>("TierListTierId")
-                        .HasColumnType("integer")
-                        .HasColumnName("tier_list_tier_id");
-
-                    b.HasIndex("SourceId")
-                        .HasDatabaseName("ix_tier_list_items_source_id");
-
-                    b.HasIndex("TierListTierId")
-                        .HasDatabaseName("ix_tier_list_items_tier_list_tier_id");
-
-                    b.ToTable("tier_list_items", (string)null);
-                });
-
-            modelBuilder.Entity("Touhou_Songs.App.TierListMaking.TierListTier", b =>
-                {
-                    b.HasBaseType("Touhou_Songs.Infrastructure.BaseEntity.BaseEntity");
-
-                    b.Property<string>("Label")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("label");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer")
-                        .HasColumnName("order");
-
-                    b.Property<int>("TierListId")
-                        .HasColumnType("integer")
-                        .HasColumnName("tier_list_id");
-
-                    b.HasIndex("TierListId")
-                        .HasDatabaseName("ix_tier_list_tiers_tier_list_id");
-
-                    b.ToTable("tier_list_tiers", (string)null);
-                });
-
-            modelBuilder.Entity("Touhou_Songs.Infrastructure.BaseEntity.BaseAuditedEntity", b =>
-                {
-                    b.HasBaseType("Touhou_Songs.Infrastructure.BaseEntity.BaseEntity");
-
-                    b.Property<string>("CreatedByUserName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("created_by_user_name");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_on");
-
-                    b.Property<string>("UpdatedByUserName")
-                        .HasColumnType("text")
-                        .HasColumnName("updated_by_user_name");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_on");
-
-                    b.ToTable((string)null);
-                });
-
-            modelBuilder.Entity("Touhou_Songs.App.TierListMaking.TierList", b =>
-                {
-                    b.HasBaseType("Touhou_Songs.Infrastructure.BaseEntity.BaseAuditedEntity");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("title");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("text")
-                        .HasDefaultValue("ArrangementSongs")
-                        .HasColumnName("type");
-
-                    b.ToTable("tier_lists", (string)null);
-                });
-
-            modelBuilder.Entity("Touhou_Songs.App.Unofficial.Songs.ArrangementSong", b =>
-                {
-                    b.HasBaseType("Touhou_Songs.Infrastructure.BaseEntity.BaseAuditedEntity");
-
-                    b.Property<int>("CircleId")
-                        .HasColumnType("integer")
-                        .HasColumnName("circle_id");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("status");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("title");
-
-                    b.Property<string>("TitleJapanese")
-                        .HasColumnType("text")
-                        .HasColumnName("title_japanese");
-
-                    b.Property<string>("TitleRomaji")
-                        .HasColumnType("text")
-                        .HasColumnName("title_romaji");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("url");
-
-                    b.HasIndex("CircleId")
-                        .HasDatabaseName("ix_arrangement_songs_circle_id");
-
-                    b.ToTable("arrangement_songs", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -745,6 +747,42 @@ namespace Touhou_Songs.Data.Migrations
                     b.Navigation("Game");
                 });
 
+            modelBuilder.Entity("Touhou_Songs.App.TierListMaking.TierListItem", b =>
+                {
+                    b.HasOne("Touhou_Songs.App.TierListMaking.TierListTier", "TierListTier")
+                        .WithMany("Items")
+                        .HasForeignKey("TierListTierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_tier_list_items_tier_list_tiers_tier_list_tier_id");
+
+                    b.Navigation("TierListTier");
+                });
+
+            modelBuilder.Entity("Touhou_Songs.App.TierListMaking.TierListTier", b =>
+                {
+                    b.HasOne("Touhou_Songs.App.TierListMaking.TierList", "TierList")
+                        .WithMany("Tiers")
+                        .HasForeignKey("TierListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_tier_list_tiers_tier_lists_tier_list_id");
+
+                    b.Navigation("TierList");
+                });
+
+            modelBuilder.Entity("Touhou_Songs.App.Unofficial.Songs.ArrangementSong", b =>
+                {
+                    b.HasOne("Touhou_Songs.App.Unofficial.Circles.Circle", "Circle")
+                        .WithMany("ArrangementSongs")
+                        .HasForeignKey("CircleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_arrangement_songs_circles_circle_id");
+
+                    b.Navigation("Circle");
+                });
+
             modelBuilder.Entity("Touhou_Songs.App.UserProfile.UserProfile", b =>
                 {
                     b.HasOne("Touhou_Songs.Infrastructure.Auth.AppUser", "User")
@@ -752,7 +790,7 @@ namespace Touhou_Songs.Data.Migrations
                         .HasForeignKey("Touhou_Songs.App.UserProfile.UserProfile", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_user_profiles_asp_net_users_user_id");
+                        .HasConstraintName("fk_user_profiles_users_user_id1");
 
                     b.Navigation("User");
                 });
@@ -799,51 +837,6 @@ namespace Touhou_Songs.Data.Migrations
                     b.Navigation("OfficialSong");
                 });
 
-            modelBuilder.Entity("Touhou_Songs.App.TierListMaking.TierListItem", b =>
-                {
-                    b.HasOne("Touhou_Songs.Infrastructure.BaseEntity.BaseAuditedEntity", "Source")
-                        .WithMany()
-                        .HasForeignKey("SourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_tier_list_items_base_entity_source_id");
-
-                    b.HasOne("Touhou_Songs.App.TierListMaking.TierListTier", "TierListTier")
-                        .WithMany("Items")
-                        .HasForeignKey("TierListTierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_tier_list_items_tier_list_tiers_tier_list_tier_id");
-
-                    b.Navigation("Source");
-
-                    b.Navigation("TierListTier");
-                });
-
-            modelBuilder.Entity("Touhou_Songs.App.TierListMaking.TierListTier", b =>
-                {
-                    b.HasOne("Touhou_Songs.App.TierListMaking.TierList", "TierList")
-                        .WithMany("Tiers")
-                        .HasForeignKey("TierListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_tier_list_tiers_tier_lists_tier_list_id");
-
-                    b.Navigation("TierList");
-                });
-
-            modelBuilder.Entity("Touhou_Songs.App.Unofficial.Songs.ArrangementSong", b =>
-                {
-                    b.HasOne("Touhou_Songs.App.Unofficial.Circles.Circle", "Circle")
-                        .WithMany("ArrangementSongs")
-                        .HasForeignKey("CircleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_arrangement_songs_circles_circle_id");
-
-                    b.Navigation("Circle");
-                });
-
             modelBuilder.Entity("Touhou_Songs.App.Official.OfficialGames.OfficialGame", b =>
                 {
                     b.Navigation("Songs");
@@ -854,14 +847,9 @@ namespace Touhou_Songs.Data.Migrations
                     b.Navigation("OfficialSongArrangementSongs");
                 });
 
-            modelBuilder.Entity("Touhou_Songs.App.Unofficial.Circles.Circle", b =>
+            modelBuilder.Entity("Touhou_Songs.App.TierListMaking.TierList", b =>
                 {
-                    b.Navigation("ArrangementSongs");
-                });
-
-            modelBuilder.Entity("Touhou_Songs.Infrastructure.Auth.AppUser", b =>
-                {
-                    b.Navigation("Profile");
+                    b.Navigation("Tiers");
                 });
 
             modelBuilder.Entity("Touhou_Songs.App.TierListMaking.TierListTier", b =>
@@ -869,14 +857,19 @@ namespace Touhou_Songs.Data.Migrations
                     b.Navigation("Items");
                 });
 
-            modelBuilder.Entity("Touhou_Songs.App.TierListMaking.TierList", b =>
+            modelBuilder.Entity("Touhou_Songs.App.Unofficial.Circles.Circle", b =>
                 {
-                    b.Navigation("Tiers");
+                    b.Navigation("ArrangementSongs");
                 });
 
             modelBuilder.Entity("Touhou_Songs.App.Unofficial.Songs.ArrangementSong", b =>
                 {
                     b.Navigation("OfficialSongArrangementSongs");
+                });
+
+            modelBuilder.Entity("Touhou_Songs.Infrastructure.Auth.AppUser", b =>
+                {
+                    b.Navigation("Profile");
                 });
 #pragma warning restore 612, 618
         }

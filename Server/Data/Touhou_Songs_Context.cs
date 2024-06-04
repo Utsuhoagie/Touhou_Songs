@@ -69,6 +69,10 @@ public partial class Touhou_Songs_Context : IdentityDbContext<AppUser>
 
 	void OnModelCreating_App(ModelBuilder modelBuilder)
 	{
+		modelBuilder.Entity<BaseEntity>()
+			.UseTpcMappingStrategy();
+
+
 		modelBuilder.Entity<Character>()
 			.HasOne(c => c.OriginGame)
 			.WithMany()

@@ -1,20 +1,18 @@
 ﻿using Touhou_Songs.App._JoinEntities;
 using Touhou_Songs.App.Official.OfficialSongs;
 using Touhou_Songs.App.Unofficial.Circles;
+using Touhou_Songs.Infrastructure.BaseEntity;
 
 namespace Touhou_Songs.App.Unofficial.Songs;
 
-public class ArrangementSong
+public class ArrangementSong : BaseAuditedEntity
 {
-	public int Id { get; set; }
-
 	public string Title { get; set; }
 	public string? TitleRomaji { get; set; }
 	public string? TitleJapanese { get; set; }
 	public string Url { get; set; }
 
 	public UnofficialStatus Status { get; set; }
-	// "Pending", "Confirmed", "Rejected"
 
 	public required int CircleId { get; set; }
 	public required Circle Circle { get; set; }
