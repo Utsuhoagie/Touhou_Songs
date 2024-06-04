@@ -1,11 +1,10 @@
 ﻿using Touhou_Songs.Infrastructure.Auth;
+using Touhou_Songs.Infrastructure.BaseEntity;
 
 namespace Touhou_Songs.App.UserProfile;
 
-public class UserProfile
+public class UserProfile : BaseAuditedEntity
 {
-	public int Id { get; set; }
-
 	public string Bio { get; set; } = "Write something about yourself!";
 
 	public string? AvatarUrl { get; set; }

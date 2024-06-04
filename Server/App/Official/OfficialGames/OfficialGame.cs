@@ -1,10 +1,10 @@
 ﻿using Touhou_Songs.App.Official.OfficialSongs;
+using Touhou_Songs.Infrastructure.BaseEntity;
 
 namespace Touhou_Songs.App.Official.OfficialGames;
 
-public class OfficialGame
+public class OfficialGame : BaseAuditedEntity
 {
-	public int Id { get; set; }
 	public string Title { get; set; }
 	public string GameCode { get; set; }
 	public string NumberCode { get; set; }

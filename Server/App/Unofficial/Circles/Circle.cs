@@ -1,13 +1,12 @@
 ﻿using Touhou_Songs.App.Unofficial.Songs;
+using Touhou_Songs.Infrastructure.BaseEntity;
 
 namespace Touhou_Songs.App.Unofficial.Circles;
 
-public class Circle
+public class Circle : BaseAuditedEntity
 {
-	public int Id { get; set; }
 	public string Name { get; set; }
 
-	// "Pending", "Confirmed", "Rejected"
 	public UnofficialStatus Status { get; set; }
 
 	public required List<ArrangementSong> ArrangementSongs { get; set; }

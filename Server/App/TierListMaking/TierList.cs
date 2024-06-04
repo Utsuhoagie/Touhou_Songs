@@ -17,7 +17,7 @@ public class TierList : BaseAuditedEntity
 	public string? Description { get; set; }
 	public TierListType Type { get; set; }
 
-	public required List<TierListTier> Tiers { get; set; }
+	public List<TierListTier> Tiers { get; set; } = new();
 
 	public TierList(string title, string? description, TierListType type)
 		=> (Title, Description, Type) = (title, description, type);

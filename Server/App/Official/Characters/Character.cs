@@ -1,11 +1,11 @@
 ﻿using Touhou_Songs.App.Official.OfficialGames;
 using Touhou_Songs.App.Official.OfficialSongs;
+using Touhou_Songs.Infrastructure.BaseEntity;
 
 namespace Touhou_Songs.App.Official.Characters;
 
-public class Character
+public class Character : BaseAuditedEntity
 {
-	public int Id { get; set; }
 	public string Name { get; set; }
 	public string ImageUrl { get; set; }
 
