@@ -27,6 +27,7 @@ public abstract class BaseIntegrationTest : IClassFixture<PostgreSqlTestContaine
 
 	protected async Task LoginAs(string role)
 	{
-
+		await Task.Delay(1);
+		throw new NotImplementedException();
 	}
 }

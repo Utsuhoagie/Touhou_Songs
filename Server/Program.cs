@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using System.Text.Json.Serialization;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -85,7 +86,11 @@ try
 
 	builder.Services
 		.AddControllers(o => o.Filters.Add<AppExceptionFilter>())
-		.AddJsonOptions(o => o.JsonSerializerOptions.PropertyNamingPolicy = null);
+		.AddJsonOptions(o =>
+		{
+			o.JsonSerializerOptions.PropertyNamingPolicy = null;
+			o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+		});
 
 	builder.Services
 		.AddValidatorsFromAssemblyContaining<CreateCircleValidator>();

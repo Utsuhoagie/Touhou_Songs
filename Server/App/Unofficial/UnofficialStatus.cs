@@ -1,5 +1,8 @@
 ﻿namespace Touhou_Songs.App.Unofficial;
 
+/// <summary>
+/// Pending, Confirmed, Rejected
+/// </summary>
 public enum UnofficialStatus
 {
 	Pending = 0,
