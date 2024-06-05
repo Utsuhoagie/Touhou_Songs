@@ -50,6 +50,13 @@ class UpdateTierListPlacementsHandler : BaseHandler<UpdateTierListPlacementsComm
 			return _resultFactory.NotFound($"Tier list {request.TierListId} not found");
 		}
 
+		var validateTierListBelongsToUser = _authUtils.ValidateEntityBelongsToUser(dbTierList);
+
+		if (!validateTierListBelongsToUser.Success)
+		{
+			return _resultFactory.FromResult(validateTierListBelongsToUser);
+		}
+
 		var dbSourceIdsOfTierListItems = request.Payload.Tiers
 			.SelectMany(tlt => tlt.Items)
 			.Select(tli => tli.SourceId);

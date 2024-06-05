@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Touhou_Songs.Infrastructure.BaseEntity;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 using Touhou_Songs.Infrastructure.Results;
 
@@ -65,6 +66,38 @@ public class AuthUtils
 		}
 
 		return resultFactory.Ok(userNameFromClaims);
+	}
+
+	public Result<bool> ValidateEntityBelongsToUser(BaseAuditedEntity entity)
+	{
+		var resultFactory = new ResultFactory<bool>();
+
+		var userFromClaims = _httpContextAccessor.HttpContext?.User;
+
+		if (userFromClaims is null)
+		{
+			return resultFactory.Unauthorized();
+		}
+
+		var userName = userFromClaims.FindFirstValue(ClaimTypes.Name);
+		var userEmail = userFromClaims.FindFirstValue(ClaimTypes.Email);
+		var userRoleString = userFromClaims.FindFirstValue(ClaimTypes.Role);
+
+		if (userName is null || userEmail is null || userRoleString is null)
+		{
+			return resultFactory.Unauthorized();
+		}
+
+		var entityBelongsToUser = userName == entity.CreatedByUserName;
+
+		if (entityBelongsToUser)
+		{
+			return resultFactory.Ok(true);
+		}
+		else
+		{
+			return resultFactory.Forbidden("Not allowed to change other users' data");
+		}
 	}
 }
 
