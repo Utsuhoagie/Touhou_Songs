@@ -47,24 +47,24 @@ class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, C
 
 	public override async Task<Result<CreateArrangementSongResponse>> Handle(CreateArrangementSongCommand command, CancellationToken cancellationToken)
 	{
-		var userWithRole_Result = await _authUtils.GetUserWithRole();
+		var userWithRole_Res = await _authUtils.GetUserWithRole();
 
 		// NOT REQUIRED, SINCE IT THROWS ALREADY
-		if (!userWithRole_Result.Success)
+		if (!userWithRole_Res.Success)
 		{
-			return _resultFactory.FromResult(userWithRole_Result);
+			return _resultFactory.FromResult(userWithRole_Res);
 		}
 
-		var (user, role) = userWithRole_Result.Value;
+		var (user, role) = userWithRole_Res.Value;
 
-		var circle = await _context.Circles.SingleOrDefaultAsync(c => c.Name == command.CircleName);
+		var dbCircle = await _context.Circles.SingleOrDefaultAsync(c => c.Name == command.CircleName);
 
-		if (circle is null)
+		if (dbCircle is null)
 		{
 			return _resultFactory.NotFound($"Circle with name = {command.CircleName} not found");
 		}
 
-		var officialSongs = await _context.OfficialSongs
+		var dbOfficialSongs = await _context.OfficialSongs
 			.Include(os => os.ArrangementSongs)
 			.Where(os => command.OfficialSongIds.Contains(os.Id))
 			.ToListAsync();
@@ -75,16 +75,16 @@ class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, C
 
 		var arrangementSong = new ArrangementSong(command.Title, command.Url, arrangementSongStatus)
 		{
-			CircleId = circle.Id,
-			Circle = circle,
-			OfficialSongs = officialSongs,
+			CircleId = dbCircle.Id,
+			Circle = dbCircle,
+			OfficialSongs = dbOfficialSongs,
 			OfficialSongArrangementSongs = new(),
 		};
 
 		_context.ArrangementSongs.Add(arrangementSong);
 		await _context.SaveChangesAsync();
 
-		var res = new CreateArrangementSongResponse(
+		var createArrangementSong_Res = new CreateArrangementSongResponse(
 			arrangementSong.Title, arrangementSong.TitleRomaji, arrangementSong.TitleJapanese,
 			arrangementSong.Url, Enum.GetName(arrangementSong.Status)!)
 		{
@@ -92,6 +92,6 @@ class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, C
 			OfficialSongTitles = arrangementSong.OfficialSongs.Select(os => os.Title).ToList(),
 		};
 
-		return _resultFactory.Ok(res);
+		return _resultFactory.Ok(createArrangementSong_Res);
 	}
 }

@@ -32,8 +32,8 @@ class GetSelfProfileHandler : BaseHandler<GetSelfProfileQuery, GetSelfProfileRes
 			return _resultFactory.NotFound("Profile not found");
 		}
 
-		var profile_Resp = new GetSelfProfileResponse(dbProfile.Bio, dbProfile.AvatarUrl);
+		var profile_Res = new GetSelfProfileResponse(dbProfile.Bio, dbProfile.AvatarUrl);
 
-		return _resultFactory.Ok(profile_Resp);
+		return _resultFactory.Ok(profile_Res);
 	}
 }

@@ -15,19 +15,19 @@ class ValidateArrangementSongStatusHandler : BaseHandler<ValidateArrangementSong
 
 	public override async Task<Result<string>> Handle(ValidateArrangementSongStatusCommand command, CancellationToken cancellationToken)
 	{
-		var arrangementSong = await _context.ArrangementSongs.SingleOrDefaultAsync(a => a.Id == command.Id);
+		var dbArrangementSong = await _context.ArrangementSongs.SingleOrDefaultAsync(a => a.Id == command.Id);
 
-		if (arrangementSong is null)
+		if (dbArrangementSong is null)
 		{
 			return _resultFactory.NotFound($"ArrangementSong {command.Id} not found.");
 		}
 
-		if (arrangementSong.Status != UnofficialStatus.Pending)
+		if (dbArrangementSong.Status != UnofficialStatus.Pending)
 		{
-			return _resultFactory.Conflict($"ArrangementSong {command.Id} is already approved. Status = {arrangementSong.Status}.");
+			return _resultFactory.Conflict($"ArrangementSong {command.Id} is already approved. Status = {dbArrangementSong.Status}.");
 		}
 
-		arrangementSong.Status = Enum.Parse<UnofficialStatus>(command.Status);
+		dbArrangementSong.Status = Enum.Parse<UnofficialStatus>(command.Status);
 		await _context.SaveChangesAsync();
 
 		var message = $"ArrangementSong [{command.Id}] was {command.Status} successfully.";

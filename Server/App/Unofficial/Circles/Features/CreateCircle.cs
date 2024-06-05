@@ -18,10 +18,9 @@ public record CreateCircleCommandResponse
 {
 	public string Name { get; set; }
 
-	// "Pending", "Confirmed", "Rejected"
-	public string Status { get; set; }
+	public UnofficialStatus Status { get; set; }
 
-	public CreateCircleCommandResponse(string name, string status) => (Name, Status) = (name, status);
+	public CreateCircleCommandResponse(string name, UnofficialStatus status) => (Name, Status) = (name, status);
 };
 
 public class CreateCircleValidator : AbstractValidator<CreateCircleCommand>
@@ -43,20 +42,20 @@ class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommand
 
 	public override async Task<Result<CreateCircleCommandResponse>> Handle(CreateCircleCommand command, CancellationToken cancellationToken)
 	{
-		var userWithRole_Result = await _authUtils.GetUserWithRole();
+		var userWithRole_Res = await _authUtils.GetUserWithRole();
 
-		if (!userWithRole_Result.Success)
+		if (!userWithRole_Res.Success)
 		{
-			return _resultFactory.FromResult(userWithRole_Result);
+			return _resultFactory.FromResult(userWithRole_Res);
 		}
 
-		var (user, role) = userWithRole_Result.Value;
+		var (user, role) = userWithRole_Res.Value;
 
-		var validationResult = await _validator.ValidateAsync(command);
+		var validation_Res = await _validator.ValidateAsync(command);
 
-		if (!validationResult.IsValid)
+		if (!validation_Res.IsValid)
 		{
-			var errorMessages = validationResult.Errors.Select(vf => vf.ErrorMessage);
+			var errorMessages = validation_Res.Errors.Select(vf => vf.ErrorMessage);
 			return _resultFactory.BadRequest(null, errorMessages);
 		}
 
@@ -72,7 +71,7 @@ class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommand
 		_context.Circles.Add(circle);
 		await _context.SaveChangesAsync();
 
-		var res = new CreateCircleCommandResponse(circle.Name, Enum.GetName(circle.Status)!);
+		var res = new CreateCircleCommandResponse(circle.Name, circle.Status);
 		return _resultFactory.Ok(res);
 	}
 }

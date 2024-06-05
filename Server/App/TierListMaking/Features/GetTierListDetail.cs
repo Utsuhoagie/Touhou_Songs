@@ -61,7 +61,7 @@ class GetTierListDetailHandler : BaseHandler<GetTierListDetailQuery, GetTierList
 			return _resultFactory.NotFound($"Tier list {query.Id} not found");
 		}
 
-		var tierListResponse = new GetTierListDetailResponse(dbTierList.Title, dbTierList.Description, dbTierList.Type)
+		var tierList_Res = new GetTierListDetailResponse(dbTierList.Title, dbTierList.Description, dbTierList.Type)
 		{
 			Id = dbTierList.Id,
 			CreatedOn = dbTierList.CreatedOn,
@@ -79,6 +79,6 @@ class GetTierListDetailHandler : BaseHandler<GetTierListDetailQuery, GetTierList
 			}).ToList(),
 		};
 
-		return _resultFactory.Ok(tierListResponse);
+		return _resultFactory.Ok(tierList_Res);
 	}
 }

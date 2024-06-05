@@ -29,9 +29,11 @@ class GetOfficialSongsHandler : BaseHandler<GetOfficialSongsQuery, IEnumerable<O
 	{
 		var officialSongs_Res = await _context.OfficialSongs
 			.Include(os => os.Game)
-			.Where(os => query.SearchTitle == null || EF.Functions.ILike(os.Title, $"%{query.SearchTitle}%"))
-			.Where(os => query.GameCode == null || os.Game.GameCode == query.GameCode)
-			.OrderBy(os => os.GameId).ThenBy(os => os.Id)
+			.Where(os =>
+				(query.SearchTitle == null || EF.Functions.ILike(os.Title, $"%{query.SearchTitle}%"))
+				&& (query.GameCode == null || os.Game.GameCode == query.GameCode))
+			.OrderBy(os => os.GameId)
+				.ThenBy(os => os.Id)
 			.Select(os => new OfficialSongResponse(os.Id, os.Title, os.Context)
 			{
 				GameCode = os.Game.GameCode

@@ -25,23 +25,23 @@ class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, string>
 
 	public override async Task<Result<string>> Handle(CreateCharacterCommand command, CancellationToken cancellationToken)
 	{
-		var originGame = await _context.OfficialGames
+		var dbOriginGame = await _context.OfficialGames
 			.SingleOrDefaultAsync(og => EF.Functions.ILike(og.GameCode, $"{command.OriginGameCode}"));
 
-		if (originGame is null)
+		if (dbOriginGame is null)
 		{
 			return _resultFactory.NotFound($"Official OriginGame {command.OriginGameCode} not found");
 		}
 
-		var officialSongs = await _context.OfficialSongs
+		var dbOfficialSongs = await _context.OfficialSongs
 			.Where(os => command.SongTitles.Contains(os.Title))
 			.ToListAsync();
 
 		var character = new Character(command.Name, command.ImageUrl)
 		{
-			OriginGameId = originGame.Id,
-			OriginGame = originGame,
-			OfficialSongs = officialSongs,
+			OriginGameId = dbOriginGame.Id,
+			OriginGame = dbOriginGame,
+			OfficialSongs = dbOfficialSongs,
 		};
 
 		_context.Characters.Add(character);

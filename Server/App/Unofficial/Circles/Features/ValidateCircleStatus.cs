@@ -15,19 +15,19 @@ class ValidateCircleStatusHandler : BaseHandler<ValidateCircleStatusCommand, str
 
 	public override async Task<Result<string>> Handle(ValidateCircleStatusCommand command, CancellationToken cancellationToken)
 	{
-		var circle = await _context.Circles.SingleOrDefaultAsync(c => c.Name == command.Name);
+		var dbCircle = await _context.Circles.SingleOrDefaultAsync(c => c.Name == command.Name);
 
-		if (circle is null)
+		if (dbCircle is null)
 		{
 			return _resultFactory.NotFound($"Circle {command.Name} not found.");
 		}
 
-		if (circle.Status != UnofficialStatus.Pending)
+		if (dbCircle.Status != UnofficialStatus.Pending)
 		{
-			return _resultFactory.Conflict($"Circle {command.Name} is already approved. Status = {circle.Status}.");
+			return _resultFactory.Conflict($"Circle {command.Name} is already approved. Status = {dbCircle.Status}.");
 		}
 
-		circle.Status = Enum.Parse<UnofficialStatus>(command.Status);
+		dbCircle.Status = Enum.Parse<UnofficialStatus>(command.Status);
 		await _context.SaveChangesAsync();
 
 		var message = $"Circle {command.Name} was {command.Status} successfully.";

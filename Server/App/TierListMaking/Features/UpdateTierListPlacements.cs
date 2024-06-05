@@ -103,7 +103,7 @@ class UpdateTierListPlacementsHandler : BaseHandler<UpdateTierListPlacementsComm
 
 		await _context.SaveChangesAsync();
 
-		var response = new UpdateTierListPlacementsResponse
+		var updateTierListPlacements_Res = new UpdateTierListPlacementsResponse
 		{
 			Id = dbTierList.Id,
 			CreatedOn = dbTierList.CreatedOn,
@@ -112,6 +112,6 @@ class UpdateTierListPlacementsHandler : BaseHandler<UpdateTierListPlacementsComm
 			UpdatedByUserName = dbTierList.UpdatedByUserName,
 		};
 
-		return _resultFactory.Ok(response);
+		return _resultFactory.Ok(updateTierListPlacements_Res);
 	}
 }

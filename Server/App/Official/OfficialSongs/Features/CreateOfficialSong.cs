@@ -25,23 +25,23 @@ class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string>
 
 	public override async Task<Result<string>> Handle(CreateOfficialSongCommand command, CancellationToken cancellationToken)
 	{
-		var officialGame = await _context.OfficialGames
+		var dbOfficialGame = await _context.OfficialGames
 			.SingleOrDefaultAsync(og => EF.Functions.ILike(og.GameCode, $"{command.GameCode}"));
 
-		if (officialGame is null)
+		if (dbOfficialGame is null)
 		{
 			return _resultFactory.NotFound($"Official Game {command.GameCode} not found");
 		}
 
-		var charactersWithSong = await _context.Characters
+		var dbCharactersWithSong = await _context.Characters
 			.Where(c => command.CharacterNames.Contains(c.Name))
 			.ToListAsync();
 
 		var officialSong = new OfficialSong(command.Title, command.Context)
 		{
-			GameId = officialGame.Id,
-			Game = officialGame,
-			Characters = charactersWithSong,
+			GameId = dbOfficialGame.Id,
+			Game = dbOfficialGame,
+			Characters = dbCharactersWithSong,
 			ArrangementSongs = new(),
 			OfficialSongArrangementSongs = new(),
 		};
