@@ -1,8 +1,10 @@
-﻿using Touhou_Songs.App.Unofficial.Songs;
+﻿using System.Diagnostics;
+using Touhou_Songs.App.Unofficial.Songs;
 using Touhou_Songs.Infrastructure.BaseEntity;
 
 namespace Touhou_Songs.App.Unofficial.Circles;
 
+[DebuggerDisplay("{Name} - {Status}")]
 public class Circle : BaseAuditedEntity
 {
 	public string Name { get; set; }

@@ -1,4 +1,5 @@
-﻿using Touhou_Songs.App._JoinEntities;
+﻿using System.Diagnostics;
+using Touhou_Songs.App._JoinEntities;
 using Touhou_Songs.App.Official.Characters;
 using Touhou_Songs.App.Official.OfficialGames;
 using Touhou_Songs.App.Unofficial.Songs;
@@ -6,6 +7,7 @@ using Touhou_Songs.Infrastructure.BaseEntity;
 
 namespace Touhou_Songs.App.Official.OfficialSongs;
 
+[DebuggerDisplay("{Title} - {Context}")]
 public class OfficialSong : BaseAuditedEntity
 {
 	public string Title { get; set; }

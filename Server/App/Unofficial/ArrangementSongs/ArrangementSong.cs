@@ -1,10 +1,12 @@
-﻿using Touhou_Songs.App._JoinEntities;
+﻿using System.Diagnostics;
+using Touhou_Songs.App._JoinEntities;
 using Touhou_Songs.App.Official.OfficialSongs;
 using Touhou_Songs.App.Unofficial.Circles;
 using Touhou_Songs.Infrastructure.BaseEntity;
 
 namespace Touhou_Songs.App.Unofficial.Songs;
 
+[DebuggerDisplay("{Title} - {Status}")]
 public class ArrangementSong : BaseAuditedEntity
 {
 	public string Title { get; set; }
