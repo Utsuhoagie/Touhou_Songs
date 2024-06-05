@@ -13,6 +13,13 @@ public class TierListsController : ApiController
 
 	public TierListsController(ISender sender) => _sender = sender;
 
+	[HttpGet("{Id}")]
+	public async Task<IActionResult> GetTierListDetail([FromRoute] GetTierListDetailQuery query)
+	{
+		var res = await _sender.Send(query);
+		return ToResponse(res);
+	}
+
 	[HttpPost]
 	public async Task<IActionResult> CreateTierList([FromBody] CreateTierListCommand command)
 	{
