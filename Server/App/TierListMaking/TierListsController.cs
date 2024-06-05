@@ -19,4 +19,12 @@ public class TierListsController : ApiController
 		var res = await _sender.Send(command);
 		return ToResponse(res);
 	}
+
+	[HttpPut("{Id}")]
+	public async Task<IActionResult> UpdateTierListPlacements([FromRoute] int Id, [FromBody] UpdateTierListPlacementsPayload payload)
+	{
+		var command = new UpdateTierListPlacementsCommand(Id, payload);
+		var res = await _sender.Send(command);
+		return ToResponse(res);
+	}
 }
