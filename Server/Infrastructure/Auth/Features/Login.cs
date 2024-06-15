@@ -40,16 +40,11 @@ class LoginHandler : BaseHandler<LoginCommand, LoginResponse>
 	{
 		var user = await _userManager.FindByEmailAsync(command.Email);
 
-		if (user is null)
-		{
-			return _resultFactory.NotFound($"User with email {command.Email} not found.");
-		}
-
-		var checkPassword = await _userManager.CheckPasswordAsync(user, command.Password);
+		var checkPassword = user is not null && await _userManager.CheckPasswordAsync(user, command.Password);
 
 		if (!checkPassword)
 		{
-			return _resultFactory.Unauthorized();
+			return _resultFactory.Unauthorized($"Wrong email or password");
 		}
 
 		var claims = new List<Claim>

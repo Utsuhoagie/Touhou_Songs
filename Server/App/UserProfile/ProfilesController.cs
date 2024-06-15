@@ -16,14 +16,14 @@ public class ProfilesController : ApiController
 		_sender = sender;
 	}
 
-	[HttpGet("self")]
+	[HttpGet("Self")]
 	public async Task<IActionResult> GetSelfProfile([FromQuery] GetSelfProfileQuery query)
 	{
 		var res = await _sender.Send(query);
 		return ToResponse(res);
 	}
 
-	[HttpPut("update")]
+	[HttpPut("Update")]
 	public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileCommand command)
 	{
 		var res = await _sender.Send(command);
