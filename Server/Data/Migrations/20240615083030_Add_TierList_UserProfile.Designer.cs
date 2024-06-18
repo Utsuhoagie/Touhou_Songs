@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Touhou_Songs.Data;
@@ -11,9 +12,11 @@ using Touhou_Songs.Data;
 namespace Touhou_Songs.Data.Migrations
 {
     [DbContext(typeof(Touhou_Songs_Context))]
-    partial class Touhou_Songs_ContextModelSnapshot : ModelSnapshot
+    [Migration("20240615083030_Add_TierList_UserProfile")]
+    partial class Add_TierList_UserProfile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

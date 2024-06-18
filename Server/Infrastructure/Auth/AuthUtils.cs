@@ -1,8 +1,7 @@
-﻿using System.Net;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Infrastructure.BaseEntity;
-using Touhou_Songs.Infrastructure.ExceptionHandling;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.Infrastructure.Auth;
@@ -15,7 +14,7 @@ public class AuthUtils
 	public AuthUtils(IHttpContextAccessor httpContextAccessor, UserManager<AppUser> userManager)
 		=> (_httpContextAccessor, _userManager) = (httpContextAccessor, userManager);
 
-	public async Task<Result<(AppUser user, AuthRole role)>> GetUserWithRole()
+	public async Task<Result<(AppUser User, AuthRole Role)>> GetUserWithRole()
 	{
 		var resultFactory = new ResultFactory<(AppUser user, AuthRole role)>();
 
@@ -31,20 +30,21 @@ public class AuthUtils
 
 		if (userEmail is null || userRoleString is null)
 		{
-			throw new AppException(HttpStatusCode.Unauthorized);
-			//return resultFactory.Unauthorized();
+			return resultFactory.Unauthorized();
 		}
 
 		var userRole = Enum.Parse<AuthRole>(userRoleString);
-		var user = await _userManager.FindByEmailAsync(userEmail);
+		var dbUser = await _userManager
+			.Users
+			.Include(u => u.Profile)
+			.SingleOrDefaultAsync(u => u.Email == userEmail);
 
-		if (user is null)
+		if (dbUser is null)
 		{
-			throw new AppException(HttpStatusCode.Unauthorized);
-			//return resultFactory.Unauthorized();
+			return resultFactory.Unauthorized();
 		}
 
-		return resultFactory.Ok((user, userRole));
+		return resultFactory.Ok((dbUser, userRole));
 	}
 
 	public Result<string> GetUserName()
@@ -98,33 +98,5 @@ public class AuthUtils
 		{
 			return resultFactory.Forbidden("Not allowed to change other users' data");
 		}
-	}
-}
-
-/// <summary>
-/// Should probably only be used for the DbContext
-/// </summary>
-public static class AuthUtilsStatic
-{
-	public static Result<string> GetUserName(IHttpContextAccessor httpContextAccessor)
-	{
-		var resultFactory = new ResultFactory<string>();
-
-		var userFromClaims = httpContextAccessor.HttpContext?.User;
-
-		if (userFromClaims is null)
-		{
-			return resultFactory.Unauthorized();
-		}
-
-		var userNameFromClaims = userFromClaims.FindFirstValue(ClaimTypes.Name);
-
-		if (userNameFromClaims is null)
-		{
-			//throw new AppException(HttpStatusCode.Unauthorized);
-			return resultFactory.Unauthorized();
-		}
-
-		return resultFactory.Ok(userNameFromClaims);
 	}
 }

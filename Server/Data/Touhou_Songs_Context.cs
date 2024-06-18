@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.App._JoinEntities;
 using Touhou_Songs.App.Official.Characters;
-using Touhou_Songs.App.Official.OfficialGames;
 using Touhou_Songs.App.Official.OfficialSongs;
 using Touhou_Songs.App.TierListMaking;
 using Touhou_Songs.App.Unofficial.Circles;
@@ -11,31 +11,9 @@ using Touhou_Songs.App.Unofficial.Songs;
 using Touhou_Songs.App.UserProfile;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseEntity;
+using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.Data;
-
-// DbSets only
-public partial class Touhou_Songs_Context : IdentityDbContext<AppUser>
-{
-	#region ---- Official ----
-	public DbSet<OfficialGame> OfficialGames { get; set; } = default!;
-	public DbSet<OfficialSong> OfficialSongs { get; set; } = default!;
-	public DbSet<Character> Characters { get; set; } = default!;
-	public DbSet<CharacterOfficialSong> CharacterOfficialSongs { get; set; } = default!;
-	#endregion
-
-	#region ---- Unofficial ----
-	public DbSet<Circle> Circles { get; set; } = default!;
-	public DbSet<ArrangementSong> ArrangementSongs { get; set; } = default!;
-	#endregion
-
-	#region ---- Profile ----
-	public DbSet<UserProfile> UserProfiles { get; set; } = default!;
-	public DbSet<TierList> TierLists { get; set; } = default!;
-	public DbSet<TierListTier> TierListTiers { get; set; } = default!;
-	public DbSet<TierListItem> TierListItems { get; set; } = default!;
-	#endregion
-}
 
 public partial class Touhou_Songs_Context : IdentityDbContext<AppUser>
 {
@@ -130,23 +108,24 @@ public partial class Touhou_Songs_Context : IdentityDbContext<AppUser>
 		OnModelCreating_App(modelBuilder);
 	}
 
-	public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+	public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{
-		var currentUserName = AuthUtilsStatic.GetUserName(_httpContextAccessor).Value;
+		var currentUserNameResult = GetUserName();
 
 		// Allow saving for non-auth actions
 		// or for seeding test data
-		if (currentUserName is null)
+		if (!currentUserNameResult.Success)
 		{
-			return base.SaveChangesAsync(cancellationToken);
+			return await base.SaveChangesAsync(cancellationToken);
 		}
+
+		var currentUserName = currentUserNameResult.Value!;
 
 		var changedEntities = ChangeTracker
 			.Entries()
 			.Where(entity =>
 				entity.Entity is BaseAuditedEntity
-				&& (entity.State == EntityState.Added
-					|| entity.State == EntityState.Modified));
+				&& (new[] { EntityState.Added, EntityState.Modified }).Contains(entity.State));
 
 		foreach (var changedEntity in changedEntities)
 		{
@@ -165,6 +144,22 @@ public partial class Touhou_Songs_Context : IdentityDbContext<AppUser>
 			}
 		}
 
-		return base.SaveChangesAsync(cancellationToken);
+		return await base.SaveChangesAsync(cancellationToken);
+	}
+
+	private Result<string> GetUserName()
+	{
+		var resultFactory = new ResultFactory<string>();
+
+		var userFromClaims = _httpContextAccessor.HttpContext?.User;
+
+		var userNameFromClaims = userFromClaims?.FindFirstValue(ClaimTypes.Name);
+
+		if (userFromClaims is null || userNameFromClaims is null)
+		{
+			return resultFactory.Unauthorized();
+		}
+
+		return resultFactory.Ok(userNameFromClaims);
 	}
 }
