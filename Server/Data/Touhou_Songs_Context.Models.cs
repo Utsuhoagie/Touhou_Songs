@@ -12,7 +12,6 @@ using Touhou_Songs.Infrastructure.Auth;
 
 namespace Touhou_Songs.Data;
 
-// DbSets only
 public partial class Touhou_Songs_Context : IdentityDbContext<AppUser>
 {
 	#region ---- Official ----

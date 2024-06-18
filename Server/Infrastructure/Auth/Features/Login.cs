@@ -38,9 +38,10 @@ class LoginHandler : BaseHandler<LoginCommand, LoginResponse>
 
 	public override async Task<Result<LoginResponse>> Handle(LoginCommand command, CancellationToken cancellationToken)
 	{
-		var user = await _userManager.FindByEmailAsync(command.Email);
+		var dbUser = await _userManager.FindByEmailAsync(command.Email);
 
-		var checkPassword = user is not null && await _userManager.CheckPasswordAsync(user, command.Password);
+		var checkPassword = dbUser is not null
+			&& await _userManager.CheckPasswordAsync(dbUser, command.Password);
 
 		if (!checkPassword)
 		{
@@ -49,12 +50,12 @@ class LoginHandler : BaseHandler<LoginCommand, LoginResponse>
 
 		var claims = new List<Claim>
 		{
-			new Claim(ClaimTypes.Name, user.UserName ?? "NONE"),
-			new Claim(ClaimTypes.Email, user.Email ?? "NONE"),
+			new Claim(ClaimTypes.Name, dbUser!.UserName ?? "NONE"),
+			new Claim(ClaimTypes.Email, dbUser.Email ?? "NONE"),
 			new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
 		};
 
-		var userRoles = (await _userManager.GetRolesAsync(user)).ToList();
+		var userRoles = (await _userManager.GetRolesAsync(dbUser)).ToList();
 
 		userRoles.ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role)));
 
