@@ -8,7 +8,7 @@ public abstract class BaseIntegrationTest : IClassFixture<PostgreSqlTestContaine
 {
 	private readonly WebApplicationFactory<Program> _webAppFactory;
 	protected readonly HttpClient HttpClient;
-	protected readonly Touhou_Songs_Context Context;
+	protected readonly AppDbContext Context;
 
 	public BaseIntegrationTest(PostgreSqlTestContainer fixture)
 	{
@@ -20,7 +20,7 @@ public abstract class BaseIntegrationTest : IClassFixture<PostgreSqlTestContaine
 		HttpClient = _webAppFactory.CreateClient(clientOptions);
 
 		using var scope = _webAppFactory.Services.CreateScope();
-		Context = scope.ServiceProvider.GetRequiredService<Touhou_Songs_Context>();
+		Context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 	}
 
 	public void Dispose() => _webAppFactory.Dispose();

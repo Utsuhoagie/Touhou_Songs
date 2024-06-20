@@ -23,7 +23,7 @@ public record OfficialSongResponse : BaseAuditedEntityResponse
 
 class GetOfficialSongsHandler : BaseHandler<GetOfficialSongsQuery, IEnumerable<OfficialSongResponse>>
 {
-	public GetOfficialSongsHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public GetOfficialSongsHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<IEnumerable<OfficialSongResponse>>> Handle(GetOfficialSongsQuery query, CancellationToken cancellationToken)
 	{

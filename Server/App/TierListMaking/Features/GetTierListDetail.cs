@@ -47,7 +47,7 @@ public record TierListItemResponse : BaseEntityResponse
 
 class GetTierListDetailHandler : BaseHandler<GetTierListDetailQuery, GetTierListDetailResponse>
 {
-	public GetTierListDetailHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context)
+	public GetTierListDetailHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context)
 	{
 	}
 

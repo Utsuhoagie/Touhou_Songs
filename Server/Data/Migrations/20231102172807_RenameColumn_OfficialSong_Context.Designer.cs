@@ -11,7 +11,7 @@ using Touhou_Songs.Data;
 
 namespace Touhou_Songs.Data.Migrations
 {
-    [DbContext(typeof(Touhou_Songs_Context))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20231102172807_RenameColumn_OfficialSong_Context")]
     partial class RenameColumn_OfficialSong_Context
     {

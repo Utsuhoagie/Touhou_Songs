@@ -13,7 +13,7 @@ public record ValidateArrangementSongStatusCommand(int Id, ValidateArrangementSo
 
 class ValidateArrangementSongStatusHandler : BaseHandler<ValidateArrangementSongStatusCommand, string>
 {
-	public ValidateArrangementSongStatusHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public ValidateArrangementSongStatusHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<string>> Handle(ValidateArrangementSongStatusCommand command, CancellationToken cancellationToken)
 	{

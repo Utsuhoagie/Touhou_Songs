@@ -11,7 +11,7 @@ public record CreateCharacterCommand(string Name, string ImageUrl, string Origin
 
 class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, string>
 {
-	public CreateCharacterHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public CreateCharacterHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<string>> Handle(CreateCharacterCommand command, CancellationToken cancellationToken)
 	{

@@ -33,7 +33,7 @@ class LoginHandler : BaseHandler<LoginCommand, LoginResponse>
 	private readonly UserManager<AppUser> _userManager;
 	private readonly ConfigurationOptions _config;
 
-	public LoginHandler(AuthUtils authUtils, Touhou_Songs_Context context, UserManager<AppUser> userManager, IOptions<ConfigurationOptions> options) : base(authUtils, context)
+	public LoginHandler(AuthUtils authUtils, AppDbContext context, UserManager<AppUser> userManager, IOptions<ConfigurationOptions> options) : base(authUtils, context)
 		=> (_userManager, _config) = (userManager, options.Value);
 
 	public override async Task<Result<LoginResponse>> Handle(LoginCommand command, CancellationToken cancellationToken)

@@ -11,7 +11,7 @@ using Touhou_Songs.Data;
 
 namespace Touhou_Songs.Data.Migrations
 {
-    [DbContext(typeof(Touhou_Songs_Context))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20231121162330_Add_Circle-ArrangementSong_1-N_Relation")]
     partial class Add_CircleArrangementSong_1N_Relation
     {

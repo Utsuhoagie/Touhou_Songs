@@ -11,7 +11,7 @@ public record CreateOfficialSongCommand(string Title, string Context, string Gam
 
 class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string>
 {
-	public CreateOfficialSongHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public CreateOfficialSongHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<string>> Handle(CreateOfficialSongCommand command, CancellationToken cancellationToken)
 	{

@@ -35,7 +35,7 @@ public record OfficialSongSimpleResponse : BaseAuditedEntityResponse
 
 class GetArrangementSongDetailHandler : BaseHandler<GetArrangementSongDetailQuery, ArrangementSongDetailResponse>
 {
-	public GetArrangementSongDetailHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public GetArrangementSongDetailHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<ArrangementSongDetailResponse>> Handle(GetArrangementSongDetailQuery query, CancellationToken cancellationToken)
 	{

@@ -11,7 +11,7 @@ using Touhou_Songs.Data;
 
 namespace Touhou_Songs.Data.Migrations
 {
-    [DbContext(typeof(Touhou_Songs_Context))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20231115053733_Add_OfficialSong-Character_M-N_Relation")]
     partial class Add_OfficialSongCharacter_MN_Relation
     {

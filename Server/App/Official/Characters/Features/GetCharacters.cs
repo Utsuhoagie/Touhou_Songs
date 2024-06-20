@@ -24,7 +24,7 @@ public record CharacterResponse : BaseAuditedEntityResponse
 
 class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<CharacterResponse>>
 {
-	public GetCharactersHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public GetCharactersHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<IEnumerable<CharacterResponse>>> Handle(GetCharactersQuery query, CancellationToken cancellationToken)
 	{

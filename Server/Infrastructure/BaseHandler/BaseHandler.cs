@@ -9,10 +9,10 @@ public abstract class BaseHandler<TRequest, TResponse> : IRequestHandler<TReques
 	where TRequest : IRequest<Result<TResponse>>
 {
 	protected readonly AuthUtils _authUtils;
-	protected readonly Touhou_Songs_Context _context;
+	protected readonly AppDbContext _context;
 	protected readonly ResultFactory<TResponse> _resultFactory = new();
 
-	public BaseHandler(AuthUtils authUtils, Touhou_Songs_Context context)
+	public BaseHandler(AuthUtils authUtils, AppDbContext context)
 		=> (_authUtils, _context) = (authUtils, context);
 
 	public abstract Task<Result<TResponse>> Handle(TRequest request, CancellationToken cancellationToken);

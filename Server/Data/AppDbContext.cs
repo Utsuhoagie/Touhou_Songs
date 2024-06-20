@@ -13,11 +13,11 @@ using Touhou_Songs.Infrastructure.BaseEntity;
 
 namespace Touhou_Songs.Data;
 
-public partial class Touhou_Songs_Context : IdentityDbContext<AppUser>
+public partial class AppDbContext : IdentityDbContext<AppUser>
 {
 	private readonly IHttpContextAccessor _httpContextAccessor;
 
-	public Touhou_Songs_Context(DbContextOptions<Touhou_Songs_Context> options, IHttpContextAccessor httpContextAccessor) : base(options)
+	public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
 	{
 		_httpContextAccessor = httpContextAccessor;
 	}

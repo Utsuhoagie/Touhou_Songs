@@ -37,7 +37,7 @@ public record UpdateTierListPlacementsResponse : BaseAuditedEntityResponse
 
 class UpdateTierListPlacementsHandler : BaseHandler<UpdateTierListPlacementsCommand, UpdateTierListPlacementsResponse>
 {
-	public UpdateTierListPlacementsHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public UpdateTierListPlacementsHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<UpdateTierListPlacementsResponse>> Handle(UpdateTierListPlacementsCommand request, CancellationToken cancellationToken)
 	{

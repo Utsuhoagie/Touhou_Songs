@@ -21,7 +21,7 @@ class ChangePasswordHandler : BaseHandler<ChangePasswordCommand, ChangePasswordR
 {
 	private readonly UserManager<AppUser> _userManager;
 
-	public ChangePasswordHandler(AuthUtils authUtils, Touhou_Songs_Context context, UserManager<AppUser> userManager) : base(authUtils, context)
+	public ChangePasswordHandler(AuthUtils authUtils, AppDbContext context, UserManager<AppUser> userManager) : base(authUtils, context)
 		=> _userManager = userManager;
 
 	public async override Task<Result<ChangePasswordResponse>> Handle(ChangePasswordCommand command, CancellationToken cancellationToken)

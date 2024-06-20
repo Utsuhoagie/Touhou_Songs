@@ -13,7 +13,7 @@ public record ValidateCircleStatusCommand(string Name, ValidateCircleStatusPaylo
 
 class ValidateCircleStatusHandler : BaseHandler<ValidateCircleStatusCommand, string>
 {
-	public ValidateCircleStatusHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public ValidateCircleStatusHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<string>> Handle(ValidateCircleStatusCommand command, CancellationToken cancellationToken)
 	{

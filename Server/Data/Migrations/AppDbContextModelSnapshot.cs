@@ -10,8 +10,8 @@ using Touhou_Songs.Data;
 
 namespace Touhou_Songs.Data.Migrations
 {
-    [DbContext(typeof(Touhou_Songs_Context))]
-    partial class Touhou_Songs_ContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(AppDbContext))]
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

@@ -46,7 +46,7 @@ public record CharacterDetailResponse : BaseAuditedEntityResponse
 
 class GetCharacterDetailHandler : BaseHandler<GetCharacterDetailQuery, CharacterDetailResponse>
 {
-	public GetCharacterDetailHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public GetCharacterDetailHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<CharacterDetailResponse>> Handle(GetCharacterDetailQuery request, CancellationToken cancellationToken)
 	{

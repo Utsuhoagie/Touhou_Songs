@@ -11,7 +11,7 @@ using Touhou_Songs.Data;
 
 namespace Touhou_Songs.Data.Migrations
 {
-    [DbContext(typeof(Touhou_Songs_Context))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20240602200001_ReAdd_TierListTier_And_Item")]
     partial class ReAdd_TierListTier_And_Item
     {

@@ -22,7 +22,7 @@ public record CreateTierListResponse : BaseAuditedEntityResponse
 
 class CreateTierListHandler : BaseHandler<CreateTierListCommand, CreateTierListResponse>
 {
-	public CreateTierListHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public CreateTierListHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<CreateTierListResponse>> Handle(CreateTierListCommand request, CancellationToken cancellationToken)
 	{

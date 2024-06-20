@@ -10,9 +10,9 @@ namespace Touhou_Songs.App;
 [ApiController]
 public class DataImporterController : ControllerBase
 {
-	private readonly Touhou_Songs_Context _context;
+	private readonly AppDbContext _context;
 
-	public DataImporterController(Touhou_Songs_Context context) => _context = context;
+	public DataImporterController(AppDbContext context) => _context = context;
 
 	public class ImportSongsOfGameCommand
 	{

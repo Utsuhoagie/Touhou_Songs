@@ -23,7 +23,7 @@ public record CircleResponse : BaseAuditedEntityResponse
 
 class GetCirclesHandler : BaseHandler<GetCirclesQuery, IEnumerable<CircleResponse>>
 {
-	public GetCirclesHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public GetCirclesHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<IEnumerable<CircleResponse>>> Handle(GetCirclesQuery query, CancellationToken cancellationToken)
 	{

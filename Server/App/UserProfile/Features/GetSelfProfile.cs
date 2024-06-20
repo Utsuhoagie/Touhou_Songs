@@ -42,7 +42,7 @@ public record GetSelfProfileResponse : BaseAuditedEntityResponse
 
 class GetSelfProfileHandler : BaseHandler<GetSelfProfileQuery, GetSelfProfileResponse>
 {
-	public GetSelfProfileHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public GetSelfProfileHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public async override Task<Result<GetSelfProfileResponse>> Handle(GetSelfProfileQuery query, CancellationToken cancellationToken)
 	{

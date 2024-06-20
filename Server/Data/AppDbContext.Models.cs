@@ -12,7 +12,7 @@ using Touhou_Songs.Infrastructure.Auth;
 
 namespace Touhou_Songs.Data;
 
-public partial class Touhou_Songs_Context : IdentityDbContext<AppUser>
+public partial class AppDbContext : IdentityDbContext<AppUser>
 {
 	#region ---- Official ----
 	public DbSet<OfficialGame> OfficialGames { get; set; } = default!;

@@ -31,7 +31,7 @@ public record CreateArrangementSongResponse : BaseAuditedEntityResponse
 
 class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, CreateArrangementSongResponse>
 {
-	public CreateArrangementSongHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public CreateArrangementSongHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<CreateArrangementSongResponse>> Handle(CreateArrangementSongCommand command, CancellationToken cancellationToken)
 	{

@@ -10,7 +10,7 @@ public record CreateOfficialGameCommand(string Title, string GameCode, string Nu
 
 class CreateOfficialGameHandler : BaseHandler<CreateOfficialGameCommand, string>
 {
-	public CreateOfficialGameHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public CreateOfficialGameHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<string>> Handle(CreateOfficialGameCommand command, CancellationToken cancellationToken)
 	{

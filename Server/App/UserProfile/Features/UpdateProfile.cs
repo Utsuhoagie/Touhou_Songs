@@ -18,7 +18,7 @@ public class UpdateProfileCommand : IRequest<Result<string>>
 
 class UpdateProfileHandler : BaseHandler<UpdateProfileCommand, string>
 {
-	public UpdateProfileHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public UpdateProfileHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public async override Task<Result<string>> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
 	{

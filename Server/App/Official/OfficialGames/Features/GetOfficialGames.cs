@@ -27,7 +27,7 @@ public record OfficialGameResponse : BaseAuditedEntityResponse
 
 class GetOfficialGamesHandler : BaseHandler<GetOfficialGamesQuery, IEnumerable<OfficialGameResponse>>
 {
-	public GetOfficialGamesHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public GetOfficialGamesHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<IEnumerable<OfficialGameResponse>>> Handle(GetOfficialGamesQuery query, CancellationToken cancellationToken)
 	{

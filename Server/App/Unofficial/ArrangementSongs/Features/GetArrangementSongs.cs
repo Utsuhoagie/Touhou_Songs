@@ -26,7 +26,7 @@ public record ArrangementSongResponse : BaseAuditedEntityResponse
 
 class GetArrangementSongsHandler : BaseHandler<GetArrangementSongsQuery, IEnumerable<ArrangementSongResponse>>
 {
-	public GetArrangementSongsHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public GetArrangementSongsHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<IEnumerable<ArrangementSongResponse>>> Handle(GetArrangementSongsQuery request, CancellationToken cancellationToken)
 	{

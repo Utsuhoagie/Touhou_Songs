@@ -36,7 +36,7 @@ public record OfficialGameDetailResponse : BaseAuditedEntityResponse
 
 class GetOfficialGameDetailHandler : BaseHandler<GetOfficialGameDetailQuery, OfficialGameDetailResponse>
 {
-	public GetOfficialGameDetailHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public GetOfficialGameDetailHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<OfficialGameDetailResponse>> Handle(GetOfficialGameDetailQuery query, CancellationToken cancellationToken)
 	{

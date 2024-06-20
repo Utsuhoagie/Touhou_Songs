@@ -29,7 +29,7 @@ class RegisterAdminHandler : BaseHandler<RegisterAdminCommand, RegisterAdminResp
 {
 	private readonly UserManager<AppUser> _userManager;
 
-	public RegisterAdminHandler(AuthUtils authUtils, Touhou_Songs_Context context, UserManager<AppUser> userManager) : base(authUtils, context)
+	public RegisterAdminHandler(AuthUtils authUtils, AppDbContext context, UserManager<AppUser> userManager) : base(authUtils, context)
 		=> _userManager = userManager;
 
 	public override async Task<Result<RegisterAdminResponse>> Handle(RegisterAdminCommand command, CancellationToken cancellationToken)

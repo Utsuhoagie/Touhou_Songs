@@ -26,13 +26,13 @@ builder.Host.UseSerilog(
 		.Enrich.FromLogContext()
 		.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}")
 		.WriteTo.File(
-			path: ".\\Logs\\log.txt",
+			path: $".\\Logs\\{DateTimeOffset.Now.ToString("dd-MM-yyyy")}.txt",
 			outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}")
 );
 
 
 
-var connectionString = builder.Configuration["ConnectionString:Touhou_Songs"] ?? throw new InvalidOperationException("Connection string 'Touhou_Songs_Context' not found.");
+var connectionString = builder.Configuration["ConnectionString:Touhou_Songs"] ?? throw new InvalidOperationException("Connection string 'Touhou_Songs' not found.");
 
 builder.Services.AddCors(o => o.AddPolicy("My_CORS_Policy", p => p
 	.WithOrigins("http://localhost:3000")
@@ -43,7 +43,7 @@ builder.Services.AddScoped<AuthUtils>();
 
 builder.Services
 	.AddIdentity<AppUser, IdentityRole>()
-	.AddEntityFrameworkStores<Touhou_Songs_Context>();
+	.AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services
 	.Configure<IdentityOptions>(options =>
@@ -54,7 +54,7 @@ builder.Services
 		options.Password.RequireDigit = false;
 	});
 
-builder.Services.AddDbContext<Touhou_Songs_Context>(options => options
+builder.Services.AddDbContext<AppDbContext>(options => options
 	.UseNpgsql(connectionString)
 	.UseSnakeCaseNamingConvention());
 

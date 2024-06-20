@@ -19,16 +19,16 @@ sealed class CustomWebApplicationFactory : WebApplicationFactory<Program>
 	{
 		builder.ConfigureTestServices(services =>
 		{
-			services.Remove(services.SingleOrDefault(service => service.ServiceType == typeof(DbContextOptions<Touhou_Songs_Context>))!);
+			services.Remove(services.SingleOrDefault(service => service.ServiceType == typeof(DbContextOptions<AppDbContext>))!);
 			services.Remove(services.SingleOrDefault(service => service.ServiceType == typeof(DbConnection))!);
 
-			services.AddDbContext<Touhou_Songs_Context>((_, option) => option.UseNpgsql(_connectionString));
+			services.AddDbContext<AppDbContext>((_, option) => option.UseNpgsql(_connectionString));
 
 			var serviceProvider = services.BuildServiceProvider();
 
 			using var scope = serviceProvider.CreateScope();
 			var scopedServices = scope.ServiceProvider;
-			var context = scopedServices.GetRequiredService<Touhou_Songs_Context>();
+			var context = scopedServices.GetRequiredService<AppDbContext>();
 			context.Database.EnsureCreated();
 			//context.Database
 		});

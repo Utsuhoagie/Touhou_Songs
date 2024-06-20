@@ -11,7 +11,7 @@ using Touhou_Songs.Data;
 
 namespace Touhou_Songs.Data.Migrations
 {
-    [DbContext(typeof(Touhou_Songs_Context))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20240602195048_Fix_TierList_ArSong_BaseAudited")]
     partial class Fix_TierList_ArSong_BaseAudited
     {

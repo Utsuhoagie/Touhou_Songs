@@ -11,7 +11,7 @@ public record GetCircleDetailQuery(string Name) : IRequest<Result<CircleResponse
 
 class GetCircleDetailHandler : BaseHandler<GetCircleDetailQuery, CircleResponse>
 {
-	public GetCircleDetailHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
+	public GetCircleDetailHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
 	public override async Task<Result<CircleResponse>> Handle(GetCircleDetailQuery query, CancellationToken cancellationToken)
 	{

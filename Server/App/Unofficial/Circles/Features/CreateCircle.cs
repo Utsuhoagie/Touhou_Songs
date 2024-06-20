@@ -34,7 +34,7 @@ class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleRespons
 {
 	private readonly IValidator<CreateCircleCommand> _validator;
 
-	public CreateCircleHandler(AuthUtils authUtils, IValidator<CreateCircleCommand> validator, Touhou_Songs_Context context) : base(authUtils, context)
+	public CreateCircleHandler(AuthUtils authUtils, IValidator<CreateCircleCommand> validator, AppDbContext context) : base(authUtils, context)
 		=> _validator = validator;
 
 	public override async Task<Result<CreateCircleResponse>> Handle(CreateCircleCommand command, CancellationToken cancellationToken)

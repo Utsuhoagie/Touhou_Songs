@@ -5,7 +5,7 @@ using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.Data;
 
-public partial class Touhou_Songs_Context
+public partial class AppDbContext
 {
 	public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{
