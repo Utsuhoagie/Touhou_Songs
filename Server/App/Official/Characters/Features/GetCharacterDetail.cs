@@ -1,7 +1,10 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Touhou_Songs.App.Official.OfficialGames;
+using Touhou_Songs.App.Official.OfficialSongs;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
+using Touhou_Songs.Infrastructure.BaseEntity;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.Results;
 
@@ -9,36 +12,36 @@ namespace Touhou_Songs.App.Official.Characters.Features;
 
 public record GetCharacterDetailQuery(string Name) : IRequest<Result<CharacterDetailResponse>>;
 
-public record CharacterDetailResponse
+public record CharacterDetailResponse : BaseAuditedEntityResponse
 {
-	public int Id { get; set; }
 	public string Name { get; set; }
 	public string ImageUrl { get; set; }
 
 	public required OfficialGameSimple OriginGame { get; set; }
-	public record OfficialGameSimple
+	public record OfficialGameSimple : BaseAuditedEntityResponse
 	{
 		public string Title { get; set; }
 		public string GameCode { get; set; }
 		public string NumberCode { get; set; }
 		public string ImageUrl { get; set; }
 
-		public OfficialGameSimple(string title, string gameCode, string numberCode, string imageUrl)
-			=> (Title, GameCode, NumberCode, ImageUrl) = (title, gameCode, numberCode, imageUrl);
+		public OfficialGameSimple(OfficialGame officialGame) : base(officialGame)
+			=> (Title, GameCode, NumberCode, ImageUrl)
+			= (officialGame.Title, officialGame.GameCode, officialGame.NumberCode, officialGame.ImageUrl);
 	}
 
-	public required IEnumerable<OfficialSongSimple> OfficialSongs { get; set; }
-	public record OfficialSongSimple
+	public required List<OfficialSongSimple> OfficialSongs { get; set; }
+	public record OfficialSongSimple : BaseAuditedEntityResponse
 	{
-		public int Id { get; set; }
 		public string Title { get; set; }
 		public string Context { get; set; }
 
-		public OfficialSongSimple(int id, string title, string context) => (Id, Title, Context) = (id, title, context);
+		public OfficialSongSimple(OfficialSong officialSong) : base(officialSong)
+			=> (Title, Context) = (officialSong.Title, officialSong.Context);
 	}
 
-	public CharacterDetailResponse(int id, string name, string imageUrl)
-		=> (Id, Name, ImageUrl) = (id, name, imageUrl);
+	public CharacterDetailResponse(Character character) : base(character)
+		=> (Name, ImageUrl) = (character.Name, character.ImageUrl);
 }
 
 class GetCharacterDetailHandler : BaseHandler<GetCharacterDetailQuery, CharacterDetailResponse>
@@ -51,10 +54,12 @@ class GetCharacterDetailHandler : BaseHandler<GetCharacterDetailQuery, Character
 			.Include(c => c.OriginGame)
 			.Include(c => c.OfficialSongs)
 			.Where(c => c.Name == request.Name)
-			.Select(c => new CharacterDetailResponse(c.Id, c.Name, c.ImageUrl)
+			.Select(c => new CharacterDetailResponse(c)
 			{
-				OriginGame = new(c.OriginGame.Title, c.OriginGame.GameCode, c.OriginGame.NumberCode, c.OriginGame.ImageUrl),
-				OfficialSongs = c.OfficialSongs.Select(os => new CharacterDetailResponse.OfficialSongSimple(os.Id, os.Title, os.Context)).ToList(),
+				OriginGame = new(c.OriginGame),
+				OfficialSongs = c.OfficialSongs
+					.Select(os => new CharacterDetailResponse.OfficialSongSimple(os))
+					.ToList(),
 			})
 			.SingleOrDefaultAsync();
 

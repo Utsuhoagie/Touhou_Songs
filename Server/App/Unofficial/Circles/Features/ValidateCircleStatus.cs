@@ -7,7 +7,9 @@ using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Unofficial.Circles.Features;
 
-public record ValidateCircleStatusCommand(string Name, string Status) : IRequest<Result<string>>;
+public record ValidateCircleStatusPayload(UnofficialStatus Status);
+
+public record ValidateCircleStatusCommand(string Name, ValidateCircleStatusPayload Payload) : IRequest<Result<string>>;
 
 class ValidateCircleStatusHandler : BaseHandler<ValidateCircleStatusCommand, string>
 {
@@ -27,10 +29,10 @@ class ValidateCircleStatusHandler : BaseHandler<ValidateCircleStatusCommand, str
 			return _resultFactory.Conflict($"Circle {command.Name} is already approved. Status = {dbCircle.Status}.");
 		}
 
-		dbCircle.Status = Enum.Parse<UnofficialStatus>(command.Status);
+		dbCircle.Status = command.Payload.Status;
 		await _context.SaveChangesAsync();
 
-		var message = $"Circle {command.Name} was {command.Status} successfully.";
+		var message = $"Circle {dbCircle.Name} was {dbCircle.Status} successfully.";
 		return _resultFactory.Ok(message);
 	}
 }

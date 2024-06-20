@@ -7,17 +7,7 @@ using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.Characters.Features;
 
-public record CreateCharacterCommand : IRequest<Result<string>>
-{
-	public string Name { get; set; }
-	public string ImageUrl { get; set; }
-
-	public string OriginGameCode { get; set; }
-	public required List<string> SongTitles { get; set; }
-
-	public CreateCharacterCommand(string name, string imageUrl, string originGameCode)
-		=> (Name, ImageUrl, OriginGameCode) = (name, imageUrl, originGameCode);
-}
+public record CreateCharacterCommand(string Name, string ImageUrl, string OriginGameCode, List<string> SongTitles) : IRequest<Result<string>>;
 
 class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, string>
 {
@@ -44,9 +34,9 @@ class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, string>
 			OfficialSongs = dbOfficialSongs,
 		};
 
-		_context.Characters.Add(character);
+		var createdCharacter = _context.Characters.Add(character).Entity;
 		await _context.SaveChangesAsync();
 
-		return _resultFactory.Ok(character.Name);
+		return _resultFactory.Ok(createdCharacter.Name);
 	}
 }

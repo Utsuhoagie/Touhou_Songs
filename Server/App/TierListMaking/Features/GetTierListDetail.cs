@@ -10,7 +10,7 @@ namespace Touhou_Songs.App.TierListMaking.Features;
 
 public record GetTierListDetailQuery(int Id) : IRequest<Result<GetTierListDetailResponse>>;
 
-public class GetTierListDetailResponse : BaseAuditedEntityResponse
+public record GetTierListDetailResponse : BaseAuditedEntityResponse
 {
 	public string Title { get; set; }
 	public string? Description { get; set; }
@@ -18,21 +18,22 @@ public class GetTierListDetailResponse : BaseAuditedEntityResponse
 
 	public required List<TierListTierResponse> Tiers { get; set; } = new();
 
-	public GetTierListDetailResponse(string title, string? description, TierListType type)
-		=> (Title, Description, Type) = (title, description, type);
+	public GetTierListDetailResponse(TierList tierList) : base(tierList)
+		=> (Title, Description, Type) = (tierList.Title, tierList.Description, tierList.Type);
 }
 
-public class TierListTierResponse : BaseEntity
+public record TierListTierResponse : BaseEntityResponse
 {
 	public string Label { get; set; }
 	public int Order { get; set; }
 
 	public required List<TierListItemResponse> Items { get; set; }
 
-	public TierListTierResponse(string label, int order) => (Label, Order) = (label, order);
+	public TierListTierResponse(TierListTier tierListTier) : base(tierListTier)
+		=> (Label, Order) = (tierListTier.Label, tierListTier.Order);
 }
 
-public class TierListItemResponse : BaseEntity
+public record TierListItemResponse : BaseEntityResponse
 {
 	public string Label { get; set; }
 	public int Order { get; set; }
@@ -40,7 +41,8 @@ public class TierListItemResponse : BaseEntity
 
 	public required int SourceId { get; set; }
 
-	public TierListItemResponse(string label, int order, string iconUrl) => (Label, Order, IconUrl) = (label, order, iconUrl);
+	public TierListItemResponse(TierListItem tierListItem) : base(tierListItem)
+		=> (Label, Order, IconUrl) = (tierListItem.Label, tierListItem.Order, tierListItem.IconUrl);
 }
 
 class GetTierListDetailHandler : BaseHandler<GetTierListDetailQuery, GetTierListDetailResponse>
@@ -61,19 +63,12 @@ class GetTierListDetailHandler : BaseHandler<GetTierListDetailQuery, GetTierList
 			return _resultFactory.NotFound($"Tier list {query.Id} not found");
 		}
 
-		var tierList_Res = new GetTierListDetailResponse(dbTierList.Title, dbTierList.Description, dbTierList.Type)
+		var tierList_Res = new GetTierListDetailResponse(dbTierList)
 		{
-			Id = dbTierList.Id,
-			CreatedOn = dbTierList.CreatedOn,
-			CreatedByUserName = dbTierList.CreatedByUserName,
-			UpdatedOn = dbTierList.UpdatedOn,
-			UpdatedByUserName = dbTierList.UpdatedByUserName,
-			Tiers = dbTierList.Tiers.Select(tlt => new TierListTierResponse(tlt.Label, tlt.Order)
+			Tiers = dbTierList.Tiers.Select(tlt => new TierListTierResponse(tlt)
 			{
-				Id = tlt.Id,
-				Items = tlt.Items.Select(tli => new TierListItemResponse(tli.Label, tli.Order, tli.IconUrl)
+				Items = tlt.Items.Select(tli => new TierListItemResponse(tli)
 				{
-					Id = tli.Id,
 					SourceId = tli.SourceId,
 				}).ToList(),
 			}).ToList(),

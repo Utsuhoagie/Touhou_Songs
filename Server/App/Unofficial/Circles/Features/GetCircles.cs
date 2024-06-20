@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
+using Touhou_Songs.Infrastructure.BaseEntity;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.Results;
 
@@ -9,16 +10,15 @@ namespace Touhou_Songs.App.Unofficial.Circles.Features;
 
 public record GetCirclesQuery(string? searchName) : IRequest<Result<IEnumerable<CircleResponse>>>;
 
-public record CircleResponse
+public record CircleResponse : BaseAuditedEntityResponse
 {
-	public int Id { get; set; }
 	public string Name { get; set; }
-	public string Status { get; set; }
+	public UnofficialStatus Status { get; set; }
 
-	public required IEnumerable<string> ArrangementSongTitles { get; set; }
+	public required List<string> ArrangementSongTitles { get; set; }
 
-	public CircleResponse(int id, string name, string status)
-		=> (Id, Name, Status) = (id, name, status);
+	public CircleResponse(Circle circle) : base(circle)
+		=> (Name, Status) = (circle.Name, circle.Status);
 }
 
 class GetCirclesHandler : BaseHandler<GetCirclesQuery, IEnumerable<CircleResponse>>
@@ -30,9 +30,9 @@ class GetCirclesHandler : BaseHandler<GetCirclesQuery, IEnumerable<CircleRespons
 		var circles_Res = await _context.Circles
 			.Include(c => c.ArrangementSongs)
 			.Where(c => query.searchName == null || EF.Functions.ILike(c.Name, $"%{query.searchName}%"))
-			.Select(c => new CircleResponse(c.Id, c.Name, c.Status.ToString())
+			.Select(c => new CircleResponse(c)
 			{
-				ArrangementSongTitles = c.ArrangementSongs.Select(a => a.Title),
+				ArrangementSongTitles = c.ArrangementSongs.Select(a => a.Title).ToList(),
 			})
 			.ToListAsync();
 

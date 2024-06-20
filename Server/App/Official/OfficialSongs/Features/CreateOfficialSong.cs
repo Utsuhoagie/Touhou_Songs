@@ -7,17 +7,7 @@ using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.OfficialSongs.Features;
 
-public record CreateOfficialSongCommand : IRequest<Result<string>>
-{
-	public string Title { get; set; }
-	public string Context { get; set; }
-
-	public required string GameCode { get; set; }
-	public required List<string> CharacterNames { get; set; }
-
-	public CreateOfficialSongCommand(string title, string context)
-		=> (Title, Context) = (title, context);
-}
+public record CreateOfficialSongCommand(string Title, string Context, string GameCode, List<string> CharacterNames) : IRequest<Result<string>>;
 
 class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string>
 {
@@ -46,9 +36,11 @@ class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string>
 			OfficialSongArrangementSongs = new(),
 		};
 
-		_context.OfficialSongs.Add(officialSong);
+
+		// then work on refactoring DTOs to use records and BaseAuditedEntityResponse
+		var createdOfficialSong = _context.OfficialSongs.Add(officialSong).Entity;
 		await _context.SaveChangesAsync();
 
-		return _resultFactory.Ok(officialSong.Title);
+		return _resultFactory.Ok(createdOfficialSong.Title);
 	}
 }

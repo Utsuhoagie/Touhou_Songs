@@ -18,9 +18,9 @@ class GetCircleDetailHandler : BaseHandler<GetCircleDetailQuery, CircleResponse>
 		var circle_Res = await _context.Circles
 			.Include(c => c.ArrangementSongs)
 			.Where(c => c.Name == query.Name)
-			.Select(c => new CircleResponse(c.Id, c.Name, c.Status.ToString())
+			.Select(c => new CircleResponse(c)
 			{
-				ArrangementSongTitles = c.ArrangementSongs.Select(a => a.Title),
+				ArrangementSongTitles = c.ArrangementSongs.Select(a => a.Title).ToList(),
 			})
 			.SingleOrDefaultAsync();
 

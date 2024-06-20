@@ -6,17 +6,7 @@ using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.OfficialGames.Features;
 
-public record CreateOfficialGameCommand : IRequest<Result<string>>
-{
-	public string Title { get; set; }
-	public string GameCode { get; set; }
-	public string NumberCode { get; set; }
-	public DateTime ReleaseDate { get; set; }
-	public string ImageUrl { get; set; }
-
-	public CreateOfficialGameCommand(string title, string gameCode, string numberCode, DateTime releaseDate, string imageUrl)
-		=> (Title, GameCode, NumberCode, ReleaseDate, ImageUrl) = (title, gameCode, numberCode, releaseDate, imageUrl);
-}
+public record CreateOfficialGameCommand(string Title, string GameCode, string NumberCode, DateTime ReleaseDate, string ImageUrl) : IRequest<Result<string>>;
 
 class CreateOfficialGameHandler : BaseHandler<CreateOfficialGameCommand, string>
 {

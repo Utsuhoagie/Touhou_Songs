@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Touhou_Songs.App.Official.OfficialGames;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
+using Touhou_Songs.Infrastructure.BaseEntity;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.Results;
 
@@ -9,25 +11,24 @@ namespace Touhou_Songs.App.Official.OfficialSongs.Features;
 
 public record GetOfficialSongDetailQuery(int Id) : IRequest<Result<OfficialSongDetailResponse>>;
 
-public record OfficialSongDetailResponse
+public record OfficialSongDetailResponse : BaseAuditedEntityResponse
 {
-	public int Id { get; set; }
 	public string Title { get; set; }
 	public string Context { get; set; }
 
 	public required OfficialGameSimple Game { get; set; }
-	public record OfficialGameSimple
+	public record OfficialGameSimple : BaseAuditedEntityResponse
 	{
 		public string Title { get; set; }
 		public string GameCode { get; set; }
 		public string ImageUrl { get; set; }
 
-		public OfficialGameSimple(string title, string gameCode, string imageUrl)
-			=> (Title, GameCode, ImageUrl) = (title, gameCode, imageUrl);
+		public OfficialGameSimple(OfficialGame officialGame) : base(officialGame)
+			=> (Title, GameCode, ImageUrl) = (officialGame.Title, officialGame.GameCode, officialGame.ImageUrl);
 	}
 
-	public OfficialSongDetailResponse(int id, string title, string context)
-		=> (Id, Title, Context) = (id, title, context);
+	public OfficialSongDetailResponse(OfficialSong officialSong) : base(officialSong)
+		=> (Title, Context) = (officialSong.Title, officialSong.Context);
 }
 
 class GetOfficialSongDetailHandler : BaseHandler<GetOfficialSongDetailQuery, OfficialSongDetailResponse>
@@ -39,9 +40,9 @@ class GetOfficialSongDetailHandler : BaseHandler<GetOfficialSongDetailQuery, Off
 		var officialSongDetail_Res = await _context.OfficialSongs
 			.Include(os => os.Game)
 			.Where(os => os.Id == query.Id)
-			.Select(os => new OfficialSongDetailResponse(os.Id, os.Title, os.Context)
+			.Select(os => new OfficialSongDetailResponse(os)
 			{
-				Game = new OfficialSongDetailResponse.OfficialGameSimple(os.Game.Title, os.Game.GameCode, os.Game.ImageUrl),
+				Game = new OfficialSongDetailResponse.OfficialGameSimple(os.Game),
 			})
 			.SingleOrDefaultAsync();
 

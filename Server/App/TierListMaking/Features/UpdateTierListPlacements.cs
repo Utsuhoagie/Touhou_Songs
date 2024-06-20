@@ -10,7 +10,7 @@ namespace Touhou_Songs.App.TierListMaking.Features;
 
 public record UpdateTierListPlacementsCommand(int TierListId, UpdateTierListPlacementsPayload Payload) : IRequest<Result<UpdateTierListPlacementsResponse>>;
 
-public class UpdateTierListPlacementsPayload
+public record UpdateTierListPlacementsPayload
 {
 	public List<NewTierListTier> Tiers { get; set; } = new();
 	public class NewTierListTier
@@ -30,13 +30,14 @@ public class UpdateTierListPlacementsPayload
 	}
 }
 
-public class UpdateTierListPlacementsResponse : BaseAuditedEntityResponse;
+public record UpdateTierListPlacementsResponse : BaseAuditedEntityResponse
+{
+	public UpdateTierListPlacementsResponse(BaseAuditedEntity entity) : base(entity) { }
+}
 
 class UpdateTierListPlacementsHandler : BaseHandler<UpdateTierListPlacementsCommand, UpdateTierListPlacementsResponse>
 {
-	public UpdateTierListPlacementsHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context)
-	{
-	}
+	public UpdateTierListPlacementsHandler(AuthUtils authUtils, Touhou_Songs_Context context) : base(authUtils, context) { }
 
 	public override async Task<Result<UpdateTierListPlacementsResponse>> Handle(UpdateTierListPlacementsCommand request, CancellationToken cancellationToken)
 	{
@@ -103,14 +104,7 @@ class UpdateTierListPlacementsHandler : BaseHandler<UpdateTierListPlacementsComm
 
 		await _context.SaveChangesAsync();
 
-		var updateTierListPlacements_Res = new UpdateTierListPlacementsResponse
-		{
-			Id = dbTierList.Id,
-			CreatedOn = dbTierList.CreatedOn,
-			CreatedByUserName = dbTierList.CreatedByUserName,
-			UpdatedOn = dbTierList.UpdatedOn,
-			UpdatedByUserName = dbTierList.UpdatedByUserName,
-		};
+		var updateTierListPlacements_Res = new UpdateTierListPlacementsResponse(dbTierList);
 
 		return _resultFactory.Ok(updateTierListPlacements_Res);
 	}

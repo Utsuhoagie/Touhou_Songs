@@ -2,25 +2,22 @@
 using MediatR;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
+using Touhou_Songs.Infrastructure.BaseEntity;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Unofficial.Circles.Features;
 
-public record CreateCircleCommand : IRequest<Result<CreateCircleCommandResponse>>
-{
-	public string Name { get; set; }
+public record CreateCircleCommand(string Name) : IRequest<Result<CreateCircleResponse>>;
 
-	public CreateCircleCommand(string name) => (Name) = (name);
-};
-
-public record CreateCircleCommandResponse
+public record CreateCircleResponse : BaseAuditedEntityResponse
 {
 	public string Name { get; set; }
 
 	public UnofficialStatus Status { get; set; }
 
-	public CreateCircleCommandResponse(string name, UnofficialStatus status) => (Name, Status) = (name, status);
+	public CreateCircleResponse(Circle circle) : base(circle)
+		=> (Name, Status) = (circle.Name, circle.Status);
 };
 
 public class CreateCircleValidator : AbstractValidator<CreateCircleCommand>
@@ -33,14 +30,14 @@ public class CreateCircleValidator : AbstractValidator<CreateCircleCommand>
 	}
 }
 
-class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommandResponse>
+class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleResponse>
 {
 	private readonly IValidator<CreateCircleCommand> _validator;
 
 	public CreateCircleHandler(AuthUtils authUtils, IValidator<CreateCircleCommand> validator, Touhou_Songs_Context context) : base(authUtils, context)
 		=> _validator = validator;
 
-	public override async Task<Result<CreateCircleCommandResponse>> Handle(CreateCircleCommand command, CancellationToken cancellationToken)
+	public override async Task<Result<CreateCircleResponse>> Handle(CreateCircleCommand command, CancellationToken cancellationToken)
 	{
 		var userWithRole_Res = await _authUtils.GetUserWithRole();
 
@@ -68,10 +65,10 @@ class CreateCircleHandler : BaseHandler<CreateCircleCommand, CreateCircleCommand
 			ArrangementSongs = new(),
 		};
 
-		_context.Circles.Add(circle);
+		var createdCircle = _context.Circles.Add(circle).Entity;
 		await _context.SaveChangesAsync();
 
-		var res = new CreateCircleCommandResponse(circle.Name, circle.Status);
+		var res = new CreateCircleResponse(createdCircle);
 		return _resultFactory.Ok(res);
 	}
 }

@@ -7,7 +7,9 @@ using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
 
-public record ValidateArrangementSongStatusCommand(int Id, string Status) : IRequest<Result<string>>;
+public record ValidateArrangementSongStatusPayload(UnofficialStatus Status);
+
+public record ValidateArrangementSongStatusCommand(int Id, ValidateArrangementSongStatusPayload Payload) : IRequest<Result<string>>;
 
 class ValidateArrangementSongStatusHandler : BaseHandler<ValidateArrangementSongStatusCommand, string>
 {
@@ -27,10 +29,10 @@ class ValidateArrangementSongStatusHandler : BaseHandler<ValidateArrangementSong
 			return _resultFactory.Conflict($"ArrangementSong {command.Id} is already approved. Status = {dbArrangementSong.Status}.");
 		}
 
-		dbArrangementSong.Status = Enum.Parse<UnofficialStatus>(command.Status);
+		dbArrangementSong.Status = command.Payload.Status;
 		await _context.SaveChangesAsync();
 
-		var message = $"ArrangementSong [{command.Id}] was {command.Status} successfully.";
+		var message = $"ArrangementSong [{dbArrangementSong.Id}] was {dbArrangementSong.Status} successfully.";
 		return _resultFactory.Ok(message);
 	}
 }

@@ -7,7 +7,9 @@ using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.UserProfile.Features;
 
-// NOTE: null -> don't update
+/// <summary>
+/// Null -> don't update
+/// </summary>
 public class UpdateProfileCommand : IRequest<Result<string>>
 {
 	public string? Bio { get; set; }

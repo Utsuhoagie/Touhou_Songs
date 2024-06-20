@@ -37,11 +37,10 @@ public class ArrangementSongsController : ApiController
 		return ToResponse(res);
 	}
 
-	public record ValidateArrangementSongStatusBody(string Status);
 	[HttpPut("{Id}/ValidateStatus")]
-	public async Task<IActionResult> ValidateArrangementSongStatus([FromRoute] int Id, [FromBody] ValidateArrangementSongStatusBody body)
+	public async Task<IActionResult> ValidateArrangementSongStatus([FromRoute] int Id, [FromBody] ValidateArrangementSongStatusPayload payload)
 	{
-		var command = new ValidateArrangementSongStatusCommand(Id, body.Status);
+		var command = new ValidateArrangementSongStatusCommand(Id, payload);
 		var res = await _sender.Send(command);
 
 		return ToResponse(res);

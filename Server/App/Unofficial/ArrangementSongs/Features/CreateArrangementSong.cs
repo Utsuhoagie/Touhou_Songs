@@ -3,42 +3,30 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.App.Unofficial.Songs;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
+using Touhou_Songs.Infrastructure.BaseEntity;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
 
-public record CreateArrangementSongCommand : IRequest<Result<CreateArrangementSongResponse>>
+public record CreateArrangementSongCommand(string Title, string? TitleRomaji, string? TitleJapanese, string Url, string CircleName, List<int> OfficialSongIds) : IRequest<Result<CreateArrangementSongResponse>>;
+
+public record CreateArrangementSongResponse : BaseAuditedEntityResponse
 {
 	public string Title { get; set; }
 	public string? TitleRomaji { get; set; }
 	public string? TitleJapanese { get; set; }
 
 	public string Url { get; set; }
-
-	public required string CircleName { get; set; }
-
-	public required List<int> OfficialSongIds { get; set; }
-
-	public CreateArrangementSongCommand(string title, string? titleRomaji, string? titleJapanese, string url)
-		=> (Title, TitleRomaji, TitleJapanese, Url) = (title, titleRomaji, titleJapanese, url);
-}
-
-public record CreateArrangementSongResponse
-{
-	public string Title { get; set; }
-	public string? TitleRomaji { get; set; }
-	public string? TitleJapanese { get; set; }
-
-	public string Url { get; set; }
-	public string Status { get; set; }
+	public UnofficialStatus Status { get; set; }
 
 	public required string CircleName { get; set; }
 
 	public required List<string> OfficialSongTitles { get; set; }
 
-	public CreateArrangementSongResponse(string title, string? titleRomaji, string? titleJapanese, string url, string status)
-		=> (Title, TitleRomaji, TitleJapanese, Url, Status) = (title, titleRomaji, titleJapanese, url, status);
+	public CreateArrangementSongResponse(ArrangementSong arrangementSong) : base(arrangementSong)
+		=> (Title, TitleRomaji, TitleJapanese, Url, Status)
+		= (arrangementSong.Title, arrangementSong.TitleRomaji, arrangementSong.TitleJapanese, arrangementSong.Url, arrangementSong.Status);
 }
 
 class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, CreateArrangementSongResponse>
@@ -49,7 +37,6 @@ class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, C
 	{
 		var userWithRole_Res = await _authUtils.GetUserWithRole();
 
-		// NOT REQUIRED, SINCE IT THROWS ALREADY
 		if (!userWithRole_Res.Success)
 		{
 			return _resultFactory.FromResult(userWithRole_Res);
@@ -81,15 +68,13 @@ class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, C
 			OfficialSongArrangementSongs = new(),
 		};
 
-		_context.ArrangementSongs.Add(arrangementSong);
+		var createdArrangementSong = _context.ArrangementSongs.Add(arrangementSong).Entity;
 		await _context.SaveChangesAsync();
 
-		var createArrangementSong_Res = new CreateArrangementSongResponse(
-			arrangementSong.Title, arrangementSong.TitleRomaji, arrangementSong.TitleJapanese,
-			arrangementSong.Url, Enum.GetName(arrangementSong.Status)!)
+		var createArrangementSong_Res = new CreateArrangementSongResponse(arrangementSong)
 		{
-			CircleName = arrangementSong.Circle.Name,
-			OfficialSongTitles = arrangementSong.OfficialSongs.Select(os => os.Title).ToList(),
+			CircleName = createdArrangementSong.Circle.Name,
+			OfficialSongTitles = createdArrangementSong.OfficialSongs.Select(os => os.Title).ToList(),
 		};
 
 		return _resultFactory.Ok(createArrangementSong_Res);

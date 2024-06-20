@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
+using Touhou_Songs.Infrastructure.BaseEntity;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.Results;
 
@@ -9,17 +10,16 @@ namespace Touhou_Songs.App.Official.Characters.Features;
 
 public record GetCharactersQuery(string? searchName) : IRequest<Result<IEnumerable<CharacterResponse>>>;
 
-public record CharacterResponse
+public record CharacterResponse : BaseAuditedEntityResponse
 {
-	public int Id { get; set; }
 	public string Name { get; set; }
 	public string ImageUrl { get; set; }
 
 	public required string OriginGameCode { get; set; }
-	public required IEnumerable<string> OfficialSongTitles { get; set; }
+	public required List<string> OfficialSongTitles { get; set; }
 
-	public CharacterResponse(int id, string name, string imageUrl)
-		=> (Id, Name, ImageUrl) = (id, name, imageUrl);
+	public CharacterResponse(Character character) : base(character)
+		=> (Name, ImageUrl) = (character.Name, character.ImageUrl);
 }
 
 class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<CharacterResponse>>
@@ -33,10 +33,10 @@ class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<Charact
 			.Include(c => c.OfficialSongs)
 			.Where(c => query.searchName == null || EF.Functions.ILike(c.Name, $"%{query.searchName}%"))
 			.OrderBy(c => c.OriginGame.ReleaseDate)
-			.Select(c => new CharacterResponse(c.Id, c.Name, c.ImageUrl)
+			.Select(c => new CharacterResponse(c)
 			{
 				OriginGameCode = c.OriginGame.GameCode,
-				OfficialSongTitles = c.OfficialSongs.Select(os => os.Title),
+				OfficialSongTitles = c.OfficialSongs.Select(os => os.Title).ToList(),
 			})
 			.ToListAsync();
 

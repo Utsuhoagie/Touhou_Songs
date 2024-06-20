@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
+using Touhou_Songs.Infrastructure.BaseEntity;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.Results;
 
@@ -9,7 +10,15 @@ namespace Touhou_Songs.App.TierListMaking.Features;
 
 public record CreateTierListCommand(string Title, string? Description, TierListType Type) : IRequest<Result<CreateTierListResponse>>;
 
-public record CreateTierListResponse(string Title, string? Description, TierListType Type);
+public record CreateTierListResponse : BaseAuditedEntityResponse
+{
+	public string Title { get; set; }
+	public string? Description { get; set; }
+	public TierListType Type { get; set; }
+
+	public CreateTierListResponse(TierList tierList) : base(tierList)
+		=> (Title, Description, Type) = (tierList.Title, tierList.Description, tierList.Type);
+};
 
 class CreateTierListHandler : BaseHandler<CreateTierListCommand, CreateTierListResponse>
 {
@@ -40,6 +49,8 @@ class CreateTierListHandler : BaseHandler<CreateTierListCommand, CreateTierListR
 
 		await _context.SaveChangesAsync();
 
-		return _resultFactory.Ok(new(createdTierList.Title, createdTierList.Description, createdTierList.Type));
+		var res = new CreateTierListResponse(createdTierList);
+
+		return _resultFactory.Ok(res);
 	}
 }

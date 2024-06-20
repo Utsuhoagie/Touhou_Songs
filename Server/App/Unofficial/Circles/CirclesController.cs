@@ -40,15 +40,11 @@ public class CirclesController : ApiController
 		return ToResponse(res);
 	}
 
-	public class ValidateCircleStatusBody
-	{
-		public string Status { get; set; } = default!;
-	}
 	[HttpPut("{Name}/ValidateStatus")]
 	[AuthorizeRoles(AuthRole.Admin)]
-	public async Task<IActionResult> ValidateCircleStatus([FromRoute] string Name, [FromBody] ValidateCircleStatusBody body)
+	public async Task<IActionResult> ValidateCircleStatus([FromRoute] string Name, [FromBody] ValidateCircleStatusPayload payload)
 	{
-		var command = new ValidateCircleStatusCommand(Name, body.Status);
+		var command = new ValidateCircleStatusCommand(Name, payload);
 		var res = await _sender.Send(command);
 
 		return ToResponse(res);
