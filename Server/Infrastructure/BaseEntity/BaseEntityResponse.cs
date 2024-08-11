@@ -1,8 +1,9 @@
 ﻿namespace Touhou_Songs.Infrastructure.BaseEntity;
 
-public abstract record BaseEntityResponse
+public record BaseEntityResponse
 {
-	public int Id { get; set; }
+	public int? Id { get; set; }
 
-	public BaseEntityResponse(BaseEntity entity) => Id = entity.Id;
+	public BaseEntityResponse() { }
+	public BaseEntityResponse(BaseEntity entity) => (Id) = (entity.Id);
 }

@@ -23,7 +23,6 @@ public record UpdateTierListPlacementsPayload
 		{
 			public int SourceId { get; set; }
 
-			public string Label { get; set; } = string.Empty;
 			public int Order { get; set; }
 			public string IconUrl { get; set; } = string.Empty;
 		}
@@ -37,7 +36,9 @@ public record UpdateTierListPlacementsResponse : BaseAuditedEntityResponse
 
 class UpdateTierListPlacementsHandler : BaseHandler<UpdateTierListPlacementsCommand, UpdateTierListPlacementsResponse>
 {
-	public UpdateTierListPlacementsHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
+	private readonly TierListRepository _tierListRepository;
+	public UpdateTierListPlacementsHandler(AuthUtils authUtils, AppDbContext context, TierListRepository tierListRepository) : base(authUtils, context)
+		=> _tierListRepository = tierListRepository;
 
 	public override async Task<Result<UpdateTierListPlacementsResponse>> Handle(UpdateTierListPlacementsCommand request, CancellationToken cancellationToken)
 	{
@@ -60,18 +61,10 @@ class UpdateTierListPlacementsHandler : BaseHandler<UpdateTierListPlacementsComm
 
 		var dbSourceIdsOfTierListItems = request.Payload.Tiers
 			.SelectMany(tlt => tlt.Items)
-			.Select(tli => tli.SourceId);
+			.Select(tli => tli.SourceId)
+			.ToList();
 
-		IEnumerable<BaseAuditedEntity> dbSourcesOfTierListItems = dbTierList.Type switch
-		{
-			TierListType.ArrangementSongs => await _context.ArrangementSongs
-				.Where(@as => dbSourceIdsOfTierListItems.Contains(@as.Id))
-				.ToListAsync(),
-			TierListType.OfficialGames => await _context.OfficialGames
-				.Where(og => dbSourceIdsOfTierListItems.Contains(og.Id))
-				.ToListAsync(),
-			_ => Enumerable.Empty<BaseAuditedEntity>(),
-		};
+		var dbSourcesOfTierListItems = await _tierListRepository.GetSources(dbTierList.Type, dbSourceIdsOfTierListItems);
 
 		if (dbSourcesOfTierListItems.Count() < dbSourceIdsOfTierListItems.Count())
 		{
@@ -88,10 +81,10 @@ class UpdateTierListPlacementsHandler : BaseHandler<UpdateTierListPlacementsComm
 					var dbSourceOfTierListItem = dbSourcesOfTierListItems
 						.Single(i => i.Id == tli.SourceId);
 
-					return new TierListItem(tli.Label, tli.Order, tli.IconUrl)
+					return new TierListItem(tli.Order, tli.IconUrl)
 					{
-						SourceId = dbSourceOfTierListItem.Id,
-						Source = dbSourceOfTierListItem,
+						//SourceId = dbSourceOfTierListItem.Id,
+						//Source = dbSourceOfTierListItem,
 					};
 				}).ToList(),
 			})

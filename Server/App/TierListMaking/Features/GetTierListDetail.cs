@@ -17,45 +17,54 @@ public record GetTierListDetailResponse : BaseAuditedEntityResponse
 	public TierListType Type { get; set; }
 
 	public required List<TierListTierResponse> Tiers { get; set; } = new();
+	public record TierListTierResponse : BaseEntityResponse
+	{
+		public string Label { get; set; }
+		public int Order { get; set; }
+
+		public required List<TierListItemResponse> Items { get; set; }
+		public record TierListItemResponse : BaseEntityResponse
+		{
+			public int Order { get; set; }
+			public string IconUrl { get; set; }
+
+			public required SourceResponse Source { get; set; }
+
+			public TierListItemResponse(TierListItem tierListItem) : base(tierListItem)
+				=> (Order, IconUrl) = (tierListItem.Order, tierListItem.IconUrl);
+		}
+
+		public TierListTierResponse(TierListTier tierListTier) : base(tierListTier)
+			=> (Label, Order) = (tierListTier.Label, tierListTier.Order);
+	}
+
+
+	public required List<SourceResponse> RemainingSourceItems { get; set; }
+
+	public record SourceResponse : BaseEntityResponse
+	{
+		public string Label { get; set; }
+
+		public SourceResponse(BaseEntity entity) : base(entity)
+			=> Label = entity.GetLabel();
+	}
 
 	public GetTierListDetailResponse(TierList tierList) : base(tierList)
 		=> (Title, Description, Type) = (tierList.Title, tierList.Description, tierList.Type);
 }
 
-public record TierListTierResponse : BaseEntityResponse
-{
-	public string Label { get; set; }
-	public int Order { get; set; }
-
-	public required List<TierListItemResponse> Items { get; set; }
-
-	public TierListTierResponse(TierListTier tierListTier) : base(tierListTier)
-		=> (Label, Order) = (tierListTier.Label, tierListTier.Order);
-}
-
-public record TierListItemResponse : BaseEntityResponse
-{
-	public string Label { get; set; }
-	public int Order { get; set; }
-	public string IconUrl { get; set; }
-
-	public required int SourceId { get; set; }
-
-	public TierListItemResponse(TierListItem tierListItem) : base(tierListItem)
-		=> (Label, Order, IconUrl) = (tierListItem.Label, tierListItem.Order, tierListItem.IconUrl);
-}
-
 class GetTierListDetailHandler : BaseHandler<GetTierListDetailQuery, GetTierListDetailResponse>
 {
-	public GetTierListDetailHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context)
-	{
-	}
+	private readonly TierListRepository _tierListRepository;
+	public GetTierListDetailHandler(AuthUtils authUtils, AppDbContext context, TierListRepository tierListRepository) : base(authUtils, context)
+		=> _tierListRepository = tierListRepository;
 
 	public async override Task<Result<GetTierListDetailResponse>> Handle(GetTierListDetailQuery query, CancellationToken cancellationToken)
 	{
 		var dbTierList = await _context.TierLists
 			.Include(tl => tl.Tiers)
 				.ThenInclude(tlt => tlt.Items)
+			//.ThenInclude(tli => tli.Source)
 			.SingleOrDefaultAsync(tl => tl.Id == query.Id);
 
 		if (dbTierList is null)
@@ -63,15 +72,25 @@ class GetTierListDetailHandler : BaseHandler<GetTierListDetailQuery, GetTierList
 			return _resultFactory.NotFound($"Tier list {query.Id} not found");
 		}
 
+		var dbRemainingSourceItems = await _tierListRepository.GetRemainingSources(dbTierList);
+
 		var tierList_Res = new GetTierListDetailResponse(dbTierList)
 		{
-			Tiers = dbTierList.Tiers.Select(tlt => new TierListTierResponse(tlt)
-			{
-				Items = tlt.Items.Select(tli => new TierListItemResponse(tli)
+			Tiers = dbTierList.Tiers
+				.Select(tlt => new GetTierListDetailResponse.TierListTierResponse(tlt)
 				{
-					SourceId = tli.SourceId,
-				}).ToList(),
-			}).ToList(),
+					Items = tlt.Items
+						.Select(tli => new GetTierListDetailResponse.TierListTierResponse.TierListItemResponse(tli)
+						{
+							//Source = new GetTierListDetailResponse.SourceResponse(tli.Source),
+							Source = null,
+						})
+						.ToList(),
+				})
+				.ToList(),
+			RemainingSourceItems = dbRemainingSourceItems
+				.Select(s => new GetTierListDetailResponse.SourceResponse(s))
+				.ToList(),
 		};
 
 		return _resultFactory.Ok(tierList_Res);

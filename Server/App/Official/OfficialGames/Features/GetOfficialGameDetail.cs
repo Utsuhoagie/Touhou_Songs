@@ -29,7 +29,7 @@ public record OfficialGameDetailResponse : BaseAuditedEntityResponse
 			=> (Title, Context) = (officialSong.Title, officialSong.Context);
 	}
 
-	public OfficialGameDetailResponse(OfficialGame officialGame) : base(officialGame)
+	public OfficialGameDetailResponse(OfficialGame officialGame) : base(/*officialGame*/)
 		=> (Title, GameCode, NumberCode, ReleaseDate, ImageUrl)
 		= (officialGame.Title, officialGame.GameCode, officialGame.NumberCode, officialGame.ReleaseDate, officialGame.ImageUrl);
 }

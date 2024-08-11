@@ -9,7 +9,6 @@ using Touhou_Songs.App.Unofficial.Circles;
 using Touhou_Songs.App.Unofficial.Songs;
 using Touhou_Songs.App.UserProfile;
 using Touhou_Songs.Infrastructure.Auth;
-using Touhou_Songs.Infrastructure.BaseEntity;
 
 namespace Touhou_Songs.Data;
 
@@ -45,8 +44,8 @@ public partial class AppDbContext : IdentityDbContext<AppUser>
 
 	void OnModelCreating_App(ModelBuilder modelBuilder)
 	{
-		modelBuilder.Entity<BaseEntity>()
-			.UseTpcMappingStrategy();
+		//modelBuilder.Entity<BaseEntity>()
+		//	.UseTpcMappingStrategy();
 
 
 		modelBuilder.Entity<Character>()

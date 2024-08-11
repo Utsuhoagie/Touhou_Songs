@@ -3,7 +3,7 @@
 namespace Touhou_Songs.App.TierListMaking;
 
 /// <summary>
-/// [ArrangementSongs]
+/// [ArrangementSongs, OfficialGames]
 /// </summary>
 public enum TierListType
 {
@@ -41,12 +41,12 @@ public class TierListItem : BaseEntity
 	public int TierListTierId { get; set; }
 	public TierListTier TierListTier { get; set; } = default!;
 
-	public string Label { get; set; }
+	//public string Label => Source.GetLabel();
 	public int Order { get; set; }
 	public string IconUrl { get; set; }
 
-	public required int SourceId { get; set; }
-	public required BaseAuditedEntity Source { get; set; }
+	//public required int SourceId { get; set; }
+	//public required BaseAuditedEntity Source { get; set; }
 
-	public TierListItem(string label, int order, string iconUrl) => (Label, Order, IconUrl) = (label, order, iconUrl);
+	public TierListItem(int order, string iconUrl) => (Order, IconUrl) = (order, iconUrl);
 }

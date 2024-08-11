@@ -20,7 +20,7 @@ public record OfficialGameResponse : BaseAuditedEntityResponse
 
 	public required IEnumerable<string> SongTitles { get; set; }
 
-	public OfficialGameResponse(OfficialGame officialGame) : base(officialGame)
+	public OfficialGameResponse(OfficialGame officialGame) : base(/*officialGame*/)
 		=> (Title, GameCode, NumberCode, ReleaseDate, ImageUrl)
 		= (officialGame.Title, officialGame.GameCode, officialGame.NumberCode, officialGame.ReleaseDate, officialGame.ImageUrl);
 }

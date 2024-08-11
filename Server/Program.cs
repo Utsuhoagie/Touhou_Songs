@@ -1,4 +1,5 @@
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using FluentValidation;
@@ -11,6 +12,7 @@ using Touhou_Songs.App.Unofficial.Circles.Features;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.API;
 using Touhou_Songs.Infrastructure.Auth;
+using Touhou_Songs.Infrastructure.BaseRepository;
 using Touhou_Songs.Infrastructure.Configuration;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
@@ -84,6 +86,12 @@ builder.Services
 	});
 
 builder.Services.Configure<ConfigurationOptions>(builder.Configuration);
+
+// Add repositories
+Assembly.GetExecutingAssembly().GetTypes()
+	.Where(type => type.BaseType == typeof(BaseRepository))
+	.ToList()
+	.ForEach(repo => builder.Services.AddScoped(repo));
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
