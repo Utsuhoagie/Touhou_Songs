@@ -23,7 +23,7 @@ public record OfficialSongDetailResponse : BaseAuditedEntityResponse
 		public string GameCode { get; set; }
 		public string ImageUrl { get; set; }
 
-		public OfficialGameSimple(OfficialGame officialGame) : base(/*officialGame*/)
+		public OfficialGameSimple(OfficialGame officialGame) : base(officialGame)
 			=> (Title, GameCode, ImageUrl) = (officialGame.Title, officialGame.GameCode, officialGame.ImageUrl);
 	}
 

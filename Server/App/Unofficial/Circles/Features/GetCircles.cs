@@ -28,18 +28,13 @@ class GetCirclesHandler : BaseHandler<GetCirclesQuery, IEnumerable<CircleRespons
 	public override async Task<Result<IEnumerable<CircleResponse>>> Handle(GetCirclesQuery query, CancellationToken cancellationToken)
 	{
 		var circles_Res = await _context.Circles
-			//.Include(c => c.ArrangementSongs)
+			.Include(c => c.ArrangementSongs)
 			.Where(c => query.searchName == null || EF.Functions.ILike(c.Name, $"%{query.searchName}%"))
 			.Select(c => new CircleResponse(c)
 			{
-				ArrangementSongTitles = new(),
-				//ArrangementSongTitles = c.ArrangementSongs.Select(a => a.Title).ToList(),
+				ArrangementSongTitles = c.ArrangementSongs.Select(a => a.Title).ToList(),
 			})
 			.ToListAsync();
-
-		//await _context.ArrangementSongs
-		//	.Where(@as => )
-		//	.ToListAsync()
 
 		return _resultFactory.Ok(circles_Res);
 	}

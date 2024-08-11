@@ -36,7 +36,7 @@ class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<Charact
 			.Select(c => new CharacterResponse(c)
 			{
 				OriginGameCode = c.OriginGame.GameCode,
-				OfficialSongTitles = new(),//c.OfficialSongs.Select(os => os.Title).ToList(),
+				OfficialSongTitles = c.OfficialSongs.Select(os => os.Title).ToList(),
 			})
 			.ToListAsync();
 

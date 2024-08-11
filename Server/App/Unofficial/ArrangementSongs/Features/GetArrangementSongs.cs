@@ -30,20 +30,12 @@ class GetArrangementSongsHandler : BaseHandler<GetArrangementSongsQuery, IEnumer
 
 	public override async Task<Result<IEnumerable<ArrangementSongResponse>>> Handle(GetArrangementSongsQuery request, CancellationToken cancellationToken)
 	{
-		//var entity = await _context.Set<BaseEntity>()
-		//	.Where(b => b.Id == 5)
-		//	.ToListAsync();
-
-		//var foo = await _context.ArrangementSongs
-		//	//.Include(a => a.Circle)
-		//	.ToListAsync();
-
 		var arrangementSongs_Res = await _context.ArrangementSongs
-			//.Include(a => a.Circle)
-			//.Include(a => a.OfficialSongs)
+			.Include(a => a.Circle)
+			.Include(a => a.OfficialSongs)
 			.Select(a => new ArrangementSongResponse(a)
 			{
-				CircleName = "asdsa", //a.Circle.Name,
+				CircleName = a.Circle.Name,
 				OfficialSongTitles = a.OfficialSongs
 					.Select(os => os.Game)
 					.Select(og => og.Title)

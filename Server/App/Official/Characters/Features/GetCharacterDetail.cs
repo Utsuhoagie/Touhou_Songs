@@ -25,7 +25,7 @@ public record CharacterDetailResponse : BaseAuditedEntityResponse
 		public string NumberCode { get; set; }
 		public string ImageUrl { get; set; }
 
-		public OfficialGameSimple(OfficialGame officialGame) : base(/*officialGame*/)
+		public OfficialGameSimple(OfficialGame officialGame) : base(officialGame)
 			=> (Title, GameCode, NumberCode, ImageUrl)
 			= (officialGame.Title, officialGame.GameCode, officialGame.NumberCode, officialGame.ImageUrl);
 	}
