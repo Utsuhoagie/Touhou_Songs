@@ -34,7 +34,8 @@ class CreateTierListHandler : BaseHandler<CreateTierListCommand, CreateTierListR
 			return _resultFactory.Unauthorized("Must have profile to create a Tier list");
 		}
 
-		var dbTierListSameTitle = await _context.TierLists.SingleOrDefaultAsync(tl => tl.Title == request.Title);
+		var dbTierListSameTitle = await _context.TierLists
+			.SingleOrDefaultAsync(tl => tl.Title == request.Title);
 
 		if (dbTierListSameTitle is not null)
 		{

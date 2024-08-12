@@ -1,5 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Touhou_Songs.App.Official.OfficialGames;
+using Touhou_Songs.App.Unofficial.Songs;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseEntity;
@@ -66,7 +68,7 @@ class UpdateTierListPlacementsHandler : BaseHandler<UpdateTierListPlacementsComm
 
 		var dbSourcesOfTierListItems = await _tierListRepository.GetSources(dbTierList.Type, dbSourceIdsOfTierListItems);
 
-		if (dbSourcesOfTierListItems.Count() < dbSourceIdsOfTierListItems.Count())
+		if (dbSourcesOfTierListItems.Count < dbSourceIdsOfTierListItems.Count)
 		{
 			return _resultFactory.NotFound($"Some source items were not found");
 		}
@@ -79,12 +81,17 @@ class UpdateTierListPlacementsHandler : BaseHandler<UpdateTierListPlacementsComm
 				Items = tlt.Items.Select(tli =>
 				{
 					var dbSourceOfTierListItem = dbSourcesOfTierListItems
-						.Single(i => i.Id == tli.SourceId);
+						.Single(s => s.Id == tli.SourceId);
+
+					var type = dbTierList.Type;
 
 					return new TierListItem(tli.Order, tli.IconUrl)
 					{
-						//SourceId = dbSourceOfTierListItem.Id,
-						//Source = dbSourceOfTierListItem,
+						ArrangementSong = type == TierListType.ArrangementSongs ? (ArrangementSong)dbSourceOfTierListItem : null,
+						ArrangementSongId = type == TierListType.ArrangementSongs ? dbSourceOfTierListItem.Id : null,
+
+						OfficialGame = type == TierListType.OfficialGames ? (OfficialGame)dbSourceOfTierListItem : null,
+						OfficialGameId = type == TierListType.OfficialGames ? dbSourceOfTierListItem.Id : null,
 					};
 				}).ToList(),
 			})

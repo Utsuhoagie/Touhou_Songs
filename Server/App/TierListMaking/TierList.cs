@@ -1,4 +1,6 @@
-﻿using Touhou_Songs.Infrastructure.BaseEntity;
+﻿using Touhou_Songs.App.Official.OfficialGames;
+using Touhou_Songs.App.Unofficial.Songs;
+using Touhou_Songs.Infrastructure.BaseEntity;
 
 namespace Touhou_Songs.App.TierListMaking;
 
@@ -41,12 +43,14 @@ public class TierListItem : BaseEntity
 	public int TierListTierId { get; set; }
 	public TierListTier TierListTier { get; set; } = default!;
 
-	//public string Label => Source.GetLabel();
 	public int Order { get; set; }
 	public string IconUrl { get; set; }
 
-	//public required int SourceId { get; set; }
-	//public required BaseAuditedEntity Source { get; set; }
+	public required int? ArrangementSongId { get; set; }
+	public required ArrangementSong? ArrangementSong { get; set; }
+
+	public required int? OfficialGameId { get; set; }
+	public required OfficialGame? OfficialGame { get; set; }
 
 	public TierListItem(int order, string iconUrl) => (Order, IconUrl) = (order, iconUrl);
 }

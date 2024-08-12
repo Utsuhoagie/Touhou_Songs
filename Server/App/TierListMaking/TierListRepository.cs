@@ -13,18 +13,11 @@ public class TierListRepository : BaseRepository
 	{
 		dbSourceIds ??= Enumerable.Empty<int>().ToList();
 
-		//IQueryable<BaseAuditedEntity> dbSourcesOfTierListItems = type switch
-		//{
-		//	TierListType.ArrangementSongs => _context.ArrangementSongs
-		//		.Where(a => dbSourceIds.Contains(a.Id)),
-		//	TierListType.OfficialGames => _context.OfficialGames
-		//		.Where(og => dbSourceIds.Contains(og.Id)),
-		//};
-
 		IQueryable<BaseAuditedEntity> sourceContext = type switch
 		{
+			TierListType.OfficialGames => _context.OfficialGames,
 			TierListType.ArrangementSongs => _context.ArrangementSongs,
-			//TierListType.OfficialGames => _context.OfficialGames,
+			_ => null!,
 		};
 
 		var dbSourcesOfTierListItems = await sourceContext
@@ -36,23 +29,29 @@ public class TierListRepository : BaseRepository
 
 	public async Task<List<BaseAuditedEntity>> GetRemainingSources(TierList tierList)
 	{
-		var tierListType = tierList.Type;
+		var type = tierList.Type;
+
 		var currentSourceIds = tierList.Tiers
-			.SelectMany(tlt => tlt.Items);
-		//.Select(tli => tli.SourceId);
+			.SelectMany(tlt => tlt.Items)
+			.Select(tli => type switch
+			{
+				TierListType.OfficialGames => tli.OfficialGameId!.Value,
+				TierListType.ArrangementSongs => tli.ArrangementSongId!.Value,
+				_ => default,
+			})
+			.ToList();
 
-		throw new NotImplementedException();
+		IQueryable<BaseAuditedEntity> sourceContext = type switch
+		{
+			TierListType.OfficialGames => _context.OfficialGames,
+			TierListType.ArrangementSongs => _context.ArrangementSongs,
+			_ => default!,
+		};
 
-		//IQueryable<BaseAuditedEntity> sourceContext = tierListType switch
-		//{
-		//	TierListType.ArrangementSongs => _context.ArrangementSongs,
-		//	//TierListType.OfficialGames => _context.OfficialGames,
-		//};
+		var dbSourcesOfTierListItems = await sourceContext
+			.Where(s => !currentSourceIds.Contains(s.Id))
+			.ToListAsync();
 
-		//var dbSourcesOfTierListItems = await sourceContext
-		//	.Where(s => !currentSourceIds.Contains(s.Id))
-		//	.ToListAsync();
-
-		//return dbSourcesOfTierListItems.ToList();
+		return dbSourcesOfTierListItems;
 	}
 }

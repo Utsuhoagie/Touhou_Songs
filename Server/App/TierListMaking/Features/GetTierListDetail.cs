@@ -64,7 +64,10 @@ class GetTierListDetailHandler : BaseHandler<GetTierListDetailQuery, GetTierList
 		var dbTierList = await _context.TierLists
 			.Include(tl => tl.Tiers)
 				.ThenInclude(tlt => tlt.Items)
-			//.ThenInclude(tli => tli.Source)
+				.ThenInclude(tli => tli.OfficialGame)
+			.Include(tl => tl.Tiers)
+				.ThenInclude(tlt => tlt.Items)
+				.ThenInclude(tli => tli.ArrangementSong)
 			.SingleOrDefaultAsync(tl => tl.Id == query.Id);
 
 		if (dbTierList is null)
@@ -80,10 +83,19 @@ class GetTierListDetailHandler : BaseHandler<GetTierListDetailQuery, GetTierList
 				.Select(tlt => new GetTierListDetailResponse.TierListTierResponse(tlt)
 				{
 					Items = tlt.Items
-						.Select(tli => new GetTierListDetailResponse.TierListTierResponse.TierListItemResponse(tli)
+						.Select(tli =>
 						{
-							//Source = new GetTierListDetailResponse.SourceResponse(tli.Source),
-							Source = null,
+							BaseAuditedEntity source = tli.TierListTier.TierList.Type switch
+							{
+								TierListType.OfficialGames => tli.OfficialGame!,
+								TierListType.ArrangementSongs => tli.ArrangementSong!,
+								_ => default!,
+							};
+
+							return new GetTierListDetailResponse.TierListTierResponse.TierListItemResponse(tli)
+							{
+								Source = new GetTierListDetailResponse.SourceResponse(source),
+							};
 						})
 						.ToList(),
 				})
