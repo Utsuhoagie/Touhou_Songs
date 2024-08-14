@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Touhou_Songs.App.Official.OfficialGames;
 using Touhou_Songs.App.Official.OfficialSongs;
-using Touhou_Songs.Infrastructure.BaseEntity;
+using Touhou_Songs.Infrastructure.BaseEntities;
 
 namespace Touhou_Songs.App.Official.Characters;
 

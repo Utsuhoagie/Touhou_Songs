@@ -1,6 +1,6 @@
 ﻿using Touhou_Songs.App.TierListMaking;
 using Touhou_Songs.Infrastructure.Auth;
-using Touhou_Songs.Infrastructure.BaseEntity;
+using Touhou_Songs.Infrastructure.BaseEntities;
 
 namespace Touhou_Songs.App.UserProfile;
 

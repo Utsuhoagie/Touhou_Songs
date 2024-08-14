@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using Touhou_Songs.App.Unofficial.Songs;
-using Touhou_Songs.Infrastructure.BaseEntity;
+using Touhou_Songs.Infrastructure.BaseEntities;
 
 namespace Touhou_Songs.App.Unofficial.Circles;
 

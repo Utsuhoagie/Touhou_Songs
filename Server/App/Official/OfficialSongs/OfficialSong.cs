@@ -3,7 +3,7 @@ using Touhou_Songs.App._JoinEntities;
 using Touhou_Songs.App.Official.Characters;
 using Touhou_Songs.App.Official.OfficialGames;
 using Touhou_Songs.App.Unofficial.Songs;
-using Touhou_Songs.Infrastructure.BaseEntity;
+using Touhou_Songs.Infrastructure.BaseEntities;
 
 namespace Touhou_Songs.App.Official.OfficialSongs;
 

@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.App.Official.OfficialSongs;
 using Touhou_Songs.Data;
@@ -58,40 +57,4 @@ class ImportSongsOfGameHandler : BaseHandler<ImportSongsOfGamesCommand, string>
 
 		return _resultFactory.Ok(null);
 	}
-}
-
-[HttpPost("OfficialSongs")]
-public async Task<IActionResult> ImportSongs([FromBody] List<ImportSongsOfGamesCommand> allSongs)
-{
-	var allGames = await _context.OfficialGames.ToListAsync();
-	var newSongs = new List<OfficialSong>();
-
-	foreach (var gameSongs in allSongs)
-	{
-		var game = allGames.SingleOrDefault(og => og.GameCode == gameSongs.GameCode);
-
-		if (game is null)
-		{
-			return NotFound($"Game {gameSongs.GameCode} not found");
-		}
-
-		foreach (var song in gameSongs.Songs)
-		{
-			var newSong = new OfficialSong(song, "??")
-			{
-				GameId = game.Id,
-				Game = game,
-				Characters = new(), // PLACEHOLDER!!!!!!!!
-				ArrangementSongs = new(), // PLACEHOLDER!!!!!
-				OfficialSongArrangementSongs = new(),
-			};
-
-			newSongs.Add(newSong);
-		}
-	}
-
-	//_context.OfficialSongs.AddRange(newSongs);
-	//await _context.SaveChangesAsync();
-
-	return Ok();
 }

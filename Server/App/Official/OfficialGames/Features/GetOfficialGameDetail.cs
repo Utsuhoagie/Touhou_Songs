@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.App.Official.OfficialSongs;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
-using Touhou_Songs.Infrastructure.BaseEntity;
+using Touhou_Songs.Infrastructure.BaseEntities;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.Results;
 

@@ -1,4 +1,4 @@
-﻿namespace Touhou_Songs.Infrastructure.BaseEntity;
+﻿namespace Touhou_Songs.Infrastructure.BaseEntities;
 
 public record BaseAuditedEntityResponse : BaseEntityResponse
 {

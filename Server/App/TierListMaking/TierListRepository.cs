@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
-using Touhou_Songs.Infrastructure.BaseEntity;
+using Touhou_Songs.Infrastructure.BaseEntities;
 using Touhou_Songs.Infrastructure.BaseRepository;
 
 namespace Touhou_Songs.App.TierListMaking;

@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
-using Touhou_Songs.Infrastructure.BaseEntity;
+using Touhou_Songs.Infrastructure.BaseEntities;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.Data;
