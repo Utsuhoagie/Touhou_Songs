@@ -14,6 +14,7 @@ using Touhou_Songs.Infrastructure.API;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseRepository;
 using Touhou_Songs.Infrastructure.Configuration;
+using Touhou_Songs.Infrastructure.ExcelManager;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
 
 // NOTE
@@ -105,6 +106,9 @@ builder.Services
 
 builder.Services
 	.AddValidatorsFromAssemblyContaining<CreateCircleValidator>();
+
+builder.Services
+	.AddScoped<ExcelManager>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services
