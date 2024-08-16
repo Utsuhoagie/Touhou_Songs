@@ -4,15 +4,24 @@ using Touhou_Songs.Infrastructure.BaseEntities;
 
 namespace Touhou_Songs.Infrastructure.ExcelManager;
 
-public class ExcelManager
+public class ExcelBuilder
 {
+	private XSSFWorkbook _file;
+
 	public const string MimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-	public byte[] GenerateFromEntities(List<string> headers, IEnumerable<BaseEntity> entities, string? sheet1Name = null)
-	{
-		var excelFile = new XSSFWorkbook();
+	public ExcelBuilder() => _file = new XSSFWorkbook();
 
-		var sheet1 = excelFile.CreateSheet(sheet1Name);
+	public byte[] GetFile()
+	{
+		using var memoryStream = new MemoryStream();
+		_file.Write(memoryStream);
+		return memoryStream.ToArray();
+	}
+
+	public void GenerateFromEntities(string? sheetName, List<string> headers, IEnumerable<BaseEntity> entities)
+	{
+		var sheet1 = _file.CreateSheet(sheetName);
 
 		var headerRow = sheet1.CreateRow(0);
 		for (var i = 0; i < headers.Count; i++)
@@ -51,10 +60,5 @@ public class ExcelManager
 		{
 			sheet1.AutoSizeColumn(i);
 		}
-
-		using var memoryStream = new MemoryStream();
-		excelFile.Write(memoryStream);
-
-		return memoryStream.ToArray();
 	}
 }

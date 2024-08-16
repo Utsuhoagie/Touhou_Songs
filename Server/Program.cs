@@ -108,7 +108,7 @@ builder.Services
 	.AddValidatorsFromAssemblyContaining<CreateCircleValidator>();
 
 builder.Services
-	.AddScoped<ExcelManager>();
+	.AddScoped<ExcelBuilder>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services
