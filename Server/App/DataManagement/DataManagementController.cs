@@ -13,8 +13,8 @@ public class DataManagementController : ApiController
 
 	public DataManagementController(ISender sender) => _sender = sender;
 
-	[HttpGet("OfficialSongs")]
-	public async Task<IActionResult> ExportAllOfficialSongs([FromQuery] ExportAllOfficialSongsQuery query)
+	[HttpGet("Data")]
+	public async Task<IActionResult> ExportAllData([FromQuery] ExportAllDataQuery query)
 	{
 		var res = await _sender.Send(query);
 		return ToResponse(res);

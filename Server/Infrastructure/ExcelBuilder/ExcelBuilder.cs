@@ -2,7 +2,7 @@
 using NPOI.XSSF.UserModel;
 using Touhou_Songs.Infrastructure.BaseEntities;
 
-namespace Touhou_Songs.Infrastructure.ExcelManager;
+namespace Touhou_Songs.Infrastructure.ExcelBuilder;
 
 public class ExcelBuilder
 {
