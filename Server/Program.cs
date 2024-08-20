@@ -12,6 +12,7 @@ using Touhou_Songs.App.Unofficial.Circles.Features;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.API;
 using Touhou_Songs.Infrastructure.Auth;
+using Touhou_Songs.Infrastructure.Auth.Models;
 using Touhou_Songs.Infrastructure.BaseRepository;
 using Touhou_Songs.Infrastructure.Configuration;
 using Touhou_Songs.Infrastructure.ExceptionHandling;
@@ -44,7 +45,7 @@ builder.Services.AddCors(o => o.AddPolicy("My_CORS_Policy", p => p
 builder.Services.AddScoped<AuthUtils>();
 
 builder.Services
-	.AddIdentity<AppUser, IdentityRole>()
+	.AddIdentity<AppUser, AppRole>()
 	.AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services

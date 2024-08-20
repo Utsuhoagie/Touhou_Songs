@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.App._JoinEntities;
 using Touhou_Songs.App.Official.Characters;
@@ -8,11 +9,11 @@ using Touhou_Songs.App.TierListMaking;
 using Touhou_Songs.App.Unofficial.Circles;
 using Touhou_Songs.App.Unofficial.Songs;
 using Touhou_Songs.App.UserProfile;
-using Touhou_Songs.Infrastructure.Auth;
+using Touhou_Songs.Infrastructure.Auth.Models;
 
 namespace Touhou_Songs.Data;
 
-public partial class AppDbContext : IdentityDbContext<AppUser>
+public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, string, IdentityUserClaim<string>, AppUserRole, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>
 {
 	#region ---- Official ----
 	public DbSet<OfficialGame> OfficialGames { get; set; } = default!;

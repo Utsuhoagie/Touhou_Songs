@@ -8,31 +8,43 @@ using Touhou_Songs.App.TierListMaking;
 using Touhou_Songs.App.Unofficial.Circles;
 using Touhou_Songs.App.Unofficial.Songs;
 using Touhou_Songs.App.UserProfile;
-using Touhou_Songs.Infrastructure.Auth;
+using Touhou_Songs.Infrastructure.Auth.Models;
 
 namespace Touhou_Songs.Data;
 
-public partial class AppDbContext : IdentityDbContext<AppUser>
+public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, string, IdentityUserClaim<string>, AppUserRole, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>
 {
 	private readonly IHttpContextAccessor _httpContextAccessor;
 
-	public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
+	public AppDbContext(DbContextOptions options, IHttpContextAccessor httpContextAccessor) : base(options)
 	{
 		_httpContextAccessor = httpContextAccessor;
 	}
 
 	void OnModelCreating_Auth(ModelBuilder modelBuilder)
 	{
-		modelBuilder.Entity<IdentityRole>()
+		modelBuilder.Entity<AppUser>()
+			.HasMany(u => u.UserRoles)
+			.WithOne(ur => ur.User)
+			.HasForeignKey(ur => ur.UserId)
+			.IsRequired();
+
+		modelBuilder.Entity<AppRole>()
+			.HasMany(r => r.UserRoles)
+			.WithOne(ur => ur.Role)
+			.HasForeignKey(ur => ur.RoleId)
+			.IsRequired();
+
+		modelBuilder.Entity<AppRole>()
 			.HasData(
-				new IdentityRole
+				new AppRole
 				{
 					Id = "8c49af1b-5822-4cbd-bd7c-967dc49a54d4",
 					Name = "Admin",
 					NormalizedName = "ADMIN",
 					ConcurrencyStamp = null,
 				},
-				new IdentityRole
+				new AppRole
 				{
 					Id = "48807e45-822f-4da9-bbf3-5e71beff314a",
 					Name = "User",
