@@ -2,6 +2,7 @@
 using MediatR;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
+using Touhou_Songs.Infrastructure.Auth.Models;
 using Touhou_Songs.Infrastructure.BaseEntities;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.Results;

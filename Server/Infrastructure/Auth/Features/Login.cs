@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Touhou_Songs.Data;
+using Touhou_Songs.Infrastructure.Auth.Models;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.Configuration;
 using Touhou_Songs.Infrastructure.Results;

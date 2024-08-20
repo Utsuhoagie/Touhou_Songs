@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Touhou_Songs.Infrastructure.Auth.Models;
 using Touhou_Songs.Infrastructure.BaseEntities;
 using Touhou_Songs.Infrastructure.Results;
 

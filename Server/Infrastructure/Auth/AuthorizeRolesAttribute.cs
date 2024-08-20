@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Touhou_Songs.Infrastructure.Auth.Models;
 
 namespace Touhou_Songs.Infrastructure.Auth;
 

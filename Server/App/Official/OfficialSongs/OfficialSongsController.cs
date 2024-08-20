@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Touhou_Songs.App.Official.OfficialSongs.Features;
 using Touhou_Songs.Infrastructure.API;
 using Touhou_Songs.Infrastructure.Auth;
+using Touhou_Songs.Infrastructure.Auth.Models;
 
 namespace Touhou_Songs.App.Official.OfficialSongs;
 
