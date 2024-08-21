@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth.Models;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.Infrastructure.Auth.Features;
@@ -27,14 +28,14 @@ class ChangePasswordHandler : BaseHandler<ChangePasswordCommand, ChangePasswordR
 
 	public async override Task<Result<ChangePasswordResponse>> Handle(ChangePasswordCommand command, CancellationToken cancellationToken)
 	{
-		var currentUserAndRoleResult = await _authUtils.GetUserWithRole();
+		var dbCurrentUserWithRoleResult = await _authUtils.GetUserWithRole();
 
-		if (!currentUserAndRoleResult.Success)
+		if (!dbCurrentUserWithRoleResult.Success)
 		{
 			return _resultFactory.Unauthorized();
 		}
 
-		var (user, _) = currentUserAndRoleResult.Value;
+		var user = dbCurrentUserWithRoleResult.Value.User;
 
 		var changePasswordResult = await _userManager.ChangePasswordAsync(user, command.OldPassword, command.NewPassword);
 
@@ -44,6 +45,6 @@ class ChangePasswordHandler : BaseHandler<ChangePasswordCommand, ChangePasswordR
 			return _resultFactory.Unauthorized(messages: errors);
 		}
 
-		return _resultFactory.Ok(new(), "Changed password successfully");
+		return _resultFactory.Ok(new(), AuthI18n.ChangedPasswordSuccess.ToLanguage(Lang.EN));
 	}
 }

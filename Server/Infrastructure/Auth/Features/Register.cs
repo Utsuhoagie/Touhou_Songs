@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth.Models;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.Infrastructure.Auth.Features;
@@ -39,7 +40,7 @@ class RegisterHandler : BaseHandler<RegisterCommand, RegisterResponse>
 
 		if (existingUser is not null)
 		{
-			return _resultFactory.Conflict($"User with email {command.Email} already exists.");
+			return _resultFactory.Conflict(AuthI18n.EmailAlreadyExists.ToLanguage(Lang.EN, command.Email));
 		}
 
 		var newUser = new AppUser(command.UserName, command.Email);

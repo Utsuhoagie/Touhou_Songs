@@ -9,6 +9,7 @@ using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth.Models;
 using Touhou_Songs.Infrastructure.BaseHandler;
 using Touhou_Songs.Infrastructure.Configuration;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.Infrastructure.Auth.Features;
@@ -46,7 +47,7 @@ class LoginHandler : BaseHandler<LoginCommand, LoginResponse>
 
 		if (!checkPassword)
 		{
-			return _resultFactory.Unauthorized($"Wrong email or password");
+			return _resultFactory.Unauthorized(AuthI18n.WrongLoginInfo.ToLanguage(Lang.EN));
 		}
 
 		var claims = new List<Claim>
