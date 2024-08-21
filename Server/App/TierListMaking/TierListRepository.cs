@@ -48,10 +48,10 @@ public class TierListRepository : BaseRepository
 			_ => default!,
 		};
 
-		var dbSourcesOfTierListItems = await sourceContext
+		var dbRemainingSourcesOfTierListItems = await sourceContext
 			.Where(s => !currentSourceIds.Contains(s.Id))
 			.ToListAsync();
 
-		return dbSourcesOfTierListItems;
+		return dbRemainingSourcesOfTierListItems;
 	}
 }

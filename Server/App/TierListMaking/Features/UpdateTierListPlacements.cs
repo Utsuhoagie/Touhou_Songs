@@ -66,6 +66,11 @@ class UpdateTierListPlacementsHandler : BaseHandler<UpdateTierListPlacementsComm
 			.Select(tli => tli.SourceId)
 			.ToList();
 
+		if (dbSourceIdsOfTierListItems.Count > dbSourceIdsOfTierListItems.Distinct().Count())
+		{
+			return _resultFactory.BadRequest($"Duplicate source Ids");
+		}
+
 		var dbSourcesOfTierListItems = await _tierListRepository.GetSources(dbTierList.Type, dbSourceIdsOfTierListItems);
 
 		if (dbSourcesOfTierListItems.Count < dbSourceIdsOfTierListItems.Count)

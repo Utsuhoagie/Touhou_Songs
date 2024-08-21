@@ -2,6 +2,9 @@
 
 namespace Touhou_Songs.Infrastructure.ExceptionHandling;
 
+/// <summary>
+/// Unused!!!
+/// </summary>
 public class AppException : Exception
 {
 	public HttpStatusCode StatusCode { get; } = HttpStatusCode.InternalServerError;
