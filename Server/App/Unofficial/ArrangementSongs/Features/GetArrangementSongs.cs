@@ -28,7 +28,7 @@ class GetArrangementSongsHandler : BaseHandler<GetArrangementSongsQuery, IEnumer
 {
 	public GetArrangementSongsHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
-	public override async Task<Result<IEnumerable<ArrangementSongResponse>>> Handle(GetArrangementSongsQuery request, CancellationToken cancellationToken)
+	public override async Task<Result<IEnumerable<ArrangementSongResponse>>> Handle(GetArrangementSongsQuery query, CancellationToken cancellationToken)
 	{
 		var arrangementSongs_Res = await _context.ArrangementSongs
 			.Include(a => a.Circle)

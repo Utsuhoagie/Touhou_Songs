@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Unofficial.Circles.Features;
@@ -26,7 +27,7 @@ class GetCircleDetailHandler : BaseHandler<GetCircleDetailQuery, CircleResponse>
 
 		if (circle_Res is null)
 		{
-			return _resultFactory.NotFound($"Circle {query.Name} not found.");
+			return _resultFactory.NotFound(GenericI18n.NotFound.ToLanguage(Lang.EN, nameof(Circle), query.Name));
 		}
 
 		return _resultFactory.Ok(circle_Res);

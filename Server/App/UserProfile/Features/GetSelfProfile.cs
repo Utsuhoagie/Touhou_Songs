@@ -6,6 +6,7 @@ using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.Auth.Models;
 using Touhou_Songs.Infrastructure.BaseEntities;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.UserProfile.Features;
@@ -55,7 +56,7 @@ class GetSelfProfileHandler : BaseHandler<GetSelfProfileQuery, GetSelfProfileRes
 
 		if (dbProfile is null)
 		{
-			return _resultFactory.NotFound("Profile not found");
+			return _resultFactory.NotFound(GenericI18n.NotFound.ToLanguage(Lang.EN, nameof(UserProfile), $"userId {user.Id}"));
 		}
 
 		var profile_Res = new GetSelfProfileResponse(user, dbProfile);

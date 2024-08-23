@@ -5,6 +5,7 @@ using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseEntities;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.OfficialGames.Features;
@@ -53,7 +54,7 @@ class GetOfficialGameDetailHandler : BaseHandler<GetOfficialGameDetailQuery, Off
 
 		if (officialGameDetail_Res is null)
 		{
-			return _resultFactory.NotFound($"OfficialGame {query.GameCode} not found.");
+			return _resultFactory.NotFound(GenericI18n.NotFound.ToLanguage(Lang.EN, nameof(OfficialGame), query.GameCode));
 		}
 
 		return _resultFactory.Ok(officialGameDetail_Res);

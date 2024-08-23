@@ -5,6 +5,7 @@ using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseEntities;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.OfficialSongs.Features;
@@ -48,7 +49,7 @@ class GetOfficialSongDetailHandler : BaseHandler<GetOfficialSongDetailQuery, Off
 
 		if (officialSongDetail_Res is null)
 		{
-			return _resultFactory.NotFound($"OfficialSong {query.Id} not found.");
+			return _resultFactory.NotFound(GenericI18n.NotFound.ToLanguage(Lang.EN, nameof(OfficialSong), query.Id));
 		}
 
 		return _resultFactory.Ok(officialSongDetail_Res);

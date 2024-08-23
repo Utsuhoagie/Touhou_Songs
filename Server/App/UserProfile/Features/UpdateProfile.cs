@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.UserProfile.Features;
@@ -28,13 +29,13 @@ class UpdateProfileHandler : BaseHandler<UpdateProfileCommand, string>
 
 		if (dbProfile is null)
 		{
-			return _resultFactory.NotFound("Profile not found");
+			return _resultFactory.NotFound(GenericI18n.NotFound.ToLanguage(Lang.EN, nameof(UserProfile), $"userId {user.Id}"));
 		}
 
 		dbProfile.Update(command.Bio, command.AvatarUrl);
 
 		await _context.SaveChangesAsync();
 
-		return _resultFactory.Ok("Profile updated");
+		return _resultFactory.Ok(GenericI18n.Success.ToLanguage(Lang.EN, "Profile updated"));
 	}
 }

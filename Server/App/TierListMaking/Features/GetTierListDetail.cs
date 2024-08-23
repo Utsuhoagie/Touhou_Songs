@@ -4,6 +4,7 @@ using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseEntities;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.TierListMaking.Features;
@@ -72,7 +73,7 @@ class GetTierListDetailHandler : BaseHandler<GetTierListDetailQuery, GetTierList
 
 		if (dbTierList is null)
 		{
-			return _resultFactory.NotFound($"Tier list {query.Id} not found");
+			return _resultFactory.NotFound(GenericI18n.NotFound.ToLanguage(Lang.EN, nameof(TierList), query.Id));
 		}
 
 		var dbRemainingSourceItems = await _tierListRepository.GetRemainingSources(dbTierList);

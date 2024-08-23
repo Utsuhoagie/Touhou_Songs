@@ -6,6 +6,7 @@ using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseEntities;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
@@ -52,7 +53,7 @@ class GetArrangementSongDetailHandler : BaseHandler<GetArrangementSongDetailQuer
 
 		if (arrangementSong_Res is null)
 		{
-			return _resultFactory.NotFound($"Arrangement Song with Id = {query.Id} not found.");
+			return _resultFactory.NotFound(GenericI18n.NotFound.ToLanguage(Lang.EN, nameof(ArrangementSong), query.Id));
 		}
 
 		return _resultFactory.Ok(arrangementSong_Res);

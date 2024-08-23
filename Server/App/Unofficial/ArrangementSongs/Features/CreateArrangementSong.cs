@@ -1,11 +1,13 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Touhou_Songs.App.Unofficial.Circles;
 using Touhou_Songs.App.Unofficial.Songs;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.Auth.Models;
 using Touhou_Songs.Infrastructure.BaseEntities;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
@@ -49,7 +51,7 @@ class CreateArrangementSongHandler : BaseHandler<CreateArrangementSongCommand, C
 
 		if (dbCircle is null)
 		{
-			return _resultFactory.NotFound($"Circle with name = {command.CircleName} not found");
+			return _resultFactory.NotFound(GenericI18n.NotFound.ToLanguage(Lang.EN, nameof(Circle), command.CircleName));
 		}
 
 		var dbOfficialSongs = await _context.OfficialSongs

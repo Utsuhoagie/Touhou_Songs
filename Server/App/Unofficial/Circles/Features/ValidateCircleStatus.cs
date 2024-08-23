@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Unofficial.Circles.Features;
@@ -21,18 +22,18 @@ class ValidateCircleStatusHandler : BaseHandler<ValidateCircleStatusCommand, str
 
 		if (dbCircle is null)
 		{
-			return _resultFactory.NotFound($"Circle {command.Name} not found.");
+			return _resultFactory.NotFound(GenericI18n.NotFound.ToLanguage(Lang.EN, nameof(Circle), command.Name));
 		}
 
 		if (dbCircle.Status != UnofficialStatus.Pending)
 		{
-			return _resultFactory.Conflict($"Circle {command.Name} is already approved. Status = {dbCircle.Status}.");
+			return _resultFactory.Conflict(GenericI18n.Conflict.ToLanguage(Lang.EN, $"Circle {command.Name} is already approved. Status = {dbCircle.Status}."));
 		}
 
 		dbCircle.Status = command.Payload.Status;
 		await _context.SaveChangesAsync();
 
 		var message = $"Circle {dbCircle.Name} was {dbCircle.Status} successfully.";
-		return _resultFactory.Ok(message);
+		return _resultFactory.Ok(GenericI18n.Success.ToLanguage(Lang.EN, message));
 	}
 }

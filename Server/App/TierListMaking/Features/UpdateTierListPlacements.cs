@@ -6,6 +6,7 @@ using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseEntities;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.TierListMaking.Features;
@@ -42,16 +43,16 @@ class UpdateTierListPlacementsHandler : BaseHandler<UpdateTierListPlacementsComm
 	public UpdateTierListPlacementsHandler(AuthUtils authUtils, AppDbContext context, TierListRepository tierListRepository) : base(authUtils, context)
 		=> _tierListRepository = tierListRepository;
 
-	public override async Task<Result<UpdateTierListPlacementsResponse>> Handle(UpdateTierListPlacementsCommand request, CancellationToken cancellationToken)
+	public override async Task<Result<UpdateTierListPlacementsResponse>> Handle(UpdateTierListPlacementsCommand command, CancellationToken cancellationToken)
 	{
 		var dbTierList = await _context.TierLists
 			.Include(tl => tl.Tiers)
 				.ThenInclude(tlt => tlt.Items)
-			.SingleOrDefaultAsync(tl => tl.Id == request.TierListId);
+			.SingleOrDefaultAsync(tl => tl.Id == command.TierListId);
 
 		if (dbTierList is null)
 		{
-			return _resultFactory.NotFound($"Tier list {request.TierListId} not found");
+			return _resultFactory.NotFound(GenericI18n.NotFound.ToLanguage(Lang.EN, nameof(TierList), command.TierListId));
 		}
 
 		var validateTierListBelongsToUser = _authUtils.ValidateEntityBelongsToUser(dbTierList);
@@ -61,24 +62,28 @@ class UpdateTierListPlacementsHandler : BaseHandler<UpdateTierListPlacementsComm
 			return _resultFactory.FromResult(validateTierListBelongsToUser);
 		}
 
-		var dbSourceIdsOfTierListItems = request.Payload.Tiers
+		var sourceIdsOfTierListItems = command.Payload.Tiers
 			.SelectMany(tlt => tlt.Items)
 			.Select(tli => tli.SourceId)
 			.ToList();
 
-		if (dbSourceIdsOfTierListItems.Count > dbSourceIdsOfTierListItems.Distinct().Count())
+		if (sourceIdsOfTierListItems.Count > sourceIdsOfTierListItems.Distinct().Count())
 		{
-			return _resultFactory.BadRequest($"Duplicate source Ids");
+			return _resultFactory.BadRequest(GenericI18n.BadRequest.ToLanguage(Lang.EN, $"Duplicate source Ids"));
 		}
 
-		var dbSourcesOfTierListItems = await _tierListRepository.GetSources(dbTierList.Type, dbSourceIdsOfTierListItems);
+		var dbSourcesOfTierListItems = await _tierListRepository.GetSources(dbTierList.Type, sourceIdsOfTierListItems);
 
-		if (dbSourcesOfTierListItems.Count < dbSourceIdsOfTierListItems.Count)
+		if (dbSourcesOfTierListItems.Count < sourceIdsOfTierListItems.Count)
 		{
-			return _resultFactory.NotFound($"Some source items were not found");
+			var foundSourceIds = dbSourcesOfTierListItems.Select(s => s.Id).ToList();
+			var notFoundSourceIds = sourceIdsOfTierListItems.Except(foundSourceIds).ToList();
+			var message = GenericI18n.NotFound.ToLanguage(Lang.EN,
+				$"Source items {dbTierList.Type}", string.Join(", ", notFoundSourceIds));
+			return _resultFactory.NotFound(message);
 		}
 
-		var newTiers = request.Payload.Tiers
+		var newTiers = command.Payload.Tiers
 			.Select(tlt => new TierListTier(tlt.Label, tlt.Order)
 			{
 				TierList = dbTierList,

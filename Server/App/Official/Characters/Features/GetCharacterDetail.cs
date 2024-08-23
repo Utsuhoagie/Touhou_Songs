@@ -6,6 +6,7 @@ using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseEntities;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.Characters.Features;
@@ -48,12 +49,12 @@ class GetCharacterDetailHandler : BaseHandler<GetCharacterDetailQuery, Character
 {
 	public GetCharacterDetailHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
-	public override async Task<Result<CharacterDetailResponse>> Handle(GetCharacterDetailQuery request, CancellationToken cancellationToken)
+	public override async Task<Result<CharacterDetailResponse>> Handle(GetCharacterDetailQuery query, CancellationToken cancellationToken)
 	{
 		var character_Res = await _context.Characters
 			.Include(c => c.OriginGame)
 			.Include(c => c.OfficialSongs)
-			.Where(c => c.Name == request.Name)
+			.Where(c => c.Name == query.Name)
 			.Select(c => new CharacterDetailResponse(c)
 			{
 				OriginGame = new(c.OriginGame),
@@ -65,7 +66,7 @@ class GetCharacterDetailHandler : BaseHandler<GetCharacterDetailQuery, Character
 
 		if (character_Res is null)
 		{
-			return _resultFactory.NotFound($"Character {request.Name} not found.");
+			return _resultFactory.NotFound(GenericI18n.NotFound.ToLanguage(Lang.EN, nameof(Character), query.Name));
 		}
 
 		return _resultFactory.Ok(character_Res);

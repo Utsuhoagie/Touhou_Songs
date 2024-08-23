@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.Characters.Features;
@@ -20,7 +21,7 @@ class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, string>
 
 		if (dbOriginGame is null)
 		{
-			return _resultFactory.NotFound($"Official OriginGame {command.OriginGameCode} not found");
+			return _resultFactory.NotFound(GenericI18n.NotFound.ToLanguage(Lang.EN, "Official OriginGame", command.OriginGameCode));
 		}
 
 		var dbOfficialSongs = await _context.OfficialSongs

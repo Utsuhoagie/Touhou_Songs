@@ -1,8 +1,10 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Touhou_Songs.App.Official.OfficialGames;
 using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.i18n;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.OfficialSongs.Features;
@@ -20,7 +22,7 @@ class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string>
 
 		if (dbOfficialGame is null)
 		{
-			return _resultFactory.NotFound($"Official Game {command.GameCode} not found");
+			return _resultFactory.NotFound(GenericI18n.NotFound.ToLanguage(Lang.EN, nameof(OfficialGame), command.GameCode));
 		}
 
 		var dbCharactersWithSong = await _context.Characters
@@ -36,8 +38,6 @@ class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string>
 			OfficialSongArrangementSongs = new(),
 		};
 
-
-		// then work on refactoring DTOs to use records and BaseAuditedEntityResponse
 		var createdOfficialSong = _context.OfficialSongs.Add(officialSong).Entity;
 		await _context.SaveChangesAsync();
 
