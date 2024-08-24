@@ -4,11 +4,12 @@ using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseEntities;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Paging;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Official.Characters.Features;
 
-public record GetCharactersQuery(string? searchName) : IRequest<Result<IEnumerable<CharacterResponse>>>;
+public record GetCharactersQuery(string? SearchName) : PagingParams, IRequest<Result<Paged<CharacterResponse>>>;
 
 public record CharacterResponse : BaseAuditedEntityResponse
 {
@@ -22,17 +23,21 @@ public record CharacterResponse : BaseAuditedEntityResponse
 		=> (Name, ImageUrl) = (character.Name, character.ImageUrl);
 }
 
-class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<CharacterResponse>>
+class GetCharactersHandler : BaseHandler<GetCharactersQuery, Paged<CharacterResponse>>
 {
 	public GetCharactersHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
-	public override async Task<Result<IEnumerable<CharacterResponse>>> Handle(GetCharactersQuery query, CancellationToken cancellationToken)
+	public override async Task<Result<Paged<CharacterResponse>>> Handle(GetCharactersQuery query, CancellationToken cancellationToken)
 	{
-		var characters_Res = await _context.Characters
+		var getCharactersQuery = _context.Characters
 			.Include(c => c.OriginGame)
 			.Include(c => c.OfficialSongs)
-			.Where(c => query.searchName == null || EF.Functions.ILike(c.Name, $"%{query.searchName}%"))
-			.OrderBy(c => c.OriginGame.ReleaseDate)
+			.Where(c => query.SearchName == null || EF.Functions.ILike(c.Name, $"%{query.SearchName}%"))
+			.OrderBy(c => c.OriginGame.ReleaseDate);
+
+		var characters_Res = await getCharactersQuery
+			.Skip((query.Page - 1) * query.PageSize)
+			.Take(query.PageSize)
 			.Select(c => new CharacterResponse(c)
 			{
 				OriginGameCode = c.OriginGame.GameCode,
@@ -40,6 +45,14 @@ class GetCharactersHandler : BaseHandler<GetCharactersQuery, IEnumerable<Charact
 			})
 			.ToListAsync();
 
-		return _resultFactory.Ok(characters_Res);
+		var totalCharacters = await getCharactersQuery.CountAsync();
+
+		var pagedCharacters_Res = new Paged<CharacterResponse>(query)
+		{
+			TotalItemsCount = totalCharacters,
+			Items = characters_Res,
+		};
+
+		return _resultFactory.Ok(pagedCharacters_Res);
 	}
 }

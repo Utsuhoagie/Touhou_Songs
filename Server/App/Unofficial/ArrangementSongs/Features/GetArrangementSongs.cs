@@ -5,11 +5,12 @@ using Touhou_Songs.Data;
 using Touhou_Songs.Infrastructure.Auth;
 using Touhou_Songs.Infrastructure.BaseEntities;
 using Touhou_Songs.Infrastructure.BaseHandler;
+using Touhou_Songs.Infrastructure.Paging;
 using Touhou_Songs.Infrastructure.Results;
 
 namespace Touhou_Songs.App.Unofficial.ArrangementSongs.Features;
 
-public record GetArrangementSongsQuery() : IRequest<Result<IEnumerable<ArrangementSongResponse>>>;
+public record GetArrangementSongsQuery(string? SearchTitle) : PagingParams, IRequest<Result<Paged<ArrangementSongResponse>>>;
 
 public record ArrangementSongResponse : BaseAuditedEntityResponse
 {
@@ -24,15 +25,21 @@ public record ArrangementSongResponse : BaseAuditedEntityResponse
 		=> (Title, Url, Status) = (arrangementSong.Title, arrangementSong.Url, arrangementSong.Status);
 }
 
-class GetArrangementSongsHandler : BaseHandler<GetArrangementSongsQuery, IEnumerable<ArrangementSongResponse>>
+class GetArrangementSongsHandler : BaseHandler<GetArrangementSongsQuery, Paged<ArrangementSongResponse>>
 {
 	public GetArrangementSongsHandler(AuthUtils authUtils, AppDbContext context) : base(authUtils, context) { }
 
-	public override async Task<Result<IEnumerable<ArrangementSongResponse>>> Handle(GetArrangementSongsQuery query, CancellationToken cancellationToken)
+	public override async Task<Result<Paged<ArrangementSongResponse>>> Handle(GetArrangementSongsQuery query, CancellationToken cancellationToken)
 	{
-		var arrangementSongs_Res = await _context.ArrangementSongs
+		var getArrangementSongsQuery = _context.ArrangementSongs
 			.Include(a => a.Circle)
 			.Include(a => a.OfficialSongs)
+			.Where(a => query.SearchTitle == null || EF.Functions.ILike(a.Title, $"%{query.SearchTitle}%"))
+			.OrderBy(a => a.Title);
+
+		var arrangementSongs_Res = await getArrangementSongsQuery
+			.Skip((query.Page - 1) * query.PageSize)
+			.Take(query.PageSize)
 			.Select(a => new ArrangementSongResponse(a)
 			{
 				CircleName = a.Circle.Name,
@@ -43,6 +50,14 @@ class GetArrangementSongsHandler : BaseHandler<GetArrangementSongsQuery, IEnumer
 			})
 			.ToListAsync();
 
-		return _resultFactory.Ok(arrangementSongs_Res);
+		var totalArrangementSongs = await getArrangementSongsQuery.CountAsync();
+
+		var pagedArrangementSongs_Res = new Paged<ArrangementSongResponse>(query)
+		{
+			TotalItemsCount = totalArrangementSongs,
+			Items = arrangementSongs_Res,
+		};
+
+		return _resultFactory.Ok(pagedArrangementSongs_Res);
 	}
 }
