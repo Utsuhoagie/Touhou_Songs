@@ -125,10 +125,10 @@ app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
+app.UseCors("My_CORS_Policy");
+
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseCors("My_CORS_Policy");
 
 app.UseAuthorization();
 
