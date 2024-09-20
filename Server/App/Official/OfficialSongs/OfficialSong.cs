@@ -16,6 +16,7 @@ public class OfficialSong : BaseAuditedEntity
 	public required int GameId { get; set; }
 	public required OfficialGame Game { get; set; }
 	public required List<Character> Characters { get; set; }
+	public required List<CharacterOfficialSong> CharacterOfficialSongs { get; set; }
 
 	public required List<ArrangementSong> ArrangementSongs { get; set; }
 	public required List<OfficialSongArrangementSong> OfficialSongArrangementSongs { get; set; }

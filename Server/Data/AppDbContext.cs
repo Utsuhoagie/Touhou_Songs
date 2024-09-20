@@ -70,7 +70,14 @@ public partial class AppDbContext : IdentityDbContext<AppUser, AppRole, string, 
 		modelBuilder.Entity<OfficialSong>()
 			.HasMany(os => os.Characters)
 			.WithMany(c => c.OfficialSongs)
-			.UsingEntity<CharacterOfficialSong>();
+			.UsingEntity<CharacterOfficialSong>(b =>
+			{
+				b.ToTable("_CharacterOfficialSong");
+				b.HasOne(cos => cos.OfficialSong)
+					.WithMany(os => os.CharacterOfficialSongs)
+					.IsRequired()
+					.OnDelete(DeleteBehavior.Restrict);
+			});
 
 
 		modelBuilder.Entity<Circle>()

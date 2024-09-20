@@ -58,8 +58,7 @@ builder.Services
 	});
 
 builder.Services.AddDbContext<AppDbContext>(options => options
-	.UseNpgsql(connectionString)
-	.UseSnakeCaseNamingConvention());
+	.UseSqlServer(connectionString));
 
 builder.Services
 	.AddAuthentication(options =>

@@ -34,6 +34,7 @@ class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string>
 			GameId = dbOfficialGame.Id,
 			Game = dbOfficialGame,
 			Characters = dbCharactersWithSong,
+			CharacterOfficialSongs = new(),
 			ArrangementSongs = new(),
 			OfficialSongArrangementSongs = new(),
 		};

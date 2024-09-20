@@ -44,6 +44,7 @@ class ImportSongsOfGameHandler : BaseHandler<ImportSongsOfGamesCommand, string>
 					GameId = game.Id,
 					Game = game,
 					Characters = new(), // PLACEHOLDER!!!!!!!!
+					CharacterOfficialSongs = new(),
 					ArrangementSongs = new(), // PLACEHOLDER!!!!!
 					OfficialSongArrangementSongs = new(),
 				};
