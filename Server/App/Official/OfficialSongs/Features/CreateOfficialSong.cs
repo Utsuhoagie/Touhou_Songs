@@ -18,7 +18,7 @@ class CreateOfficialSongHandler : BaseHandler<CreateOfficialSongCommand, string>
 	public override async Task<Result<string>> Handle(CreateOfficialSongCommand command, CancellationToken cancellationToken)
 	{
 		var dbOfficialGame = await _context.OfficialGames
-			.SingleOrDefaultAsync(og => EF.Functions.ILike(og.GameCode, $"{command.GameCode}"));
+			.SingleOrDefaultAsync(og => EF.Functions.Like(og.GameCode, $"{command.GameCode}"));
 
 		if (dbOfficialGame is null)
 		{

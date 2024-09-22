@@ -17,7 +17,7 @@ class CreateCharacterHandler : BaseHandler<CreateCharacterCommand, string>
 	public override async Task<Result<string>> Handle(CreateCharacterCommand command, CancellationToken cancellationToken)
 	{
 		var dbOriginGame = await _context.OfficialGames
-			.SingleOrDefaultAsync(og => EF.Functions.ILike(og.GameCode, $"{command.OriginGameCode}"));
+			.SingleOrDefaultAsync(og => EF.Functions.Like(og.GameCode, $"{command.OriginGameCode}"));
 
 		if (dbOriginGame is null)
 		{

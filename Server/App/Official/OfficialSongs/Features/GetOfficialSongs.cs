@@ -31,7 +31,7 @@ class GetOfficialSongsHandler : BaseHandler<GetOfficialSongsQuery, Paged<Officia
 		var getOfficialSongsQuery = _context.OfficialSongs
 			.Include(os => os.Game)
 			.Where(os =>
-				(query.SearchTitle == null || EF.Functions.ILike(os.Title, $"%{query.SearchTitle}%"))
+				(query.SearchTitle == null || EF.Functions.Like(os.Title, $"%{query.SearchTitle}%"))
 				&& (query.GameCode == null || os.Game.GameCode == query.GameCode))
 			.OrderBy(os => os.GameId)
 				.ThenBy(os => os.Id);

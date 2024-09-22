@@ -39,14 +39,14 @@ class GetSelfTierLists : BaseHandler<GetSelfTierListsQuery, Paged<TierListRespon
 		var getSelfTierListsQuery = _context.UserProfiles
 			.Include(up => up.TierLists)
 			.Where(up => up.UserId == user.Id)
-			.OrderByDescending(up => up.CreatedOn);
+			.OrderByDescending(up => up.CreatedOn)
+			.SelectMany(up => up.TierLists)
+			.Select(tl => new TierListResponse(tl));
 
 		var tierLists_Res = await getSelfTierListsQuery
 			.Skip((query.Page - 1) * query.PageSize)
 			.Take(query.PageSize)
-			.SelectMany(up => up.TierLists)
-			.Select(tl => new TierListResponse(tl))
-			.ToListAsync();
+			.ToListAsync(cancellationToken);
 
 		var totalTierLists = await getSelfTierListsQuery.CountAsync();
 

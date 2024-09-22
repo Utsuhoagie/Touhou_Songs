@@ -34,7 +34,7 @@ class GetArrangementSongsHandler : BaseHandler<GetArrangementSongsQuery, Paged<A
 		var getArrangementSongsQuery = _context.ArrangementSongs
 			.Include(a => a.Circle)
 			.Include(a => a.OfficialSongs)
-			.Where(a => query.SearchTitle == null || EF.Functions.ILike(a.Title, $"%{query.SearchTitle}%"))
+			.Where(a => query.SearchTitle == null || EF.Functions.Like(a.Title, $"%{query.SearchTitle}%"))
 			.OrderBy(a => a.Title);
 
 		var arrangementSongs_Res = await getArrangementSongsQuery

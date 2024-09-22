@@ -34,7 +34,7 @@ class GetOfficialGamesHandler : BaseHandler<GetOfficialGamesQuery, Paged<Officia
 	{
 		var getOfficialGamesQuery = _context.OfficialGames
 			.Include(og => og.Songs)
-			.Where(og => query.SearchTitle == null || EF.Functions.ILike(og.Title, $"%{query.SearchTitle}%"))
+			.Where(og => query.SearchTitle == null || EF.Functions.Like(og.Title, $"%{query.SearchTitle}%"))
 			.OrderBy(og => og.ReleaseDate);
 
 		var officialGames_Res = await getOfficialGamesQuery

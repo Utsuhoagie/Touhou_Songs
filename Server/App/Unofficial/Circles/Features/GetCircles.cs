@@ -30,7 +30,7 @@ class GetCirclesHandler : BaseHandler<GetCirclesQuery, Paged<CircleResponse>>
 	{
 		var getCirclesQuery = _context.Circles
 			.Include(c => c.ArrangementSongs)
-			.Where(c => query.SearchName == null || EF.Functions.ILike(c.Name, $"%{query.SearchName}%"))
+			.Where(c => query.SearchName == null || EF.Functions.Like(c.Name, $"%{query.SearchName}%"))
 			.OrderBy(c => c.Name);
 
 		var circles_Res = await getCirclesQuery

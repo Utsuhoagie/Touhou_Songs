@@ -32,7 +32,7 @@ class GetCharactersHandler : BaseHandler<GetCharactersQuery, Paged<CharacterResp
 		var getCharactersQuery = _context.Characters
 			.Include(c => c.OriginGame)
 			.Include(c => c.OfficialSongs)
-			.Where(c => query.SearchName == null || EF.Functions.ILike(c.Name, $"%{query.SearchName}%"))
+			.Where(c => query.SearchName == null || EF.Functions.Like(c.Name, $"%{query.SearchName}%"))
 			.OrderBy(c => c.OriginGame.ReleaseDate);
 
 		var characters_Res = await getCharactersQuery
