@@ -44,10 +44,15 @@ public record GetTierListDetailResponse : BaseAuditedEntityResponse
 
 	public record SourceResponse : BaseEntityResponse
 	{
+		public required string IdForRoute { get; set; }
 		public string Label { get; set; }
+		public string ImageUrl { get; set; }
 
 		public SourceResponse(BaseEntity entity) : base(entity)
-			=> Label = entity.GetLabel();
+		{
+			Label = entity.GetLabel();
+			ImageUrl = entity.GetImageUrl()!;
+		}
 	}
 
 	public GetTierListDetailResponse(TierList tierList) : base(tierList)
@@ -69,7 +74,7 @@ class GetTierListDetailHandler : BaseHandler<GetTierListDetailQuery, GetTierList
 			.Include(tl => tl.Tiers)
 				.ThenInclude(tlt => tlt.Items)
 				.ThenInclude(tli => tli.ArrangementSong)
-			.SingleOrDefaultAsync(tl => tl.Id == query.Id);
+			.SingleOrDefaultAsync(tl => tl.Id == query.Id, cancellationToken);
 
 		if (dbTierList is null)
 		{
@@ -95,14 +100,22 @@ class GetTierListDetailHandler : BaseHandler<GetTierListDetailQuery, GetTierList
 
 							return new GetTierListDetailResponse.TierListTierResponse.TierListItemResponse(tli)
 							{
-								Source = new GetTierListDetailResponse.SourceResponse(source),
+								Source = new GetTierListDetailResponse.SourceResponse(source)
+								{
+									IdForRoute = source.GetIdForRoute(),
+								},
 							};
 						})
+						.OrderBy(tli => tli.Order)
 						.ToList(),
 				})
+				.OrderBy(tlt => tlt.Order)
 				.ToList(),
 			RemainingSourceItems = dbRemainingSourceItems
-				.Select(s => new GetTierListDetailResponse.SourceResponse(s))
+				.Select(s => new GetTierListDetailResponse.SourceResponse(s)
+				{
+					IdForRoute = s.GetIdForRoute(),
+				})
 				.ToList(),
 		};
 
