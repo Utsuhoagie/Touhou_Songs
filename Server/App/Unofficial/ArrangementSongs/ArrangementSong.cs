@@ -3,6 +3,7 @@ using Touhou_Songs.App._JoinEntities;
 using Touhou_Songs.App.Official.OfficialSongs;
 using Touhou_Songs.App.Unofficial.Circles;
 using Touhou_Songs.Infrastructure.BaseEntities;
+using Touhou_Songs.Infrastructure.Url;
 
 namespace Touhou_Songs.App.Unofficial.Songs;
 
@@ -24,4 +25,6 @@ public class ArrangementSong : BaseAuditedEntity
 
 	public ArrangementSong(string title, string url, UnofficialStatus status)
 		=> (Title, Url, Status) = (title, url, status);
+
+	public override string? GetImageUrl() => UrlUtils.GetYoutubeThumbnailUrl(Url);
 }

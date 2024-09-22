@@ -17,4 +17,8 @@ public class OfficialGame : BaseAuditedEntity
 
 	public OfficialGame(string title, string gameCode, string numberCode, DateTime releaseDate, string imageUrl)
 		=> (Title, GameCode, NumberCode, ReleaseDate, ImageUrl) = (title, gameCode, numberCode, releaseDate, imageUrl);
+
+	public override string GetIdForRoute() => GameCode;
+
+	public override string? GetImageUrl() => ImageUrl;
 }

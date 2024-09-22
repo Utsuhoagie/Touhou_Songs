@@ -4,6 +4,10 @@ public abstract class BaseEntity
 {
 	public int Id { get; set; }
 
+	public virtual string GetIdForRoute() => $"{Id}";
+
+	public virtual string? GetImageUrl() => null;
+
 	public string GetLabel()
 	{
 		var type = GetType();
